@@ -14,13 +14,155 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      product_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          id: string
+          image_url: string
+          product_id: string
+          sort_order: number
+          storage_path: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          product_id: string
+          sort_order?: number
+          storage_path?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          product_id?: string
+          sort_order?: number
+          storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_images_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          available_metals: string[]
+          carat: string | null
+          category: string
+          clarity: string | null
+          created_at: string
+          cut: string | null
+          description: string | null
+          dimensions: string | null
+          hallmark_badge: string | null
+          id: string
+          in_stock: boolean
+          is_featured: boolean
+          is_published: boolean
+          metal: string | null
+          origin: string | null
+          price_pkr: number | null
+          pricing_mode: string
+          primary_image_url: string | null
+          published_at: string | null
+          short_desc: string | null
+          sku: string | null
+          slug: string
+          stock_quantity: number
+          tag: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          available_metals?: string[]
+          carat?: string | null
+          category: string
+          clarity?: string | null
+          created_at?: string
+          cut?: string | null
+          description?: string | null
+          dimensions?: string | null
+          hallmark_badge?: string | null
+          id?: string
+          in_stock?: boolean
+          is_featured?: boolean
+          is_published?: boolean
+          metal?: string | null
+          origin?: string | null
+          price_pkr?: number | null
+          pricing_mode?: string
+          primary_image_url?: string | null
+          published_at?: string | null
+          short_desc?: string | null
+          sku?: string | null
+          slug: string
+          stock_quantity?: number
+          tag?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          available_metals?: string[]
+          carat?: string | null
+          category?: string
+          clarity?: string | null
+          created_at?: string
+          cut?: string | null
+          description?: string | null
+          dimensions?: string | null
+          hallmark_badge?: string | null
+          id?: string
+          in_stock?: boolean
+          is_featured?: boolean
+          is_published?: boolean
+          metal?: string | null
+          origin?: string | null
+          price_pkr?: number | null
+          pricing_mode?: string
+          primary_image_url?: string | null
+          published_at?: string | null
+          short_desc?: string | null
+          sku?: string | null
+          slug?: string
+          stock_quantity?: number
+          tag?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      novalestic_has_admin_access: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

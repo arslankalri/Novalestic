@@ -111,7 +111,7 @@ export const ManageStoreView: React.FC = () => {
       tag: metal,
       shortDesc: shortDesc || `${title} crafted in ${metal} with natural stones.`,
       description: description || `Handcrafted fine jewellery creation set in ${metal} featuring ${carat}. Thoroughly hallmarked and inspected.`,
-      image: image || sampleImages[0].url,
+      image: image || sampleImages[0]?.url || '',
       hallmarkBadge: hallmarkBadge || '18K Gold',
       inStock: true,
       featured: true,
@@ -158,7 +158,7 @@ export const ManageStoreView: React.FC = () => {
   };
 
   const publicStoreUrl = typeof window !== 'undefined'
-    ? window.location.href.split('#')[0]
+    ? window.location.href.split('#')[0] ?? ''
     : 'https://novalestic.pk';
 
   const handleCopyLink = () => {
@@ -221,7 +221,7 @@ export const ManageStoreView: React.FC = () => {
       id: `TEST-ORD-${Math.floor(1000 + Math.random() * 9000)}`,
       items: [
         {
-          product: products[0],
+          product: products[0]!,
           quantity: 1,
           selectedMetal: '18k Yellow Gold',
           ringSize: 'Size 14',

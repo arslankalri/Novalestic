@@ -246,6 +246,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }, 3500);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [toastMessage]);
 
   // Format Pakistani Rupees with standard comma grouping
@@ -299,7 +300,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
       if (existingIdx > -1) {
         const next = [...prev];
-        next[existingIdx].quantity += quantity;
+        const existing = next[existingIdx];
+        if (existing) existing.quantity += quantity;
         return next;
       }
       return [

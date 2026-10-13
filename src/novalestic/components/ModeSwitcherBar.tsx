@@ -10,7 +10,7 @@ export const ModeSwitcherBar: React.FC = () => {
 
   // Determine current public URL
   const publicStoreUrl = typeof window !== 'undefined'
-    ? window.location.href.split('#')[0]
+    ? window.location.href.split('#')[0] ?? ''
     : 'https://novalestic.pk';
 
   const handleCopyLink = () => {

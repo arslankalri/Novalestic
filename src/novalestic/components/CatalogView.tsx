@@ -40,7 +40,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
     },
   };
 
-  const currentInfo = categoryTitles[category] || categoryTitles.all;
+  const currentInfo = categoryTitles[category] ?? categoryTitles.all!;
 
   const filteredProducts = useMemo(() => {
     let items = category === 'all'

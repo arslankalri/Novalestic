@@ -25,7 +25,7 @@ export interface CartItem {
   product: Product;
   quantity: number;
   selectedMetal: string;
-  ringSize?: string;
+  ringSize?: string | undefined;
 }
 
 export interface Order {

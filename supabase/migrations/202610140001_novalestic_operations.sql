@@ -111,17 +111,28 @@ create trigger novalestic_orders_number
 before insert on public.orders
 for each row execute function public.novalestic_generate_order_number();
 
+create or replace function public.novalestic_touch_updated_at()
+returns trigger
+language plpgsql
+set search_path = ''
+as $
+begin
+  new.updated_at = now();
+  return new;
+end;
+$;
+
 drop trigger if exists novalestic_customers_updated_at on public.customers;
 create trigger novalestic_customers_updated_at before update on public.customers
-for each row execute function public.novalestic_set_updated_at();
+for each row execute function public.novalestic_touch_updated_at();
 
 drop trigger if exists novalestic_enquiries_updated_at on public.enquiries;
 create trigger novalestic_enquiries_updated_at before update on public.enquiries
-for each row execute function public.novalestic_set_updated_at();
+for each row execute function public.novalestic_touch_updated_at();
 
 drop trigger if exists novalestic_orders_updated_at on public.orders;
 create trigger novalestic_orders_updated_at before update on public.orders
-for each row execute function public.novalestic_set_updated_at();
+for each row execute function public.novalestic_touch_updated_at();
 
 alter table public.customers enable row level security;
 alter table public.enquiries enable row level security;

@@ -24,6 +24,7 @@ interface FormState {
   sku: string;
   pricingMode: 'fixed' | 'enquiry';
   price: string;
+  costPrice: string;
   metal: string;
   availableMetals: string;
   carat: string;
@@ -33,7 +34,7 @@ interface FormState {
 }
 
 const EMPTY: FormState = {
-  id: null, title: '', category: 'rings', sku: '', pricingMode: 'enquiry', price: '',
+  id: null, title: '', category: 'rings', sku: '', pricingMode: 'enquiry', price: '', costPrice: '',
   metal: '', availableMetals: '', carat: '', shortDesc: '', description: '', featured: false,
 };
 
@@ -67,7 +68,7 @@ export function AdminDashboard() {
     setMessage(null);
     setForm({
       id: p.id, title: p.title, category: p.category as Category, sku: p.sku ?? '',
-      pricingMode: p.pricing_mode as 'fixed' | 'enquiry', price: p.price_pkr?.toString() ?? '',
+      pricingMode: p.pricing_mode as 'fixed' | 'enquiry', price: p.price_pkr?.toString() ?? '', costPrice: p.cost_price_pkr?.toString() ?? '',
       metal: p.metal ?? '', availableMetals: (p.available_metals ?? []).join(', '), carat: p.carat ?? '',
       shortDesc: p.short_desc ?? '', description: p.description ?? '', featured: p.is_featured,
     });
@@ -112,6 +113,7 @@ export function AdminDashboard() {
         sku: blank(form.sku),
         pricing_mode: form.pricingMode,
         price_pkr: form.pricingMode === 'fixed' ? Number(form.price) : null,
+        cost_price_pkr: form.costPrice.trim() === '' ? null : Number(form.costPrice),
         metal: blank(form.metal),
         available_metals: form.availableMetals.split(',').map((s) => s.trim()).filter(Boolean),
         carat: blank(form.carat),
@@ -218,7 +220,8 @@ export function AdminDashboard() {
               <input type="number" min="0" step="1" placeholder="e.g. 250000" value={form.price} onChange={(e) => set('price', e.target.value)} className={input} />
             )}
           </fieldset>
-          <label className="block text-sm">Cost price (PKR, private)<input type="number" min="0" step="0.01" placeholder="Optional — never shown publicly" value={form.costPrice} onChange={(e) => set('costPrice', e.target.value)} className={input} /></label>\n          <label className="block text-sm">Metal<input placeholder="e.g. 18k yellow gold" value={form.metal} onChange={(e) => set('metal', e.target.value)} className={input} /></label>
+          <label className="block text-sm">Cost price (PKR, private)<input type="number" min="0" step="0.01" placeholder="Optional — never shown publicly" value={form.costPrice} onChange={(e) => set('costPrice', e.target.value)} className={input} /></label>\n          <label className="block text-sm">Cost price (PKR, private)<input type="number" min="0" step="0.01" placeholder="Optional — never shown publicly" value={form.costPrice} onChange={(e) => set('costPrice', e.target.value)} className={input} /></label>
+          <label className="block text-sm">Metal<input placeholder="e.g. 18k yellow gold" value={form.metal} onChange={(e) => set('metal', e.target.value)} className={input} /></label>
           <label className="block text-sm">Available metals (comma separated)<input value={form.availableMetals} onChange={(e) => set('availableMetals', e.target.value)} className={input} /></label>
           <label className="block text-sm">Carat / purity<input value={form.carat} onChange={(e) => set('carat', e.target.value)} className={input} /></label>
           <label className="block text-sm">Short description<input value={form.shortDesc} onChange={(e) => set('shortDesc', e.target.value)} className={input} /></label>

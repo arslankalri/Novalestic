@@ -35,7 +35,7 @@ const AppContent: React.FC = () => {
         return <CatalogView category="bangles-bracelets" />;
 
       case 'product-detail':
-        return <ProductDetailView productId={selectedProductId || 'sovereign-radiant-emerald-ring'} />;
+        return <ProductDetailView productId={selectedProductId || 'sample-ring'} />;
 
       case 'cart':
         return <CartView />;

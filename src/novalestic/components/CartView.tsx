@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { Order } from '../types';
-import { Trash2, ShoppingBag, ArrowLeft, ShieldCheck, Check, Truck, MessageCircle, Mail, ExternalLink, Send } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowLeft, Check, MessageCircle, Mail, ExternalLink, Send, Info } from 'lucide-react';
 
 export const CartView: React.FC = () => {
   const {
@@ -69,7 +69,7 @@ export const CartView: React.FC = () => {
         if (typeof window !== 'undefined') {
           window.open(waUrl, '_blank');
           setSentToWhatsApp(true);
-          markOrderDelivered(order.id, 'whatsapp');
+          // Opening WhatsApp does not confirm that a message was sent.
         }
       }, 700);
     }
@@ -80,7 +80,7 @@ export const CartView: React.FC = () => {
     const waUrl = getOrderWhatsAppUrl(confirmedOrder);
     window.open(waUrl, '_blank');
     setSentToWhatsApp(true);
-    markOrderDelivered(confirmedOrder.id, 'whatsapp');
+    // Opening WhatsApp does not confirm that a message was sent.
   };
 
   const handleDeliverToEmail = () => {
@@ -88,7 +88,7 @@ export const CartView: React.FC = () => {
     const mailUrl = getOrderEmailUrl(confirmedOrder);
     window.location.href = mailUrl;
     setSentToEmail(true);
-    markOrderDelivered(confirmedOrder.id, 'email');
+    // Opening an email draft does not confirm that a message was sent.
   };
 
   return (
@@ -114,7 +114,7 @@ export const CartView: React.FC = () => {
             </div>
 
             <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-              ORDER STORED IN STUDIO RECORDS
+              SAMPLE CHECKOUT PREVIEW
             </span>
 
             <h2 className="font-serif-luxury text-3xl text-[#1b1c19] font-normal mb-3">
@@ -142,7 +142,7 @@ export const CartView: React.FC = () => {
               </div>
 
               <p className="text-xs text-[#4d4545] leading-relaxed">
-                Click below to immediately deliver this complete order to the store owner's official WhatsApp and Email:
+                Use these links to open a message draft. You must send the message yourself; nothing is automatically delivered.
               </p>
 
               {/* Delivery Buttons */}
@@ -159,7 +159,7 @@ export const CartView: React.FC = () => {
                 >
                   <MessageCircle className="w-4 h-4 shrink-0" />
                   <span>
-                    {sentToWhatsApp ? '✓ Delivered via WhatsApp' : 'Deliver to Owner WhatsApp'}
+                    {sentToWhatsApp ? 'WhatsApp opened — send message' : 'Open WhatsApp message'}
                   </span>
                 </button>
 
@@ -176,7 +176,7 @@ export const CartView: React.FC = () => {
                   >
                     <Mail className="w-4 h-4 text-[#765a18] shrink-0" />
                     <span>
-                      {sentToEmail ? '✓ Delivered via Email' : 'Deliver to Owner Email'}
+                      {sentToEmail ? 'Email opened — send message' : 'Open email draft'}
                     </span>
                   </button>
                   {confirmedOrder && (
@@ -447,8 +447,7 @@ export const CartView: React.FC = () => {
                       >
                         <option value="cod">Cash on Delivery (Pay when you receive)</option>
                         <option value="bank_transfer">Direct Bank Transfer (HBL / Meezan / Alfalah)</option>
-                        <option value="card">Debit / Credit Card</option>
-                      </select>
+                                      </select>
                     </div>
                   </div>
 
@@ -488,12 +487,11 @@ export const CartView: React.FC = () => {
                   <span className="font-semibold text-[#1b1c19] tabular-nums">{formatPrice(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Insured Courier Delivery:</span>
-                  <span className="text-[#15803d] font-bold uppercase tracking-wider">FREE (Complimentary)</span>
+                  <span>Delivery:</span>
+                  <span className="text-[#765a18] font-medium">To be confirmed</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Gold Purity Assay:</span>
-                  <span className="text-[#15803d] font-bold">18K Certified</span>
+
                 </div>
                 <div className="flex justify-between text-base font-serif-luxury font-bold text-[#1b1c19] pt-3 border-t border-[#DFC27F]/40">
                   <span>Total (PKR):</span>
@@ -503,7 +501,7 @@ export const CartView: React.FC = () => {
 
               <div className="p-3 bg-[#E8F4F0] border border-[#15803d]/20 text-[#15803d] text-xs flex items-center gap-2">
                 <Truck className="w-4 h-4 shrink-0" />
-                <span>Insured nationwide delivery with verification on arrival.</span>
+                <span>Store preview only. Shipping details will be added before launch.</span>
               </div>
             </div>
           </div>

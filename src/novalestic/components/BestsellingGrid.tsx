@@ -105,10 +105,7 @@ export const BestsellingGrid: React.FC = () => {
                     <span className="text-[10px] font-semibold uppercase text-[#765a18] tracking-widest">
                       {product.metal}
                     </span>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#DFC27F]" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#dbdad5]" />
-                    </div>
+
                   </div>
 
                   <button

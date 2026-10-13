@@ -65,16 +65,33 @@ const DEFAULT_SETTINGS: StoreSettings = {
 };
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Products list from local storage or defaults
+  // Products list from local storage or defaults.
+  // Refresh only the old built-in demo fixtures; keep any custom products created in the
+  // existing owner/admin workflow so this catalogue cleanup does not erase their work.
   const [products, setProducts] = useState<Product[]>(() => {
     try {
       if (typeof window === 'undefined') return INITIAL_PRODUCTS;
       const saved = localStorage.getItem(STORAGE_KEY_PRODUCTS);
       if (saved) {
-        return JSON.parse(saved);
+        const savedProducts: Product[] = JSON.parse(saved);
+        const legacySampleIds = new Set([
+          'sovereign-radiant-emerald-ring',
+          'aura-bezel-drop-earrings',
+          'lestic-imperial-solitaire-pendant',
+          'celestial-pave-diamond-emerald-band',
+          'vendome-archival-signet-ring',
+          'chivor-cascade-chandelier-earrings',
+          'muzo-nocturne-collar-necklace',
+          'solitaire-colombian-pave-ring',
+        ]);
+        if (Array.isArray(savedProducts) && savedProducts.some((product) => legacySampleIds.has(product.id))) {
+          const customProducts = savedProducts.filter((product) => !legacySampleIds.has(product.id));
+          return [...INITIAL_PRODUCTS, ...customProducts];
+        }
+        if (Array.isArray(savedProducts)) return savedProducts;
       }
     } catch {
-      // Fallback
+      // Fall back to the default preview catalogue if saved data cannot be read.
     }
     return INITIAL_PRODUCTS;
   });

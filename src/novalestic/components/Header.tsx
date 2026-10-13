@@ -21,7 +21,7 @@ export const Header: React.FC = () => {
         <div className="flex-1 flex items-center justify-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-[#15803d] shrink-0" />
           <p className="text-[11px] font-medium tracking-[0.16em] uppercase text-[#4d4545] truncate">
-            FREE SECURE DELIVERY ACROSS PAKISTAN <span className="text-[#DFC27F] mx-2">•</span> CASH ON DELIVERY &amp; BANK TRANSFER AVAILABLE
+            NOVALESTIC JEWELLERS <span className="text-[#DFC27F] mx-2">•</span> A NEW COLLECTION IS TAKING SHAPE
           </p>
         </div>
 

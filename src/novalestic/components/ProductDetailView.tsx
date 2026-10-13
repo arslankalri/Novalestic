@@ -201,15 +201,8 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 onClick={handleBuyNow}
                 className="w-full py-3.5 bg-[#9E7B32] hover:bg-[#765a18] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                <span>VIEW CART</span>
+                <span>ADD &amp; VIEW CART</span>
               </button>
-
-              <button
-                onClick={() => navigateTo('cart')}
-                className="w-full py-3 bg-transparent hover:bg-[#F2EDE3] text-[#1b1c19] border border-[#C6A45B]/50 text-xs font-semibold uppercase tracking-[0.14em] transition-colors flex items-center justify-center gap-2"
-              >
-                <span>VIEW CART</span>
-              </button>>
             </div>
 
             {/* Preview notice */}

@@ -14,28 +14,28 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
 
   const categoryTitles: Record<string, { title: string; subtitle: string; description: string }> = {
     all: {
-      title: 'Complete Fine Jewellery Collection',
+      title: 'All Jewellery — Sample Catalogue',
       subtitle: 'THE NOVALESTIC COLLECTION',
       description: 'Explore the collection and discover pieces that suit your personal style.',
     },
     rings: {
-      title: 'Fine Jewellery Rings',
-      subtitle: 'COUTURE SOLITAIRES & ETERNITY BANDS',
+      title: 'Rings — Sample Catalogue',
+      subtitle: 'RING DESIGN PREVIEWS',
       description: 'Explore rings for everyday wear, meaningful gifts and special occasions.',
     },
     earrings: {
-      title: 'Solitaire & Drop Earrings',
-      subtitle: 'DROPS, CHANDELIERS & TOPS',
+      title: 'Earrings — Sample Catalogue',
+      subtitle: 'EARRING DESIGN PREVIEWS',
       description: 'Explore earrings in a range of silhouettes, from subtle to statement-making.',
     },
     necklaces: {
-      title: 'Emerald Necklaces & Pendants',
-      subtitle: 'PENDANTS, COLLIERS & STRANDS',
+      title: 'Necklaces — Sample Catalogue',
+      subtitle: 'NECKLACE DESIGN PREVIEWS',
       description: 'Explore necklaces and pendants to complement your own style.',
     },
     'bangles-bracelets': {
       title: 'Bangles & Bracelets',
-      subtitle: 'GOLD BANGLES & TENNIS BRACELETS',
+      subtitle: 'BRACELET DESIGN PREVIEWS',
       description: 'Discover bracelets and bangles for layering or wearing on their own.',
     },
   };
@@ -108,7 +108,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
               aria-label="Filter jewellery by metal"
               value={selectedMetal}
               onChange={(e) => setSelectedMetal(e.target.value)}
-              className="bg-[#fbf9f4] border border-[#e4e2dd] text-xs px-3 py-1.5 text-[#1b1c19] focus:outline-none"
+              className="bg-[#fbf9f4] border border-[#e4e2dd] text-xs px-3 py-1.5 text-[#1b1c19] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#9E7B32]"
             >
               <option value="all">All Metals</option>
               <option value="champagne">Champagne Gold</option>
@@ -225,7 +225,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
           <div className="border border-[#e4e2dd] bg-[#F2EDE3]/60 px-6 py-16 text-center">
             <h2 className="font-serif-luxury text-2xl text-[#1b1c19] mb-2">Nothing here just yet</h2>
             <p className="text-sm text-[#5d5750] mb-6">Try another category or clear your metal filter.</p>
-            <button onClick={() => setSelectedMetal('all')} className="border border-[#C6A45B] px-5 py-3 text-xs uppercase tracking-[0.16em] hover:bg-[#F2EDE3]">Clear filters</button>
+            <button onClick={() => setSelectedMetal('all')} className="border border-[#C6A45B] px-5 py-3 text-xs uppercase tracking-[0.16em] hover:bg-[#F2EDE3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]">Clear filters</button>
           </div>
         )}
       </div>

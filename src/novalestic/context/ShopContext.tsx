@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem } from '../types';
 import { INITIAL_PRODUCTS } from '../data/products';
+import { fetchPublishedProducts } from '../data/publishedProducts';
 
 interface ShopContextType {
   products: Product[];
@@ -25,7 +26,15 @@ const STORAGE_KEY_CART = 'nova_lestic_cart_pkr_v1';
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Public storefront catalogue is intentionally read-only. A separate, authenticated
   // admin portal can be added later without exposing management controls in this app.
-  const products = INITIAL_PRODUCTS;
+  // Published catalogue items replace the design-preview samples once any exist.
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  useEffect(() => {
+    let active = true;
+    fetchPublishedProducts().then((live) => {
+      if (active && live.length > 0) setProducts(live);
+    }).catch(() => { /* keep sample listings if the catalogue is unreachable */ });
+    return () => { active = false; };
+  }, []);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
@@ -105,7 +114,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => window.clearTimeout(timer);
   }, [toastMessage]);
 
-  const formatPrice = (pricePKR: number): string => `Rs. ${pricePKR.toLocaleString('en-PK')}`;
+  const formatPrice = (pricePKR: number): string => pricePKR > 0 ? `Rs. ${pricePKR.toLocaleString('en-PK')}` : 'Price on enquiry';
 
   const addToCart = (product: Product, quantity = 1, selectedMetal = product.metal, ringSize?: string) => {
     const size = ringSize || (product.category === 'rings' ? 'Size 14 (Standard)' : undefined);

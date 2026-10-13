@@ -201,7 +201,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      novalestic_has_admin_access: { Args: never; Returns: boolean }
+      novalestic_has_admin_access: { Args: never; Returns: boolean }\n      novalestic_update_order_status: { Args: { p_order_id: string; p_status: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

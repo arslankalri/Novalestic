@@ -33,7 +33,7 @@ export const CartView: React.FC = () => {
               <ShoppingBag className="w-8 h-8" />
             </div>
             <h2 className="font-serif-luxury text-2xl text-[#1b1c19] mb-2 font-normal">Your cart is empty</h2>
-            <p className="text-sm text-[#4d4545] max-w-md mx-auto mb-6">Browse the sample collection and add pieces to explore how the shopping experience works.</p>
+            <p className="text-sm text-[#4d4545] max-w-md mx-auto mb-6">Browse the collection and contact us to enquire about a piece.</p>
             <button type="button" onClick={() => navigateTo('shop')} className="px-8 py-3.5 bg-[#1b1c19] text-white hover:bg-[#9E7B32] text-xs font-semibold uppercase tracking-wider transition-colors">
               Browse Jewellery
             </button>
@@ -102,7 +102,7 @@ export const CartView: React.FC = () => {
               </button>
               <div className="p-3 bg-[#fbf9f4] border border-[#C6A45B]/30 text-[#5d5750] text-xs flex items-start gap-2">
                 <Info className="w-4 h-4 shrink-0 text-[#9E7B32] mt-0.5" />
-                <span>Store preview only. Product prices are examples; checkout, payments, shipping and order processing are not connected yet.</span>
+                <span>Store preview only. Prices are confirmed by our team on WhatsApp. For help with your selection, contact us directly.</span>
               </div>
             </aside>
           </div>

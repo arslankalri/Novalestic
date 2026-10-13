@@ -119,7 +119,6 @@ export function AdminDashboard() {
         sku: blank(form.sku),
         pricing_mode: form.pricingMode,
         price_pkr: form.pricingMode === 'fixed' ? Number(form.price) : null,
-        cost_price_pkr: form.costPrice.trim() === '' ? null : Number(form.costPrice),
         metal: blank(form.metal),
         available_metals: form.availableMetals.split(',').map((s) => s.trim()).filter(Boolean),
         carat: blank(form.carat),

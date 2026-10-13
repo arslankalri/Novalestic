@@ -172,15 +172,21 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               </label>
               <div className="flex items-center border border-[#e4e2dd] bg-[#f5f3ee]">
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3]"
+                  type="button"
+                  onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                  aria-label="Decrease quantity"
+                  disabled={quantity <= 1}
+                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  -
+                  −
                 </button>
-                <span className="px-4 py-1.5 text-xs font-bold font-mono">{quantity}</span>
+                <span aria-live="polite" className="px-4 py-1.5 text-xs font-bold font-mono">{quantity}</span>
                 <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3]"
+                  type="button"
+                  onClick={() => setQuantity((current) => Math.min(99, current + 1))}
+                  aria-label="Increase quantity"
+                  disabled={quantity >= 99}
+                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   +
                 </button>

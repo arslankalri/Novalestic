@@ -215,7 +215,7 @@ returns boolean
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   current_order public.orders%rowtype;
   item record;
@@ -256,7 +256,7 @@ begin
   update public.orders set status = p_status where id = p_order_id;
   return true;
 end;
-$;
+$$;
 
 revoke all on function public.novalestic_update_order_status(uuid, text) from public;
 grant execute on function public.novalestic_update_order_status(uuid, text) to authenticated;

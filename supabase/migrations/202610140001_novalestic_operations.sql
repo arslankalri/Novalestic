@@ -75,6 +75,7 @@ create table if not exists public.order_items (
   sku text,
   quantity integer not null check (quantity > 0),
   unit_price_pkr numeric(14,2) not null check (unit_price_pkr >= 0),
+  unit_cost_pkr numeric(14,2) check (unit_cost_pkr is null or unit_cost_pkr >= 0),
   line_total_pkr numeric(14,2) not null check (line_total_pkr >= 0),
   created_at timestamptz not null default now()
 );

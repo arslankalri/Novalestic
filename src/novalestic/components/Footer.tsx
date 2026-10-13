@@ -11,6 +11,7 @@ export const Footer: React.FC = () => {
     { label: 'Rings', view: 'rings' },
     { label: 'Earrings', view: 'earrings' },
     { label: 'Necklaces', view: 'necklaces' },
+    { label: 'Bangles & Bracelets', view: 'bangles-bracelets' },
   ];
 
   return (

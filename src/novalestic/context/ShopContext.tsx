@@ -58,8 +58,8 @@ const STORAGE_KEY_ORDERS = 'nova_lestic_orders_pkr_v1';
 const STORAGE_KEY_SETTINGS = 'nova_lestic_settings_v1';
 
 const DEFAULT_SETTINGS: StoreSettings = {
-  ownerEmail: 'arslankalri@gmail.com',
-  ownerWhatsApp: '+923001234567',
+  ownerEmail: '',
+  ownerWhatsApp: '',
   businessName: 'Novalestic Jewellers',
   autoWhatsAppPrompt: true,
 };

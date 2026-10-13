@@ -116,6 +116,12 @@ alter table public.user_roles enable row level security;
 alter table public.products enable row level security;
 alter table public.product_images enable row level security;
 
+-- Table grants are required in addition to RLS policies.
+grant select on public.products to anon, authenticated;
+grant insert, update, delete on public.products to authenticated;
+grant select on public.product_images to anon, authenticated;
+grant insert, update, delete on public.product_images to authenticated;
+
 drop policy if exists "Users can read their own role" on public.user_roles;
 create policy "Users can read their own role"
 on public.user_roles for select

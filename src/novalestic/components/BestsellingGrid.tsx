@@ -4,13 +4,14 @@ import { ShoppingBag, Eye } from 'lucide-react';
 
 export const BestsellingGrid: React.FC = () => {
   const { products, formatPrice, addToCart, navigateTo } = useShop();
-  const [activeTab, setActiveTab] = useState<'all' | 'rings' | 'earrings' | 'necklaces'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets'>('all');
 
   const filterTabs = [
     { id: 'all', label: 'ALL PIECES' },
     { id: 'rings', label: 'RINGS' },
     { id: 'earrings', label: 'EARRINGS' },
     { id: 'necklaces', label: 'NECKLACES' },
+    { id: 'bangles-bracelets', label: 'BANGLES & BRACELETS' },
   ] as const;
 
   const filteredProducts = products.filter((item) => {
@@ -25,10 +26,10 @@ export const BestsellingGrid: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-              A FIRST LOOK AT NOVALESTIC
+              COLLECTION PREVIEW
             </span>
             <h2 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal">
-              Explore the Collection
+              Explore Sample Categories
             </h2>
           </div>
 
@@ -42,7 +43,7 @@ export const BestsellingGrid: React.FC = () => {
                   type="button"
                   onClick={() => setActiveTab(tab.id)}
                   aria-pressed={isActive}
-                  className={`px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-all duration-200 ${
+                  className={`px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] ${
                     isActive
                       ? 'bg-[#1b1c19] text-white shadow-sm'
                       : 'text-[#4d4545] hover:text-[#1b1c19]'
@@ -66,7 +67,7 @@ export const BestsellingGrid: React.FC = () => {
               <div className="relative w-full aspect-[4/5] bg-[#eae8e3] overflow-hidden">
                 <button
                   onClick={() => navigateTo('product-detail', product.id)}
-                  className="w-full h-full block focus:outline-none"
+                  className="w-full h-full block focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#9E7B32]"
                   aria-label={`View details of ${product.title}`}
                 >
                   <img
@@ -112,7 +113,7 @@ export const BestsellingGrid: React.FC = () => {
 
                   <button
                     onClick={() => navigateTo('product-detail', product.id)}
-                    className="text-left w-full group/title focus:outline-none"
+                    className="text-left w-full group/title focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
                   >
                     <h3 className="font-serif-luxury text-[17px] text-[#1b1c19] font-medium mb-1 group-hover/title:text-[#9E7B32] transition-colors line-clamp-1">
                       {product.title}

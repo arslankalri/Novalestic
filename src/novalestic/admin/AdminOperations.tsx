@@ -167,8 +167,10 @@ export function AdminOperations({ mode }: { mode: Mode }) {
 
   const changeOrder = async (order: Order, field: 'status' | 'payment_status', value: string) => {
     setMessage('');
-    const { error } = await supabase.from('orders').update({ [field]: value }).eq('id', order.id);
-    setMessage(error ? error.message : `${order.order_number} updated.`);
+    const result = field === 'status'
+      ? await supabase.rpc('novalestic_update_order_status', { p_order_id: order.id, p_status: value })
+      : await supabase.from('orders').update({ payment_status: value }).eq('id', order.id);
+    setMessage(result.error ? result.error.message : order.order_number + ' updated.');
     await load();
   };
 
@@ -220,7 +222,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
         </div>
       </>}
       {mode==='orders' && <>
-        <section className={panel}><h2 className={heading}>Record a manual order</h2><p className="mb-4 text-sm text-[#766e62]">For orders received through WhatsApp, phone, Instagram or in person. No online payment is taken here.</p>
+        <section className={panel}><h2 className={heading}>Record a manual order</h2><p className="mb-4 text-sm text-[#766e62]">For orders received through WhatsApp, phone, Instagram or in person. No online payment is taken here. Moving an order into processing/shipped/delivered deducts stock once; record opening stock first.</p>
           <form onSubmit={saveOrder} className="grid gap-3 md:grid-cols-3">
             <label className={label}>Customer name *<input required value={orderForm.customer_name} onChange={e=>setOrderForm({...orderForm,customer_name:e.target.value})} className={input}/></label>
             <label className={label}>Phone<input value={orderForm.phone} onChange={e=>setOrderForm({...orderForm,phone:e.target.value})} className={input}/></label>
@@ -239,7 +241,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
             <div className="md:col-span-3 flex flex-wrap items-center justify-between gap-3 border-t border-[#eee8de] pt-4"><p className="text-sm">Estimated total: <strong>{money(Math.max(0,Number(orderForm.quantity||0)*Number(orderForm.unit_price||0)+Number(orderForm.shipping_fee||0)-Number(orderForm.discount||0)))}</strong></p><button disabled={busy||products.length===0} className={btn}>{busy?'Saving…':'Create order'}</button></div>
           </form>
         </section>
-        <section className={panel}><h2 className={heading}>Orders ({orders.length})</h2>{orders.length===0?<p className="text-sm text-[#7a7368]">No orders yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Order / date</th><th>Customer</th><th>Total</th><th>Order status</th><th>Payment</th></tr></thead><tbody>{orders.map(o=><tr key={o.id} className="border-t border-[#eee8de] align-middle"><td className="py-3"><strong>{o.order_number}</strong><p className="text-xs text-[#8a8174]">{date(o.created_at)}</p></td><td>{o.customer_name}<p className="text-xs text-[#8a8174]">{o.phone||o.email||'No contact'}</p></td><td>{money(o.total_pkr)}<p className="text-xs text-[#8a8174]">Paid {money(o.paid_amount_pkr)}</p></td><td><select aria-label={`Status for ${o.order_number}`} value={o.status} onChange={e=>void changeOrder(o,'status',e.target.value)} className={input}>{['pending','confirmed','processing','shipped','delivered','cancelled'].map(s=><option key={s} value={s}>{s}</option>)}</select></td><td><select aria-label={`Payment for ${o.order_number}`} value={o.payment_status} onChange={e=>void changeOrder(o,'payment_status',e.target.value)} className={input}>{['unpaid','partial','paid','refunded'].map(s=><option key={s} value={s}>{s}</option>)}</select></td></tr>)}</tbody></table></div>}</section>
+        <section className={panel}><h2 className={heading}>Orders ({orders.length})</h2>{orders.length===0?<p className="text-sm text-[#7a7368]">No orders yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Order / date</th><th>Customer</th><th>Total</th><th>Order status*</th><th>Payment</th></tr></thead><tbody>{orders.map(o=><tr key={o.id} className="border-t border-[#eee8de] align-middle"><td className="py-3"><strong>{o.order_number}</strong><p className="text-xs text-[#8a8174]">{date(o.created_at)}</p></td><td>{o.customer_name}<p className="text-xs text-[#8a8174]">{o.phone||o.email||'No contact'}</p></td><td>{money(o.total_pkr)}<p className="text-xs text-[#8a8174]">Paid {money(o.paid_amount_pkr)}</p></td><td><select aria-label={`Status for ${o.order_number}`} value={o.status} onChange={e=>void changeOrder(o,'status',e.target.value)} className={input}>{['pending','confirmed','processing','shipped','delivered','cancelled'].map(s=><option key={s} value={s}>{s}</option>)}</select></td><td><select aria-label={`Payment for ${o.order_number}`} value={o.payment_status} onChange={e=>void changeOrder(o,'payment_status',e.target.value)} className={input}>{['unpaid','partial','paid','refunded'].map(s=><option key={s} value={s}>{s}</option>)}</select></td></tr>)}</tbody></table></div>}<p className="mt-3 text-xs text-[#8a8174]">*Moving an order into fulfilment deducts stock once. Cancelling after dispatch does not automatically restock; record a return/adjustment in Inventory.</p></section>
       </>}
       {mode==='customers' && <>
         <section className={panel}><h2 className={heading}>Add customer</h2><form onSubmit={saveCustomer} className="grid gap-3 md:grid-cols-3">

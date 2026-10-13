@@ -44,19 +44,21 @@ const blank = (s: string) => (s.trim() === '' ? null : s.trim());
 export function AdminDashboard() {
   const navigate = useNavigate();
   const [products, setProducts] = useState<ProductRow[]>([]);
-  const [images, setImages] = useState<ImageRow[]>([]);
+  const [images, setImages] = useState<ImageRow[]>([]);\n  const [costs, setCosts] = useState<Database['public']['Tables']['product_costs']['Row'][]>([]);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const load = async () => {
-    const [{ data: p }, { data: i }] = await Promise.all([
+    const [{ data: p }, { data: i }, { data: c }] = await Promise.all([
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('product_images').select('*').order('sort_order'),
+      supabase.from('product_costs').select('*'),
     ]);
     setProducts(p ?? []);
     setImages(i ?? []);
+    setCosts(c ?? []);
   };
 
   useEffect(() => { void load(); }, []);
@@ -68,7 +70,7 @@ export function AdminDashboard() {
     setMessage(null);
     setForm({
       id: p.id, title: p.title, category: p.category as Category, sku: p.sku ?? '',
-      pricingMode: p.pricing_mode as 'fixed' | 'enquiry', price: p.price_pkr?.toString() ?? '', costPrice: p.cost_price_pkr?.toString() ?? '',
+      pricingMode: p.pricing_mode as 'fixed' | 'enquiry', price: p.price_pkr?.toString() ?? '', costPrice: costs.find((cost) => cost.product_id === p.id)?.cost_price_pkr.toString() ?? '',
       metal: p.metal ?? '', availableMetals: (p.available_metals ?? []).join(', '), carat: p.carat ?? '',
       shortDesc: p.short_desc ?? '', description: p.description ?? '', featured: p.is_featured,
     });
@@ -131,6 +133,14 @@ export function AdminDashboard() {
       } else {
         const { error } = await supabase.from('products').update(base).eq('id', id);
         if (error) throw error;
+      }
+
+      if (form.costPrice.trim() === '') {
+        const { error: costError } = await supabase.from('product_costs').delete().eq('product_id', id);
+        if (costError) throw costError;
+      } else {
+        const { error: costError } = await supabase.from('product_costs').upsert({ product_id: id, cost_price_pkr: Number(form.costPrice) });
+        if (costError) throw costError;
       }
 
       const nextOrder = existingImages.reduce((m, i) => Math.max(m, i.sort_order + 1), 0);

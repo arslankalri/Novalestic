@@ -27,27 +27,3 @@ export interface CartItem {
   selectedMetal: string;
   ringSize?: string | undefined;
 }
-
-export interface Order {
-  id: string;
-  items: CartItem[];
-  totalPKR: number;
-  customerName: string;
-  customerPhone: string;
-  customerEmail: string;
-  city: string;
-  address: string;
-  paymentMethod: 'cod' | 'bank_transfer' | 'card';
-  createdAt: string;
-  status: 'Confirmed' | 'Processing' | 'Dispatched' | 'Delivered';
-  deliveredToWhatsApp?: boolean;
-  deliveredToEmail?: boolean;
-  notes?: string;
-}
-
-export interface StoreSettings {
-  ownerEmail: string;
-  ownerWhatsApp: string;
-  businessName: string;
-  autoWhatsAppPrompt: boolean;
-}

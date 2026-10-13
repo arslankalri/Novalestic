@@ -5,6 +5,7 @@ import type { Database } from '@/integrations/supabase/types';
 
 type Mode = 'dashboard' | 'orders' | 'customers' | 'enquiries' | 'inventory' | 'reports';
 type Product = Database['public']['Tables']['products']['Row'];
+type ProductCost = Database['public']['Tables']['product_costs']['Row'];
 type Customer = Database['public']['Tables']['customers']['Row'];
 type Order = Database['public']['Tables']['orders']['Row'];
 type Enquiry = Database['public']['Tables']['enquiries']['Row'];
@@ -23,7 +24,7 @@ const btn = 'inline-flex items-center justify-center rounded bg-[#062c21] px-4 p
 const label = 'block space-y-1 text-sm text-[#5d554b]';
 
 export function AdminOperations({ mode }: { mode: Mode }) {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);\n  const [productCosts, setProductCosts] = useState<ProductCost[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
@@ -48,6 +49,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
     if (mode === 'orders') {
       tasks.push((async () => { const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(200); if (error) throw error; setOrders(data ?? []); })());
       tasks.push((async () => { const { data, error } = await supabase.from('products').select('*').order('title'); if (error) throw error; setProducts(data ?? []); })());
+      tasks.push((async () => { const { data, error } = await supabase.from('product_costs').select('*'); if (error) throw error; setProductCosts(data ?? []); })());
     }
     if (mode === 'customers') {
       tasks.push((async () => { const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; setCustomers(data ?? []); })());
@@ -154,7 +156,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
       orderId = order.id;
       const { error: itemError } = await supabase.from('order_items').insert({
         order_id: order.id, product_id: product.id, product_title: product.title, sku: product.sku,
-        quantity, unit_price_pkr: price, unit_cost_pkr: product.cost_price_pkr, line_total_pkr: subtotal,
+        quantity, unit_price_pkr: price, unit_cost_pkr: productCosts.find(cost => cost.product_id === product.id)?.cost_price_pkr ?? null, line_total_pkr: subtotal,
       });
       if (itemError) throw itemError;
       setOrderForm({ customer_name: '', phone: '', email: '', product_id: '', quantity: '1', unit_price: '', shipping_fee: '0', discount: '0', paid: '0', source: 'whatsapp', payment_method: 'manual', shipping_address: '', city: '', notes: '' });

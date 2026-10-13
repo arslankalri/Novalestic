@@ -65,7 +65,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleHashChange = () => {
       if (typeof window === 'undefined') return;
       const hash = window.location.hash.toLowerCase().replace(/^#/, '');
-      const publicViews = ['home', 'shop', 'rings', 'earrings', 'necklaces', 'bangles-bracelets', 'cart'];
+      const publicViews = ['home', 'shop', 'rings', 'earrings', 'necklaces', 'bangles-bracelets', 'cart', 'contact'];
       if (publicViews.includes(hash)) setCurrentView(hash);
     };
     handleHashChange();
@@ -82,7 +82,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [cart]);
 
   const navigateTo = (view: string, productId?: string) => {
-    const publicViews = ['home', 'shop', 'rings', 'earrings', 'necklaces', 'bangles-bracelets', 'product-detail', 'cart'];
+    const publicViews = ['home', 'shop', 'rings', 'earrings', 'necklaces', 'bangles-bracelets', 'product-detail', 'cart', 'contact'];
     if (!publicViews.includes(view)) {
       setCurrentView('home');
       setSelectedProductId(null);

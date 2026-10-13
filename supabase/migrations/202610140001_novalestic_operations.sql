@@ -4,6 +4,10 @@
 
 create sequence if not exists public.novalestic_order_number_seq;
 
+alter table public.products
+  add column if not exists cost_price_pkr numeric(14,2)
+  check (cost_price_pkr is null or cost_price_pkr >= 0);
+
 create table if not exists public.customers (
   id uuid primary key default gen_random_uuid(),
   full_name text not null check (length(trim(full_name)) > 0),

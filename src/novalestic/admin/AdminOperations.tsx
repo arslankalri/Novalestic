@@ -211,7 +211,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
       {(mode==='dashboard'||mode==='reports') && <>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {[
-            ['Recent recorded sales',money(totalRevenue),'Latest 100 recorded orders'],
+            ['Recent order value',money(totalRevenue),'Latest 100 non-cancelled orders'],
             ['Payments received (recent)',money(collected),'Latest 100 recorded orders'],
             ...(mode === 'reports' ? [['Gross profit estimate', money(grossProfit), 'Cost known for ' + knownCostLines + ' line items'] as string[]] : []),
             ['Open orders',String(openOrders.length),'Pending through shipped'],
@@ -255,7 +255,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
           <label className={label}>Notes<input value={customerForm.notes} onChange={e=>setCustomerForm({...customerForm,notes:e.target.value})} className={input}/></label>
           <div className="md:col-span-3"><button disabled={busy} className={btn}>{busy?'Saving…':'Save customer'}</button></div>
         </form></section>
-        <section className={panel}><h2 className={heading}>Customers ({customers.length})</h2>{customers.length===0?<p className="text-sm text-[#7a7368]">No customer records yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Name</th><th>Contact</th><th>Location</th><th>Orders / spend</th><th>Added</th></tr></thead><tbody>{customers.map(c=><tr key={c.id} className="border-t border-[#eee8de]"><td className="py-3 font-medium">{c.full_name}</td><td>{c.phone||'—'}<p className="text-xs text-[#8a8174]">{c.email||''}</p></td><td>{c.city||'—'}</td><td>{orders.filter(o=>o.customer_id===c.id && o.status!=='cancelled').length} orders<p className="text-xs text-[#8a8174]">{money(orders.filter(o=>o.customer_id===c.id && o.status!=='cancelled').reduce((sum,o)=>sum+Number(o.total_pkr),0))}</p></td><td>{date(c.created_at)}</td></tr>)}</tbody></table></div>}</section>
+        <section className={panel}><h2 className={heading}>Customers ({customers.length})</h2>{customers.length===0?<p className="text-sm text-[#7a7368]">No customer records yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Name</th><th>Contact</th><th>Location</th><th>Orders / order value</th><th>Added</th></tr></thead><tbody>{customers.map(c=><tr key={c.id} className="border-t border-[#eee8de]"><td className="py-3 font-medium">{c.full_name}</td><td>{c.phone||'—'}<p className="text-xs text-[#8a8174]">{c.email||''}</p></td><td>{c.city||'—'}</td><td>{orders.filter(o=>o.customer_id===c.id && o.status!=='cancelled').length} orders<p className="text-xs text-[#8a8174]">{money(orders.filter(o=>o.customer_id===c.id && o.status!=='cancelled').reduce((sum,o)=>sum+Number(o.total_pkr),0))}</p></td><td>{date(c.created_at)}</td></tr>)}</tbody></table></div>}</section>
       </>}
       {mode==='enquiries' && <>
         <section className={panel}><h2 className={heading}>Record an enquiry</h2><form onSubmit={saveEnquiry} className="grid gap-3 md:grid-cols-3">

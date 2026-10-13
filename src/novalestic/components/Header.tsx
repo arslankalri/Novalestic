@@ -12,6 +12,7 @@ export const Header: React.FC = () => {
     { label: 'RINGS', view: 'rings' },
     { label: 'EARRINGS', view: 'earrings' },
     { label: 'NECKLACES', view: 'necklaces' },
+    { label: 'BANGLES & BRACELETS', view: 'bangles-bracelets' },
   ];
 
   const handleNavigate = (view: string) => {

@@ -62,7 +62,7 @@ export const CartView: React.FC = () => {
     setCheckoutStep('success');
 
     // Auto-prompt / trigger delivery to owner's WhatsApp if enabled
-    if (false && ownerSettings.autoWhatsAppPrompt) {
+    if (ownerSettings.autoWhatsAppPrompt && false) {
       setTimeout(() => {
         const waUrl = getOrderWhatsAppUrl(order);
         if (typeof window !== 'undefined') {
@@ -121,7 +121,7 @@ export const CartView: React.FC = () => {
             </h2>
 
             <p className="text-sm text-[#4d4545] leading-relaxed mb-6">
-              Your jewellery order <strong className="text-[#1b1c19]">#{confirmedOrder.id}</strong> has been stored securely in our system. Order details are being routed to our studio for insured packing and dispatch.
+              This is a demonstration only. The request is stored in this browser and has not been submitted to a central order system.
             </p>
 
             {/* Direct Delivery to Owner WhatsApp & Email Box */}

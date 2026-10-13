@@ -39,7 +39,9 @@ export const BestsellingGrid: React.FC = () => {
               return (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActiveTab(tab.id)}
+                  aria-pressed={isActive}
                   className={`px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-all duration-200 ${
                     isActive
                       ? 'bg-[#1b1c19] text-white shadow-sm'
@@ -135,6 +137,11 @@ export const BestsellingGrid: React.FC = () => {
             </div>
           ))}
         </div>
+        {filteredProducts.length === 0 && (
+          <p className="mt-8 text-center text-sm text-[#5d5750]" role="status">
+            No sample pieces are available in this category yet.
+          </p>
+        )}
       </div>
     </section>
   );

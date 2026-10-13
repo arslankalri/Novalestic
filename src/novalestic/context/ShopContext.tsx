@@ -43,8 +43,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          const publicProductIds = new Set(INITIAL_PRODUCTS.map((product) => product.id));
-          return (parsed as CartItem[]).filter((item) => publicProductIds.has(item?.product?.id));
+          return (parsed as CartItem[]).filter((item) => typeof item?.product?.id === 'string');
         }
       }
     } catch {

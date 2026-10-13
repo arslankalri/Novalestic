@@ -29,13 +29,12 @@ interface FormState {
   carat: string;
   shortDesc: string;
   description: string;
-  inStock: boolean;
   featured: boolean;
 }
 
 const EMPTY: FormState = {
   id: null, title: '', category: 'rings', sku: '', pricingMode: 'enquiry', price: '',
-  metal: '', availableMetals: '', carat: '', shortDesc: '', description: '', inStock: true, featured: false,
+  metal: '', availableMetals: '', carat: '', shortDesc: '', description: '', featured: false,
 };
 
 const slugify = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -70,7 +69,7 @@ export function AdminDashboard() {
       id: p.id, title: p.title, category: p.category as Category, sku: p.sku ?? '',
       pricingMode: p.pricing_mode as 'fixed' | 'enquiry', price: p.price_pkr?.toString() ?? '',
       metal: p.metal ?? '', availableMetals: (p.available_metals ?? []).join(', '), carat: p.carat ?? '',
-      shortDesc: p.short_desc ?? '', description: p.description ?? '', inStock: p.in_stock, featured: p.is_featured,
+      shortDesc: p.short_desc ?? '', description: p.description ?? '', featured: p.is_featured,
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -118,7 +117,6 @@ export function AdminDashboard() {
         carat: blank(form.carat),
         short_desc: blank(form.shortDesc),
         description: blank(form.description),
-        in_stock: form.inStock,
         is_featured: form.featured,
       };
 
@@ -225,9 +223,9 @@ export function AdminDashboard() {
           <label className="block text-sm">Carat / purity<input value={form.carat} onChange={(e) => set('carat', e.target.value)} className={input} /></label>
           <label className="block text-sm">Short description<input value={form.shortDesc} onChange={(e) => set('shortDesc', e.target.value)} className={input} /></label>
           <label className="block text-sm">Full description<textarea rows={3} value={form.description} onChange={(e) => set('description', e.target.value)} className={input} /></label>
-          <div className="flex gap-6 text-sm">
-            <label><input type="checkbox" checked={form.inStock} onChange={(e) => set('inStock', e.target.checked)} /> In stock</label>
+          <div className="flex flex-wrap items-center gap-5 text-sm">
             <label><input type="checkbox" checked={form.featured} onChange={(e) => set('featured', e.target.checked)} /> Featured</label>
+            <p className="text-xs text-[#7f7575]">Record opening stock under Inventory; stock availability updates from the stock ledger.</p>
           </div>
           {formImages.length > 0 && (
             <div className="flex flex-wrap gap-2">

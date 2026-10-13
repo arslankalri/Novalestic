@@ -9,7 +9,7 @@ interface ProductDetailViewProps {
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
   const { products, formatPrice, addToCart, navigateTo } = useShop();
 
-  const product = products.find((p) => p.id === productId) || products[0];
+  const product = products.find((p) => p.id === productId);
 
   const [selectedMetal, setSelectedMetal] = useState(product?.availableMetals?.[0] || product?.metal || '18k Yellow Gold');
   const [selectedRingSize, setSelectedRingSize] = useState('Size 14 (Standard)');

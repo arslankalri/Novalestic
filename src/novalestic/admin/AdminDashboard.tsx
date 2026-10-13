@@ -188,6 +188,14 @@ export function AdminDashboard() {
           <button onClick={signOut} className="text-[#4d4544] underline">Sign out</button>
         </div>
       </header>
+      <nav className="flex gap-2 overflow-x-auto border-b border-[#e4e2dd] bg-white px-6 py-3 text-sm">
+        <a href="/admin/overview" className="whitespace-nowrap underline">Business overview</a>
+        <a href="/admin/orders" className="whitespace-nowrap underline">Orders</a>
+        <a href="/admin/enquiries" className="whitespace-nowrap underline">Enquiries</a>
+        <a href="/admin/customers" className="whitespace-nowrap underline">Customers</a>
+        <a href="/admin/inventory" className="whitespace-nowrap underline">Inventory</a>
+        <a href="/admin/reports" className="whitespace-nowrap underline">Reports</a>
+      </nav>
 
       <div className="max-w-6xl mx-auto p-6 grid gap-8 lg:grid-cols-[420px_1fr]">
         <form onSubmit={save} className="bg-white border border-[#e4e2dd] p-6 space-y-4 self-start">

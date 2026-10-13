@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ShoppingBag, Eye, ShieldCheck, ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { ShoppingBag, Eye, ArrowLeft, SlidersHorizontal } from 'lucide-react';
 
 interface CatalogViewProps {
   category: 'all' | 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets';
@@ -15,28 +15,28 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
   const categoryTitles: Record<string, { title: string; subtitle: string; description: string }> = {
     all: {
       title: 'Complete Fine Jewellery Collection',
-      subtitle: 'HANDCRAFTED IN 18K GOLD & NATURAL EMERALDS',
-      description: 'Explore our full catalogue of authentic rings, drop earrings, and necklaces in Pakistani Rupees.',
+      subtitle: 'THE NOVALESTIC COLLECTION',
+      description: 'Explore the collection and discover pieces that suit your personal style.',
     },
     rings: {
       title: 'Fine Jewellery Rings',
       subtitle: 'COUTURE SOLITAIRES & ETERNITY BANDS',
-      description: 'Meticulously crafted cocktail rings, emerald solitaires, and eternity bands embracing natural gemstones.',
+      description: 'Explore rings for everyday wear, meaningful gifts and special occasions.',
     },
     earrings: {
       title: 'Solitaire & Drop Earrings',
       subtitle: 'DROPS, CHANDELIERS & TOPS',
-      description: 'Hand-matched pairs displaying incandescent green vibrancy set in hallmarked 18k gold.',
+      description: 'Explore earrings in a range of silhouettes, from subtle to statement-making.',
     },
     necklaces: {
       title: 'Emerald Necklaces & Pendants',
       subtitle: 'PENDANTS, COLLIERS & STRANDS',
-      description: 'Centerpiece necklaces and pendants suspended on solid 18k gold link chains.',
+      description: 'Explore necklaces and pendants to complement your own style.',
     },
     'bangles-bracelets': {
       title: 'Bangles & Bracelets',
       subtitle: 'GOLD BANGLES & TENNIS BRACELETS',
-      description: 'Articulated gold bracelets and emerald bangles designed for everyday elegance.',
+      description: 'Discover bracelets and bangles for layering or wearing on their own.',
     },
   };
 
@@ -86,6 +86,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
           </h1>
           <p className="text-sm sm:text-base text-[#4d4545] max-w-2xl mx-auto leading-relaxed font-light">
             {currentInfo.description}
+          </p>
+          <p className="mt-5 inline-flex items-center border border-[#C6A45B]/40 bg-[#fbf9f4]/70 px-3 py-2 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-[#765a18]">
+            Store preview · Sample listings shown for design purposes
           </p>
         </div>
 
@@ -148,14 +151,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
                   />
                 </button>
 
-                {product.hallmarkBadge && (
-                  <div className="absolute top-3 left-3 bg-[#E8F4F0]/90 backdrop-blur-sm text-[#15803d] px-2.5 py-1 text-[10px] uppercase tracking-wider flex items-center gap-1 font-bold shadow-xs">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{product.hallmarkBadge}</span>
-                  </div>
-                )}
+                
 
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
                   <button
                     onClick={() => addToCart(product)}
                     className="flex-1 py-2.5 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"
@@ -211,6 +209,13 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
             </div>
           ))}
         </div>
+        {filteredProducts.length === 0 && (
+          <div className="border border-[#e4e2dd] bg-[#F2EDE3]/60 px-6 py-16 text-center">
+            <h2 className="font-serif-luxury text-2xl text-[#1b1c19] mb-2">Nothing here just yet</h2>
+            <p className="text-sm text-[#5d5750] mb-6">Try another category or clear your metal filter.</p>
+            <button onClick={() => setSelectedMetal('all')} className="border border-[#C6A45B] px-5 py-3 text-xs uppercase tracking-[0.16em] hover:bg-[#F2EDE3]">Clear filters</button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -60,17 +60,6 @@ export const CartView: React.FC = () => {
     setConfirmedOrder(order);
     setCheckoutStep('success');
 
-    // Auto-prompt / trigger delivery to owner's WhatsApp if enabled
-    if (ownerSettings.autoWhatsAppPrompt && false) {
-      setTimeout(() => {
-        const waUrl = getOrderWhatsAppUrl(order);
-        if (typeof window !== 'undefined') {
-          window.open(waUrl, '_blank');
-          setSentToWhatsApp(true);
-          // Opening WhatsApp does not confirm that a message was sent.
-        }
-      }, 700);
-    }
   };
 
   const handleDeliverToWhatsApp = () => {

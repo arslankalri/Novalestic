@@ -13,6 +13,7 @@ type OperationsTable<Row> = {
   Relationships: []
 }
 
+type ProductCostRow = { product_id: string; cost_price_pkr: number; updated_at: string }
 type CustomerRow = {
   id: string; full_name: string; phone: string | null; email: string | null;
   city: string | null; address: string | null; notes: string | null;
@@ -50,6 +51,7 @@ export type Database = {
   }
   public: {
     Tables: {
+      product_costs: OperationsTable<ProductCostRow>
       customers: OperationsTable<CustomerRow>
       enquiries: OperationsTable<EnquiryRow>
       orders: OperationsTable<OrderRow>
@@ -98,7 +100,6 @@ export type Database = {
           available_metals: string[]
           carat: string | null
           category: string
-          cost_price_pkr: number | null
           clarity: string | null
           created_at: string
           cut: string | null
@@ -127,7 +128,6 @@ export type Database = {
           available_metals?: string[]
           carat?: string | null
           category: string
-          cost_price_pkr?: number | null
           clarity?: string | null
           created_at?: string
           cut?: string | null
@@ -156,7 +156,6 @@ export type Database = {
           available_metals?: string[]
           carat?: string | null
           category?: string
-          cost_price_pkr?: number | null
           clarity?: string | null
           created_at?: string
           cut?: string | null

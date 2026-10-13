@@ -62,7 +62,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
         <div className="mb-6 flex items-center gap-2 text-xs text-[#7f7575] uppercase tracking-wider">
           <button
             onClick={() => navigateTo('home')}
-            className="hover:text-[#1b1c19] flex items-center gap-1 transition-colors"
+            className="hover:text-[#1b1c19] flex items-center gap-1 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Home</span>
@@ -70,7 +70,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
           <span>/</span>
           <button
             onClick={() => navigateTo('shop')}
-            className="hover:text-[#1b1c19] transition-colors"
+            className="hover:text-[#1b1c19] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
           >
             Jewellery
           </button>
@@ -131,7 +131,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                       type="button"
                       onClick={() => setSelectedMetal(metal)}
                       aria-pressed={selectedMetal === metal}
-                      className={`px-3.5 py-2 text-xs border transition-all ${
+                      className={`px-3.5 py-2 text-xs border transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] ${
                         selectedMetal === metal
                           ? 'border-[#9E7B32] bg-[#F2EDE3] font-semibold text-[#1b1c19]'
                           : 'border-[#e4e2dd] bg-[#f5f3ee] text-[#4d4545] hover:bg-[#eae8e3]'
@@ -153,7 +153,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 <select
                   value={selectedRingSize}
                   onChange={(e) => setSelectedRingSize(e.target.value)}
-                  className="w-full bg-[#f5f3ee] border border-[#e4e2dd] px-3.5 py-2.5 text-xs text-[#1b1c19] focus:outline-none focus:border-[#9E7B32]"
+                  className="w-full bg-[#f5f3ee] border border-[#e4e2dd] px-3.5 py-2.5 text-xs text-[#1b1c19] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] focus:border-[#9E7B32]"
                 >
                   {ringSizes.map((size) => (
                     <option key={size} value={size}>
@@ -178,7 +178,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                   onClick={() => setQuantity((current) => Math.max(1, current - 1))}
                   aria-label="Decrease quantity"
                   disabled={quantity <= 1}
-                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   −
                 </button>
@@ -199,7 +199,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
             <div className="space-y-3 mb-8">
               <button
                 onClick={handleAddToCart}
-                className="w-full py-4 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-xs font-semibold uppercase tracking-[0.18em] transition-colors flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-4 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-xs font-semibold uppercase tracking-[0.18em] transition-colors flex items-center justify-center gap-2 shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>ADD TO CART</span>
@@ -208,7 +208,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="w-full py-3.5 bg-[#9E7B32] hover:bg-[#765a18] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-sm"
+                className="w-full py-3.5 bg-[#9E7B32] hover:bg-[#765a18] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
               >
                 <span>ADD &amp; VIEW CART</span>
               </button>
@@ -233,11 +233,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
                   <span className="text-[#7f7575]">Gemstone:</span>
-                  <span className="font-medium text-[#1b1c19]">{product.carat}</span>
+                  <span className="font-medium text-[#1b1c19]">{product.carat || 'To be confirmed'}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
                   <span className="text-[#7f7575]">Stone Origin:</span>
-                  <span className="font-medium text-[#1b1c19]">{product.origin}</span>
+                  <span className="font-medium text-[#1b1c19]">{product.origin || 'To be confirmed'}</span>
                 </div>
 
               </div>

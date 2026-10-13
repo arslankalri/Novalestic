@@ -60,18 +60,18 @@ export const CartView: React.FC = () => {
                         </button>
                         <p className="text-xs text-[#7f7575] mt-1">{item.selectedMetal}{item.ringSize ? ' · ' + item.ringSize : ''}</p>
                         <p className="text-sm font-semibold text-[#1b1c19] mt-2">{formatPrice(item.product.pricePKR)} <span className="font-normal text-[#7f7575]">each</span></p>
-                        <button type="button" onClick={() => removeFromCart(item.product.id, item.selectedMetal)} className="inline-flex items-center gap-1.5 text-xs text-[#7f7575] hover:text-[#ba1a1a] mt-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9E7B32]">
+                        <button type="button" onClick={() => removeFromCart(item.product.id, item.selectedMetal, item.ringSize)} className="inline-flex items-center gap-1.5 text-xs text-[#7f7575] hover:text-[#ba1a1a] mt-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9E7B32]">
                           <Trash2 className="w-3.5 h-3.5" /> Remove
                         </button>
                       </div>
                     </div>
                     <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3">
                       <div className="flex items-center border border-[#e4e2dd] bg-[#f5f3ee]">
-                        <button type="button" aria-label={'Decrease quantity of ' + item.product.title} disabled={item.quantity <= 1} onClick={() => updateCartQuantity(item.product.id, item.selectedMetal, -1)} className="p-2.5 hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9E7B32]">
+                        <button type="button" aria-label={'Decrease quantity of ' + item.product.title} disabled={item.quantity <= 1} onClick={() => updateCartQuantity(item.product.id, item.selectedMetal, -1, item.ringSize)} className="p-2.5 hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9E7B32]">
                           <Minus className="w-3.5 h-3.5" />
                         </button>
                         <span aria-live="polite" className="min-w-9 text-center text-sm font-semibold tabular-nums">{item.quantity}</span>
-                        <button type="button" aria-label={'Increase quantity of ' + item.product.title} disabled={item.quantity >= 99} onClick={() => updateCartQuantity(item.product.id, item.selectedMetal, 1)} className="p-2.5 hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9E7B32]">
+                        <button type="button" aria-label={'Increase quantity of ' + item.product.title} disabled={item.quantity >= 99} onClick={() => updateCartQuantity(item.product.id, item.selectedMetal, 1, item.ringSize)} className="p-2.5 hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#9E7B32]">
                           <Plus className="w-3.5 h-3.5" />
                         </button>
                       </div>

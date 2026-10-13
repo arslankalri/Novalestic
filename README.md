@@ -1,24 +1,28 @@
-# Hello World Page
+# NOVALESTIC JEWELLERS
 
-small project helloworld html page
+NOVALESTIC is a jewellery storefront project focused on a refined, mobile-friendly shopping experience for customers browsing jewellery priced in Pakistani rupees (PKR).
 
-This project was built with [Lovable](https://lovable.dev).
+## Current status
 
-## Build with Lovable
+The current storefront is a design preview. Product names, images, descriptions, specifications and prices are sample content used to develop the interface; they are not confirmed inventory or live offers. The cart is a front-end preview and checkout, payments, order submission, stock management, analytics and customer accounts are not connected to a production backend yet.
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/8281936d-8362-41cd-b9a5-d23b7adbfc8c).
+## Planned development
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+1. Finish and review the public storefront UI and responsive behaviour.
+2. Prepare the catalogue model for verified products and product variants.
+3. Finish cart behaviour and prepare the checkout integration points without accepting real orders prematurely.
+4. Later, connect a cloud backend and build a private admin portal for authorised store managers.
+5. Add secure order processing, analytics, delivery and payment integrations after their requirements and providers are confirmed.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+This project uses React, TypeScript, Vite and Tailwind CSS. Install dependencies using the package manager and lockfile included in the repository, then run the scripts defined in `package.json`.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
+npm run build
+npm run lint
 ```
+
+Use the repository's existing workflow and default branch. Do not put secrets, payment credentials, customer data or private admin credentials in client-side code or source control.

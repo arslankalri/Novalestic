@@ -206,6 +206,9 @@ create trigger novalestic_inventory_apply
 before insert on public.inventory_movements
 for each row execute function public.novalestic_apply_inventory_movement();
 
+-- The stock ledger is authoritative for stock availability.
+update public.products set in_stock = (stock_quantity > 0);
+
 create or replace function public.novalestic_update_order_status(p_order_id uuid, p_status text)
 returns boolean
 language plpgsql

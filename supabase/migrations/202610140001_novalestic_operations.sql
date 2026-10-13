@@ -198,6 +198,57 @@ create trigger novalestic_inventory_apply
 before insert on public.inventory_movements
 for each row execute function public.novalestic_apply_inventory_movement();
 
+create or replace function public.novalestic_update_order_status(p_order_id uuid, p_status text)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  current_order public.orders%rowtype;
+  item record;
+begin
+  if not public.novalestic_has_admin_access() then
+    raise exception 'Administrator access required';
+  end if;
+  if p_status not in ('pending','confirmed','processing','shipped','delivered','cancelled') then
+    raise exception 'Invalid order status';
+  end if;
+
+  select * into current_order from public.orders where id = p_order_id for update;
+  if not found then
+    raise exception 'Order not found';
+  end if;
+
+  -- Deduct stock once, when the order first enters fulfilment.
+  -- If any item lacks stock, the transaction fails and the status remains unchanged.
+  if p_status in ('processing','shipped','delivered')
+     and current_order.status not in ('processing','shipped','delivered')
+     and not exists (
+       select 1 from public.inventory_movements
+       where order_id = p_order_id and movement_type = 'sale'
+     ) then
+    for item in
+      select product_id, product_title, quantity
+      from public.order_items
+      where order_id = p_order_id and product_id is not null
+    loop
+      insert into public.inventory_movements
+        (product_id, movement_type, quantity_delta, reason, order_id)
+      values
+        (item.product_id, 'sale', -item.quantity,
+         'Stock reserved for order ' || current_order.order_number, p_order_id);
+    end loop;
+  end if;
+
+  update public.orders set status = p_status where id = p_order_id;
+  return true;
+end;
+$;
+
+revoke all on function public.novalestic_update_order_status(uuid, text) from public;
+grant execute on function public.novalestic_update_order_status(uuid, text) to authenticated;
+
 -- Ledger rows are immutable: corrections are recorded as compensating movements.
 drop policy if exists "Admins manage inventory movements" on public.inventory_movements;
 create policy "Admins read inventory movements" on public.inventory_movements for select to authenticated

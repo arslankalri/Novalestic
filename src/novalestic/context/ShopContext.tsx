@@ -65,6 +65,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const publicViews = ['home', 'shop', 'rings', 'earrings', 'necklaces', 'bangles-bracelets', 'cart'];
       if (publicViews.includes(hash)) setCurrentView(hash);
     };
+    handleHashChange();
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);

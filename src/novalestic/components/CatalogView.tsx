@@ -48,7 +48,11 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
       : products.filter((p) => p.category === category);
 
     if (selectedMetal !== 'all') {
-      items = items.filter((p) => p.metal.toLowerCase().includes(selectedMetal.toLowerCase()));
+      items = items.filter((p) =>
+        [p.metal, ...(p.availableMetals ?? [])].some((metal) =>
+          metal.toLowerCase().includes(selectedMetal.toLowerCase())
+        )
+      );
     }
 
     if (sortBy === 'price-asc') {
@@ -96,10 +100,12 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-[#f5f3ee] border border-[#e4e2dd] mb-8">
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <SlidersHorizontal className="w-4 h-4 text-[#765a18] shrink-0" />
-            <span className="text-xs uppercase tracking-wider font-semibold text-[#1b1c19]">
+            <label htmlFor="catalog-metal-filter" className="text-xs uppercase tracking-wider font-semibold text-[#1b1c19]">
               Filter Metal:
-            </span>
+            </label>
             <select
+              id="catalog-metal-filter"
+              aria-label="Filter jewellery by metal"
               value={selectedMetal}
               onChange={(e) => setSelectedMetal(e.target.value)}
               className="bg-[#fbf9f4] border border-[#e4e2dd] text-xs px-3 py-1.5 text-[#1b1c19] focus:outline-none"
@@ -112,20 +118,27 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-            <span className="text-xs uppercase tracking-wider font-semibold text-[#1b1c19]">
+            <label htmlFor="catalog-sort" className="text-xs uppercase tracking-wider font-semibold text-[#1b1c19]">
               Sort By:
-            </span>
+            </label>
             <select
+              id="catalog-sort"
+              aria-label="Sort jewellery listings"
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === 'featured' || value === 'price-asc' || value === 'price-desc') {
+                  setSortBy(value);
+                }
+              }}
               className="bg-[#fbf9f4] border border-[#e4e2dd] text-xs px-3 py-1.5 text-[#1b1c19] focus:outline-none"
             >
               <option value="featured">Featured</option>
               <option value="price-desc">Price: High to Low</option>
               <option value="price-asc">Price: Low to High</option>
             </select>
-            <span className="text-xs text-[#7f7575] pl-2 tabular-nums">
-              ({filteredProducts.length} Items)
+            <span aria-live="polite" className="text-xs text-[#7f7575] pl-2 tabular-nums">
+              ({filteredProducts.length} {filteredProducts.length === 1 ? 'item' : 'items'})
             </span>
           </div>
         </div>

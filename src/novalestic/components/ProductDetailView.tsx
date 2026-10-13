@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ArrowLeft, ShoppingBag, MessageCircle, Info } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Info } from 'lucide-react';
 
 interface ProductDetailViewProps {
   productId: string;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
-  const { products, formatPrice, addToCart, navigateTo, ownerSettings } = useShop();
+  const { products, formatPrice, addToCart, navigateTo } = useShop();
 
   const product = products.find((p) => p.id === productId) || products[0];
 
@@ -26,8 +26,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
     );
   }
 
-  const cleanPhone = ownerSettings.ownerWhatsApp.replace(/[^0-9]/g, '');
-  const waNumber = cleanPhone.startsWith('0') ? `92${cleanPhone.slice(1)}` : cleanPhone;
+
 
   const ringSizes = [
     'Size 12 (Small)',
@@ -205,17 +204,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 <span>VIEW CART</span>
               </button>
 
-              <a
-                href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
-                  `Assalam o Alaikum Novalestic, I am inquiring about "${product.title}" (${formatPrice(product.pricePKR)}). Is this piece available for viewing/delivery?`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 bg-[#E8F4F0] hover:bg-[#d5ebe3] text-[#15803d] border border-[#15803d]/30 text-xs font-semibold uppercase tracking-[0.14em] transition-colors flex items-center justify-center gap-2"
+              <button
+                onClick={() => navigateTo('cart')}
+                className="w-full py-3 bg-transparent hover:bg-[#F2EDE3] text-[#1b1c19] border border-[#C6A45B]/50 text-xs font-semibold uppercase tracking-[0.14em] transition-colors flex items-center justify-center gap-2"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>INQUIRE ON WHATSAPP</span>
-              </a>
+                <span>VIEW CART</span>
+              </button>>
             </div>
 
             {/* Preview notice */}

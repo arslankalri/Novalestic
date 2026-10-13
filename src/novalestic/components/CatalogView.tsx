@@ -111,9 +111,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
               className="bg-[#fbf9f4] border border-[#e4e2dd] text-xs px-3 py-1.5 text-[#1b1c19] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#9E7B32]"
             >
               <option value="all">All Metals</option>
-              <option value="champagne">Champagne Gold</option>
               <option value="yellow">Yellow Gold</option>
               <option value="white">White Gold</option>
+              <option value="rose">Rose Gold</option>
             </select>
           </div>
 

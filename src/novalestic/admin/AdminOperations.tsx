@@ -11,7 +11,7 @@ type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 type Movement = Database['public']['Tables']['inventory_movements']['Row'];
 
 const nav: { to: string; label: string }[] = [
-  { to: '/admin', label: 'Overview' }, { to: '/admin/orders', label: 'Orders' },
+  { to: '/admin/overview', label: 'Overview' }, { to: '/admin', label: 'Catalogue' }, { to: '/admin/orders', label: 'Orders' },
   { to: '/admin/enquiries', label: 'Enquiries' }, { to: '/admin/customers', label: 'Customers' },
   { to: '/admin/inventory', label: 'Inventory' }, { to: '/admin/reports', label: 'Reports' },
 ];
@@ -165,7 +165,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
         <div><p className="text-xs uppercase tracking-[.24em] text-[#94763c]">NOVALESTIC JEWELLERS</p><h1 className="font-serif text-xl">{title}</h1></div>
         <div className="flex gap-3 text-sm"><Link to="/" className="underline">Storefront</Link><button onClick={async()=>{await supabase.auth.signOut(); window.location.href='/admin/login';}} className="underline">Sign out</button></div>
       </div>
-      <nav className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-5 pb-3">{nav.map(n=><Link key={n.to} to={n.to as never} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-sm ${(mode==='dashboard'&&n.to==='/admin')||(n.to==='/admin/'+mode)?'border-[#092e23] bg-[#092e23] text-[#f1d99a]':'border-[#e6dfd3] bg-white text-[#5d554b] hover:border-[#b89a56]'}`}>{n.label}</Link>)}</nav>
+      <nav className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-5 pb-3">{nav.map(n=><Link key={n.to} to={n.to as never} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-sm ${(mode==='dashboard'&&n.to==='/admin/overview')||(n.to==='/admin/'+mode)?'border-[#092e23] bg-[#092e23] text-[#f1d99a]':'border-[#e6dfd3] bg-white text-[#5d554b] hover:border-[#b89a56]'}`}>{n.label}</Link>)}</nav>
     </header>
     <div className="mx-auto max-w-7xl space-y-6 p-5 md:p-7">
       {message && <p role="status" className="rounded border border-[#e6d8b5] bg-[#fff8e6] px-4 py-3 text-sm">{message}</p>}

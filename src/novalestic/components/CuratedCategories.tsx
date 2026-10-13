@@ -58,7 +58,7 @@ export const CuratedCategories: React.FC = () => {
             <button
               key={cat.num}
               onClick={() => navigateTo(cat.view)}
-              className="group flex flex-col text-left bg-[#f5f3ee] transition-all duration-500 hover:shadow-xl focus:outline-none border border-[#e4e2dd]/60"
+              className="group flex flex-col text-left bg-[#f5f3ee] transition-all duration-500 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] border border-[#e4e2dd]/60"
             >
               <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#F2EDE3]">
                 <img

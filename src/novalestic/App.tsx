@@ -16,6 +16,7 @@ import { NewsletterSection } from './components/NewsletterSection';
 import { CatalogView } from './components/CatalogView';
 import { ProductDetailView } from './components/ProductDetailView';
 import { CartView } from './components/CartView';
+import { ContactView } from './components/ContactView';
 import { NotificationToast } from './components/NotificationToast';
 
 const AppContent: React.FC = () => {
@@ -39,6 +40,8 @@ const AppContent: React.FC = () => {
 
       case 'cart':
         return <CartView />;
+      case 'contact':
+        return <ContactView />;
 
       case 'home':
       default:

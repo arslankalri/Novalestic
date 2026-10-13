@@ -1,70 +1,74 @@
-# NOVALESTIC Supabase setup — Phase 1
+# NOVALESTIC JEWELLERS — backend and admin setup
 
-This document accompanies `supabase/migrations/202610130001_novalestic_admin_foundation.sql`.
+## Current architecture
 
-## Important status
+The public storefront and protected catalogue admin are in the original `arslankalri/Novalestic` repository. The catalogue uses the Supabase/Lovable Cloud backend configured for this project.
 
-The migration file is committed to GitHub, but the migration has **not** been applied to a Supabase project, and no administrator account or credentials have been created. The existing public storefront has not been changed by this phase.
+The business-operations UI adds private order, customer, enquiry, inventory and reporting pages. These pages require the operations migration below to be applied to the **same database used by the live project**.
 
-## 1. Create the backend project
+## 1. Apply the operations migration
 
-1. Create a dedicated Supabase project for NOVALESTIC JEWELLERS.
-2. Keep project ownership in an account controlled by the business owner.
-3. In the Supabase SQL Editor, review and apply the migration at:
-   `supabase/migrations/202610130001_novalestic_admin_foundation.sql`
-4. Confirm the tables `user_roles`, `products`, and `product_images` exist, RLS is enabled, and the `product-images` bucket exists.
+Run this file once in the project's Cloud/Supabase SQL editor:
 
-Do not run this migration against a database used by another application.
+`supabase/migrations/202610140001_novalestic_operations.sql`
 
-## 2. Configure authentication
+[Open the migration on GitHub](https://github.com/arslankalri/Novalestic/blob/main/supabase/migrations/202610140001_novalestic_operations.sql)
 
-1. In Supabase Authentication settings, disable public email sign-ups.
-2. Invite/create the owner's user through the trusted Supabase dashboard.
-3. Verify the owner can sign in before assigning a role.
-4. In the SQL Editor, replace the placeholder email below with the exact email used for the invited account, then run:
+This migration creates the customers, enquiries, orders, order-items and inventory-movement tables; private admin/partner RLS policies; automatic order numbers; stock-ledger updates; and private product cost fields for internal margin estimates.
 
-```sql
-insert into public.user_roles (user_id, role)
-select id, 'admin'
-from auth.users
-where lower(email) = lower('REPLACE-WITH-OWNER-EMAIL')
-on conflict (user_id) do update set role = 'admin';
-```
+**Do not apply it to a different project's database.** If the catalogue foundation migration has not already been applied to this database, apply the foundation migration first:
 
-Check that exactly one intended user has the `admin` role. Do not add role-management controls to the public frontend. Partner access can be provisioned separately later.
+`supabase/migrations/202610130001_novalestic_admin_foundation.sql`
 
-## 3. Frontend environment values
+Do not re-run an already-applied foundation migration just because the operations migration is new.
 
-The frontend will eventually need only the project URL and public/anon key:
+## 2. Admin access
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+The owner account should be provisioned through the trusted Cloud authentication dashboard and granted the `admin` role in `public.user_roles`. Public registration is not part of the app. Add a partner account later with a separate `partner` role; do not share the owner's password.
 
-Add these in the hosting/development environment settings. Never commit actual values into source control. Never expose the Supabase service-role key in a browser app or commit it to GitHub.
+The app checks admin/partner access before showing protected admin routes. Database RLS independently restricts customer, enquiry, order, order-item and inventory records to those roles.
 
-## 4. Data and publishing behavior
+## 3. Admin pages
 
-- Public catalogue reads must filter to `is_published = true`.
-- Product creation should start unpublished until required fields and a primary image are provided.
-- On Save & Publish, validate the product and set `is_published = true`; it will then be publicly readable.
-- Keep enquiry-only pricing supported. Do not invent prices or specifications.
-- Product photos are public-read because the storefront must display them; only authorized admin/partner accounts may upload, update, or delete them.
-- Storage path convention: `products/{product_id}/{unique_filename}`.
-- Allowed image types: JPEG, PNG, WebP; maximum 10 MiB per image.
+- `/admin` — catalogue management and product publishing
+- `/admin/overview` — operations overview
+- `/admin/orders` — record and track manual orders from WhatsApp, phone, Instagram, in-person or other sources
+- `/admin/enquiries` — enquiry pipeline and follow-up dates
+- `/admin/customers` — customer records and linked order totals
+- `/admin/inventory` — stock ledger and current stock
+- `/admin/reports` — recent recorded sales, collected payments and estimated gross profit where product cost is known
 
-## 5. Verification checklist
+Manual orders are not online checkout. Payment is recorded manually; the app does not process payments or create shipping labels.
 
-Before building the admin UI or connecting the public storefront, verify:
+## 4. Inventory and financial accuracy
 
-- [ ] Anonymous users cannot read unpublished product rows.
-- [ ] Anonymous users cannot insert, update, or delete products.
-- [ ] Authenticated users without an admin role cannot write products or upload files.
-- [ ] The owner admin can insert and update products.
-- [ ] Public visitors can read published products and product photos.
-- [ ] Public visitors cannot create, update, or delete storage objects.
-- [ ] Public self-registration is disabled.
-- [ ] No service-role key is present in frontend code or Git history.
+- Use the Inventory page to record opening stock, restocks, returns, sales/dispatches, damage and downward adjustments.
+- Inventory movements are ledger records; they cannot be edited or deleted from the client. Corrections should be entered as compensating movements.
+- Stock cannot be reduced below zero by the stock ledger.
+- Product cost price is private and is never displayed on the public storefront.
+- Gross profit is an estimate based on order-item price and the cost snapshot captured when the order is created. Missing cost prices mean the estimate is incomplete; shipping, discounts, taxes, returns and other expenses may require further accounting treatment.
+- Dashboard sales cards summarize the latest 100 orders, not a complete accounting statement.
 
-## Current phase boundary
+## 5. Security rules
 
-This migration establishes the backend schema and security policies only. It does not add routes, UI, Supabase client dependencies, environment values, or change storefront data fetching. Do not begin Phase 3 until the backend and admin portal have been verified.
+- Never put a Supabase service-role key or database password into browser code or commit it to GitHub.
+- Keep public sign-ups disabled.
+- Public catalogue access must remain limited to published products.
+- Operational tables must remain admin/partner-only.
+- Only authorized staff can upload or delete product images.
+- Test owner and non-admin access separately before production use.
+
+## 6. Verification checklist
+
+After applying the migration, sign in and verify:
+
+- [ ] Overview loads without database errors.
+- [ ] A customer record can be saved.
+- [ ] A WhatsApp/phone enquiry can be recorded and its status changed.
+- [ ] A manual order can be created and its order number generated.
+- [ ] Order status and payment status can be updated.
+- [ ] An opening stock or restock movement increases the product's stock quantity.
+- [ ] An outgoing movement cannot make stock negative.
+- [ ] A known product cost is copied into a new order item and reports show an estimate.
+- [ ] Signed-out visitors and signed-in non-admin users cannot read operational records.
+- [ ] Public product browsing still shows published products only.

@@ -142,3 +142,16 @@
     color: var(--color-foreground);
   }
 }
+
+.hello-page {
+  --background: oklch(0.985 0.003 160);
+  --foreground: oklch(0.25 0.016 160);
+  --primary: oklch(0.53 0.12 165);
+  --accent: oklch(0.94 0.035 165);
+  --muted-foreground: oklch(0.53 0.012 160);
+  --border: oklch(0.91 0.008 160);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0;
+}

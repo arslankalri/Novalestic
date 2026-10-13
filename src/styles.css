@@ -143,15 +143,27 @@
   }
 }
 
-.hello-page {
-  --background: oklch(0.985 0.003 160);
-  --foreground: oklch(0.25 0.016 160);
-  --primary: oklch(0.53 0.12 165);
-  --accent: oklch(0.94 0.035 165);
-  --muted-foreground: oklch(0.53 0.012 160);
-  --border: oklch(0.91 0.008 160);
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  letter-spacing: 0;
+/* Novalestic Jewellers theme */
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --color-gold-light: #dfc27f;
+  --color-gold-deep: #9e7b32;
+  --color-surface-cream: #f2ede3;
+  --color-surface-warm: #fbf9f4;
+  --color-emerald-deep: #002118;
+  --color-emerald-subtle: #e8f4f0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #fbf9f4;
+  color: #1b1c19;
+}
+
+h1,
+h2,
+h3,
+.font-serif-luxury {
+  font-family: var(--font-serif);
 }

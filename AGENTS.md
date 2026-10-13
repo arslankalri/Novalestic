@@ -9,4 +9,4 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Keep the Hello World experience in the index route with page-scoped semantic CSS tokens; this small static project needs no backend or additional routes.
+- The app is Novalestic Jewellers, a jewellery storefront ported from an external Vite SPA. Its code lives in `src/novalestic/` (App.tsx, components, context, data, types) and is mounted by the index route; it manages its own view switching internally via ShopContext (no TanStack routes per view). Shop state persists in localStorage; keep `typeof window` guards in state initializers for SSR. Store prices are in PKR.

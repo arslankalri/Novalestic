@@ -49,7 +49,10 @@ export function AdminOperations({ mode }: { mode: Mode }) {
       tasks.push((async () => { const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(200); if (error) throw error; setOrders(data ?? []); })());
       tasks.push((async () => { const { data, error } = await supabase.from('products').select('*').order('title'); if (error) throw error; setProducts(data ?? []); })());
     }
-    if (mode === 'customers') tasks.push((async () => { const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; setCustomers(data ?? []); })());
+    if (mode === 'customers') {
+      tasks.push((async () => { const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; setCustomers(data ?? []); })());
+      tasks.push((async () => { const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(1000); if (error) throw error; setOrders(data ?? []); })());
+    }
     if (mode === 'enquiries') tasks.push((async () => { const { data, error } = await supabase.from('enquiries').select('*').order('created_at', { ascending: false }).limit(500); if (error) throw error; setEnquiries(data ?? []); })());
     if (mode === 'inventory') {
       tasks.push((async () => { const { data, error } = await supabase.from('products').select('*').order('title'); if (error) throw error; setProducts(data ?? []); })());
@@ -68,6 +71,31 @@ export function AdminOperations({ mode }: { mode: Mode }) {
   const openOrders = orders.filter(o => !['delivered','cancelled'].includes(o.status));
   const lowStock = products.filter(p => p.stock_quantity <= 2);
 
+  const ensureCustomer = async (details: { full_name: string; phone?: string; email?: string; city?: string; address?: string }) => {
+    const phone = details.phone?.trim() || null;
+    const email = details.email?.trim().toLowerCase() || null;
+    let existingId: string | null = null;
+    if (phone) {
+      const { data, error } = await supabase.from('customers').select('id').eq('phone', phone).limit(1).maybeSingle();
+      if (error) throw error;
+      existingId = data?.id ?? null;
+    }
+    if (!existingId && email) {
+      const { data, error } = await supabase.from('customers').select('id').eq('email', email).limit(1).maybeSingle();
+      if (error) throw error;
+      existingId = data?.id ?? null;
+    }
+    const values = { full_name: details.full_name.trim(), phone, email, city: details.city?.trim() || null, address: details.address?.trim() || null };
+    if (existingId) {
+      const { error } = await supabase.from('customers').update(values).eq('id', existingId);
+      if (error) throw error;
+      return existingId;
+    }
+    const { data, error } = await supabase.from('customers').insert(values).select('id').single();
+    if (error) throw error;
+    return data.id;
+  };
+
   const saveCustomer = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true); setMessage('');
     try {
@@ -85,8 +113,9 @@ export function AdminOperations({ mode }: { mode: Mode }) {
   const saveEnquiry = async (e: FormEvent) => {
     e.preventDefault(); setBusy(true); setMessage('');
     try {
+      const customerId = await ensureCustomer({ full_name: enquiryForm.customer_name, phone: enquiryForm.phone, email: enquiryForm.email });
       const { error } = await supabase.from('enquiries').insert({
-        customer_name: enquiryForm.customer_name.trim(), phone: enquiryForm.phone || null, email: enquiryForm.email || null,
+        customer_id: customerId, customer_name: enquiryForm.customer_name.trim(), phone: enquiryForm.phone || null, email: enquiryForm.email || null,
         channel: enquiryForm.channel, subject: enquiryForm.subject || null, message: enquiryForm.message || null,
         follow_up_at: enquiryForm.follow_up_at ? new Date(enquiryForm.follow_up_at).toISOString() : null,
       });
@@ -113,8 +142,9 @@ export function AdminOperations({ mode }: { mode: Mode }) {
     if (paid > total) { setMessage('Amount paid cannot exceed the order total.'); setBusy(false); return; }
     let orderId: string | null = null;
     try {
+      const customerId = await ensureCustomer({ full_name: orderForm.customer_name, phone: orderForm.phone, email: orderForm.email, city: orderForm.city, address: orderForm.shipping_address });
       const { data: order, error } = await supabase.from('orders').insert({
-        order_number: '', customer_name: orderForm.customer_name.trim(), phone: orderForm.phone || null,
+        order_number: '', customer_id: customerId, customer_name: orderForm.customer_name.trim(), phone: orderForm.phone || null,
         email: orderForm.email || null, status: 'pending', payment_status: paid === 0 ? 'unpaid' : paid >= total ? 'paid' : 'partial',
         payment_method: orderForm.payment_method, subtotal_pkr: subtotal, shipping_fee_pkr: shipping,
         discount_pkr: discount, total_pkr: total, paid_amount_pkr: paid, source: orderForm.source,
@@ -221,7 +251,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
           <label className={label}>Notes<input value={customerForm.notes} onChange={e=>setCustomerForm({...customerForm,notes:e.target.value})} className={input}/></label>
           <div className="md:col-span-3"><button disabled={busy} className={btn}>{busy?'Saving…':'Save customer'}</button></div>
         </form></section>
-        <section className={panel}><h2 className={heading}>Customers ({customers.length})</h2>{customers.length===0?<p className="text-sm text-[#7a7368]">No customer records yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Name</th><th>Contact</th><th>Location</th><th>Added</th></tr></thead><tbody>{customers.map(c=><tr key={c.id} className="border-t border-[#eee8de]"><td className="py-3 font-medium">{c.full_name}</td><td>{c.phone||'—'}<p className="text-xs text-[#8a8174]">{c.email||''}</p></td><td>{c.city||'—'}</td><td>{date(c.created_at)}</td></tr>)}</tbody></table></div>}</section>
+        <section className={panel}><h2 className={heading}>Customers ({customers.length})</h2>{customers.length===0?<p className="text-sm text-[#7a7368]">No customer records yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Name</th><th>Contact</th><th>Location</th><th>Orders / spend</th><th>Added</th></tr></thead><tbody>{customers.map(c=><tr key={c.id} className="border-t border-[#eee8de]"><td className="py-3 font-medium">{c.full_name}</td><td>{c.phone||'—'}<p className="text-xs text-[#8a8174]">{c.email||''}</p></td><td>{c.city||'—'}</td><td>{orders.filter(o=>o.customer_id===c.id && o.status!=='cancelled').length} orders<p className="text-xs text-[#8a8174]">{money(orders.filter(o=>o.customer_id===c.id && o.status!=='cancelled').reduce((sum,o)=>sum+Number(o.total_pkr),0))}</p></td><td>{date(c.created_at)}</td></tr>)}</tbody></table></div>}</section>
       </>}
       {mode==='enquiries' && <>
         <section className={panel}><h2 className={heading}>Record an enquiry</h2><form onSubmit={saveEnquiry} className="grid gap-3 md:grid-cols-3">

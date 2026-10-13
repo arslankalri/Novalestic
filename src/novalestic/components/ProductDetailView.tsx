@@ -128,7 +128,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                   {product.availableMetals.map((metal) => (
                     <button
                       key={metal}
+                      type="button"
                       onClick={() => setSelectedMetal(metal)}
+                      aria-pressed={selectedMetal === metal}
                       className={`px-3.5 py-2 text-xs border transition-all ${
                         selectedMetal === metal
                           ? 'border-[#9E7B32] bg-[#F2EDE3] font-semibold text-[#1b1c19]'
@@ -204,6 +206,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               </button>
 
               <button
+                type="button"
                 onClick={handleBuyNow}
                 className="w-full py-3.5 bg-[#9E7B32] hover:bg-[#765a18] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
@@ -226,7 +229,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               <div className="space-y-2.5 text-xs text-[#4d4545]">
                 <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
                   <span className="text-[#7f7575]">Gold Metal:</span>
-                  <span className="font-medium text-[#1b1c19]">{product.metal}</span>
+                  <span className="font-medium text-[#1b1c19]">{selectedMetal}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
                   <span className="text-[#7f7575]">Gemstone:</span>

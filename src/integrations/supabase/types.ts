@@ -50,6 +50,11 @@ export type Database = {
   }
   public: {
     Tables: {
+      customers: OperationsTable<CustomerRow>
+      enquiries: OperationsTable<EnquiryRow>
+      orders: OperationsTable<OrderRow>
+      order_items: OperationsTable<OrderItemRow>
+      inventory_movements: OperationsTable<InventoryMovementRow>
       product_images: {
         Row: {
           alt_text: string | null

@@ -16,7 +16,6 @@ export const CartView: React.FC = () => {
     getOrderWhatsAppUrl,
     getOrderEmailUrl,
     getOrderGmailUrl,
-    markOrderDelivered,
   } = useShop();
 
   const [checkoutStep, setCheckoutStep] = useState<'cart' | 'checkout' | 'success'>('cart');
@@ -63,7 +62,7 @@ export const CartView: React.FC = () => {
     setCheckoutStep('success');
 
     // Auto-prompt / trigger delivery to owner's WhatsApp if enabled
-    if (ownerSettings.autoWhatsAppPrompt) {
+    if (false && ownerSettings.autoWhatsAppPrompt) {
       setTimeout(() => {
         const waUrl = getOrderWhatsAppUrl(order);
         if (typeof window !== 'undefined') {
@@ -186,7 +185,7 @@ export const CartView: React.FC = () => {
                       rel="noopener noreferrer"
                       onClick={() => {
                         setSentToEmail(true);
-                        markOrderDelivered(confirmedOrder.id, 'email');
+                        // Opening an email draft does not confirm delivery.
                       }}
                       className="text-[10px] text-[#765a18] hover:underline text-center block"
                     >
@@ -219,7 +218,7 @@ export const CartView: React.FC = () => {
               <div className="flex justify-between border-b border-[#e4e2dd] pb-2">
                 <span className="text-[#7f7575]">Payment Method:</span>
                 <span className="text-[#1b1c19] font-medium uppercase">
-                  {confirmedOrder.paymentMethod === 'cod' ? 'Cash on Delivery' : confirmedOrder.paymentMethod === 'bank_transfer' ? 'Direct Bank Wire' : 'Credit / Debit Card'}
+                  {confirmedOrder.paymentMethod === 'cod' ? 'Cash on Delivery (planned)' : 'Bank transfer (planned)'}
                 </span>
               </div>
               <div className="flex justify-between border-b border-[#e4e2dd] pb-2">
@@ -230,7 +229,7 @@ export const CartView: React.FC = () => {
               </div>
               <div className="flex justify-between pt-1">
                 <span className="text-[#7f7575]">Delivery Status:</span>
-                <span className="text-[#15803d] font-bold">Stored in Studio Records</span>
+                <span className="text-[#765a18] font-medium">Preview only — not submitted</span>
               </div>
             </div>
 
@@ -499,9 +498,9 @@ export const CartView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-3 bg-[#E8F4F0] border border-[#15803d]/20 text-[#15803d] text-xs flex items-center gap-2">
-                <Truck className="w-4 h-4 shrink-0" />
-                <span>Store preview only. Shipping details will be added before launch.</span>
+              <div className="p-3 bg-[#fbf9f4] border border-[#C6A45B]/30 text-[#5d5750] text-xs flex items-start gap-2">
+                <Info className="w-4 h-4 shrink-0 text-[#9E7B32]" />
+                <span>Store preview only. Checkout, payment and shipping are not connected yet.</span>
               </div>
             </div>
           </div>

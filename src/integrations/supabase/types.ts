@@ -34,7 +34,7 @@ type OrderRow = {
 }
 type OrderItemRow = {
   id: string; order_id: string; product_id: string | null; product_title: string;
-  sku: string | null; quantity: number; unit_price_pkr: number; line_total_pkr: number;
+  sku: string | null; quantity: number; unit_price_pkr: number; unit_cost_pkr: number | null; line_total_pkr: number;
   created_at: string
 }
 type InventoryMovementRow = {

@@ -44,25 +44,6 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
     'Custom Size / Resizing on Request',
   ];
 
-  const handleAddToCart = () => {
-    addToCart(
-      product,
-      quantity,
-      selectedMetal,
-      product.category === 'rings' ? selectedRingSize : undefined
-    );
-  };
-
-  const handleBuyNow = () => {
-    addToCart(
-      product,
-      quantity,
-      selectedMetal,
-      product.category === 'rings' ? selectedRingSize : undefined
-    );
-    navigateTo('cart');
-  };
-
   return (
     <div className="w-full bg-[#fbf9f4] min-h-screen pt-36 pb-24">
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">

@@ -179,6 +179,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
           {[
             ['Recent recorded sales',money(totalRevenue),'Latest 100 recorded orders'],
             ['Payments received (recent)',money(collected),'Latest 100 recorded orders'],
+            ...(mode === 'reports' ? [['Gross profit estimate', money(grossProfit), 'Cost known for ' + knownCostLines + ' line items'] as string[]] : []),
             ['Open orders',String(openOrders.length),'Pending through shipped'],
             ['Open enquiries',String(enquiries.filter(e=>!['converted','lost'].includes(e.status)).length),'Need follow-up or response'],
           ].map(([k,v,d])=><section className={panel} key={k}><p className="text-sm text-[#71695d]">{k}</p><p className="mt-2 font-serif text-2xl">{v}</p><p className="mt-1 text-xs text-[#8a8174]">{d}</p></section>)}

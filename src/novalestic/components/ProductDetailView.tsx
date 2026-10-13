@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ArrowLeft, ShoppingBag, Info } from 'lucide-react';
+
+const WHATSAPP_NUMBER = '923019653550';
+import { ArrowLeft, MessageCircle, Info } from 'lucide-react';
 
 interface ProductDetailViewProps {
   productId: string;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
-  const { products, formatPrice, addToCart, navigateTo } = useShop();
+  const { products, navigateTo } = useShop();
 
   const product = products.find((p) => p.id === productId);
 
@@ -103,20 +105,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
           <div className="lg:col-span-5 flex flex-col justify-start">
             <div className="border-b border-[#e4e2dd] pb-6 mb-6">
               <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-                SAMPLE LISTING · {product.category.replace('-', ' ')}
+                NOVALESTIC COLLECTION · {product.category.replace('-', ' ')}
               </span>
 
               <h1 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal mb-3">
                 {product.title}
               </h1>
 
-              <div className="flex items-baseline justify-between mt-4">
-                <span className="text-xs uppercase tracking-widest text-[#7f7575] font-medium">
-                  Price (PKR)
-                </span>
-                <span className="font-serif-luxury text-3xl font-bold text-[#1b1c19] tabular-nums">
-                  {formatPrice(product.pricePKR)}
-                </span>
+              <div className="mt-4">
+                <span className="font-serif-luxury text-2xl font-bold text-[#1b1c19]">Contact for price</span>
+                <p className="text-xs text-[#7f7575] mt-1">Price and availability confirmed directly with our team.</p>
               </div>
             </div>
 
@@ -203,27 +201,21 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
 
             {/* Action Buttons */}
             <div className="space-y-3 mb-8">
-              <button
-                onClick={handleAddToCart}
-                className="w-full py-4 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-xs font-semibold uppercase tracking-[0.18em] transition-colors flex items-center justify-center gap-2 shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about: ${product.title}. Please share the current price, availability, materials and specifications.`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-4 bg-[#176b43] hover:bg-[#125637] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-lg"
               >
-                <ShoppingBag className="w-4 h-4" />
-                <span>ADD TO CART</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleBuyNow}
-                className="w-full py-3.5 bg-[#9E7B32] hover:bg-[#765a18] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
-              >
-                <span>ADD &amp; VIEW CART</span>
-              </button>
+                <MessageCircle className="w-4 h-4" /> Enquire on WhatsApp
+              </a>
+              <button type="button" onClick={() => navigateTo('contact')} className="w-full py-3.5 border border-[#C6A45B] text-[#765a18] hover:bg-[#F2EDE3] text-xs font-semibold uppercase tracking-[0.16em] transition-colors">Other Contact Options</button>
             </div>
 
             {/* Preview notice */}
             <div className="bg-[#F2EDE3]/70 p-4 border border-[#C6A45B]/35 flex items-start gap-3 text-xs text-[#5d5750] mb-6">
               <Info className="w-4 h-4 text-[#9E7B32] shrink-0 mt-0.5" />
-              <p className="leading-relaxed">This is a sample product page for design preview. Product details, availability, shipping and payment options will be confirmed before the store opens.</p>
+              <p className="leading-relaxed">Product details, availability, materials and final pricing are confirmed directly before an order is finalised.</p>
             </div>
 
             {/* Specifications */}

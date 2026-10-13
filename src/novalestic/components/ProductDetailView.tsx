@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ArrowLeft, ShoppingBag, ShieldCheck, Truck, Check, CreditCard, MessageCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, MessageCircle, Info } from 'lucide-react';
 
 interface ProductDetailViewProps {
   productId: string;
@@ -90,12 +90,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 className="w-full h-full object-cover object-center"
               />
 
-              {product.hallmarkBadge && (
-                <div className="absolute top-4 left-4 bg-[#E8F4F0] text-[#15803d] px-3 py-1.5 text-xs uppercase tracking-wider flex items-center gap-1.5 font-bold shadow-sm">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>{product.hallmarkBadge}</span>
-                </div>
-              )}
+              <span className="absolute top-4 left-4 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] font-semibold">Sample listing</span>
             </div>
           </div>
 
@@ -103,7 +98,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
           <div className="lg:col-span-5 flex flex-col justify-start">
             <div className="border-b border-[#e4e2dd] pb-6 mb-6">
               <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-                {product.origin}
+                SAMPLE LISTING · {product.category.replace('-', ' ')}
               </span>
 
               <h1 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal mb-3">
@@ -128,7 +123,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
             {product.availableMetals && product.availableMetals.length > 0 && (
               <div className="mb-6">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#1b1c19] mb-2">
-                  Select Gold Metal: <span className="font-normal text-[#765a18]">{selectedMetal}</span>
+                  Select Option: <span className="font-normal text-[#765a18]">{selectedMetal}</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {product.availableMetals.map((metal) => (
@@ -166,7 +161,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                   ))}
                 </select>
                 <span className="text-[10px] text-[#7f7575] mt-1 block">
-                  Free resizing service available across Pakistan.
+                  Sample sizing options for design preview.
                 </span>
               </div>
             )}
@@ -207,8 +202,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 onClick={handleBuyNow}
                 className="w-full py-3.5 bg-[#9E7B32] hover:bg-[#765a18] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-sm"
               >
-                <CreditCard className="w-4 h-4" />
-                <span>BUY NOW (PROCEED TO CHECKOUT)</span>
+                <span>VIEW CART</span>
               </button>
 
               <a
@@ -224,17 +218,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               </a>
             </div>
 
-            {/* Delivery Assurance */}
-            <div className="bg-[#f5f3ee] p-4 border border-[#e4e2dd] space-y-2 text-xs text-[#4d4545] mb-6">
-              <div className="flex items-center gap-2 text-[#15803d]">
-                <Truck className="w-4 h-4" />
-                <span className="font-semibold uppercase tracking-wider text-[11px]">
-                  Free Insured Delivery in Pakistan
-                </span>
-              </div>
-              <p className="text-[11px] leading-relaxed">
-                Dispatched in heavy velvet presentation gift boxing with Cash on Delivery and direct bank wire options.
-              </p>
+            {/* Preview notice */}
+            <div className="bg-[#F2EDE3]/70 p-4 border border-[#C6A45B]/35 flex items-start gap-3 text-xs text-[#5d5750] mb-6">
+              <Info className="w-4 h-4 text-[#9E7B32] shrink-0 mt-0.5" />
+              <p className="leading-relaxed">This is a sample product page for design preview. Product details, availability, shipping and payment options will be confirmed before the store opens.</p>
             </div>
 
             {/* Specifications */}
@@ -256,13 +243,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                   <span className="text-[#7f7575]">Stone Origin:</span>
                   <span className="font-medium text-[#1b1c19]">{product.origin}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
-                  <span className="text-[#7f7575]">Assay Guarantee:</span>
-                  <span className="font-bold text-[#15803d] flex items-center gap-1">
-                    <Check className="w-3.5 h-3.5" />
-                    100% Genuine 18K Hallmarked
-                  </span>
-                </div>
+
               </div>
             </div>
           </div>

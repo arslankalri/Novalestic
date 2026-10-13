@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ShoppingBag, Eye } from 'lucide-react';
+import { MessageCircle, Eye } from 'lucide-react';
 
 export const BestsellingGrid: React.FC = () => {
-  const { products, formatPrice, addToCart, navigateTo } = useShop();
+  const { products, navigateTo } = useShop();
   const [activeTab, setActiveTab] = useState<'all' | 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets'>('all');
 
   const filterTabs = [
@@ -29,7 +29,7 @@ export const BestsellingGrid: React.FC = () => {
               COLLECTION PREVIEW
             </span>
             <h2 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal">
-              Explore Sample Categories
+              Explore the Collection
             </h2>
           </div>
 
@@ -79,18 +79,18 @@ export const BestsellingGrid: React.FC = () => {
                 </button>
 
                 <span className="absolute top-3 left-3 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-2.5 py-1.5 text-[9px] uppercase tracking-[0.14em] font-semibold pointer-events-none">
-                  Sample
+                  Price on enquiry
                 </span>
 
                 {/* Quick Add Overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="flex-1 py-2.5 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"
+                  <a
+                    href={`https://wa.me/923019653550?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about ${product.title}. Please share the current price and availability.`)}`}
+                    target="_blank" rel="noreferrer"
+                    className="flex-1 py-2.5 bg-[#176b43] hover:bg-[#125637] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"
                   >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>ADD TO CART</span>
-                  </button>
+                    <MessageCircle className="w-3.5 h-3.5" /> Enquire
+                  </a>
                   <button
                     onClick={() => navigateTo('product-detail', product.id)}
                     aria-label="View Details"
@@ -130,9 +130,7 @@ export const BestsellingGrid: React.FC = () => {
                   <span className="text-[10px] uppercase text-[#7f7575] tracking-wider font-medium">
                     Price
                   </span>
-                  <span className="font-serif-luxury text-base font-bold text-[#1b1c19] tabular-nums">
-                    {formatPrice(product.pricePKR)}
-                  </span>
+                  <span className="font-serif-luxury text-sm font-bold text-[#176b43]">Contact for price</span>
                 </div>
               </div>
             </div>

@@ -68,6 +68,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Products list from local storage or defaults
   const [products, setProducts] = useState<Product[]>(() => {
     try {
+      if (typeof window === 'undefined') return INITIAL_PRODUCTS;
       const saved = localStorage.getItem(STORAGE_KEY_PRODUCTS);
       if (saved) {
         return JSON.parse(saved);
@@ -81,6 +82,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Cart state
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
+      if (typeof window === 'undefined') return [];
       const saved = localStorage.getItem(STORAGE_KEY_CART);
       if (saved) return JSON.parse(saved);
     } catch {
@@ -92,6 +94,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Stored orders state
   const [orders, setOrders] = useState<Order[]>(() => {
     try {
+      if (typeof window === 'undefined') return [];
       const saved = localStorage.getItem(STORAGE_KEY_ORDERS);
       if (saved) return JSON.parse(saved);
     } catch {
@@ -103,6 +106,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Owner store delivery settings (Email & WhatsApp)
   const [ownerSettings, setOwnerSettings] = useState<StoreSettings>(() => {
     try {
+      if (typeof window === 'undefined') return DEFAULT_SETTINGS;
       const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
       if (saved) {
         return { ...DEFAULT_SETTINGS, ...JSON.parse(saved) };
@@ -124,6 +128,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (hash === '#admin' || hash === '#manage' || hash === '#owner') return true;
         if (hash === '#store' || hash === '#customer' || hash === '#shop') return false;
       }
+      if (typeof window === 'undefined') return false;
       const saved = localStorage.getItem('nova_lestic_is_owner_mode');
       return saved === 'true';
     } catch {

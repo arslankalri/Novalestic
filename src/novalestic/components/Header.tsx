@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
 import { NovalesticLogo } from './NovalesticLogo';
-import { ModeSwitcherBar } from './ModeSwitcherBar';
-import { ShoppingBag, PlusCircle, PackageCheck, Menu, X, Settings } from 'lucide-react';
+import { ShoppingBag, Menu, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { currentView, navigateTo, cartCount, orders, isOwnerMode, setIsOwnerMode } = useShop();
+  const { currentView, navigateTo, cartCount } = useShop();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -17,9 +16,6 @@ export const Header: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-40 bg-[#fbf9f4]/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-[#e4e2dd]">
-      {/* Store View Switcher & Publishing Bar */}
-      <ModeSwitcherBar />
-
       {/* Top Banner */}
       <div className="bg-[#F2EDE3] px-4 md:px-8 py-2 flex items-center justify-between gap-2 border-b border-[#DFC27F]/25 text-center">
         <div className="flex-1 flex items-center justify-center gap-2">
@@ -29,20 +25,6 @@ export const Header: React.FC = () => {
           </p>
         </div>
 
-        {/* Discreet Owner Login link if in Customer Mode */}
-        {!isOwnerMode && (
-          <button
-            onClick={() => {
-              setIsOwnerMode(true);
-              navigateTo('manage-store');
-            }}
-            className="hidden lg:flex items-center gap-1 text-[10px] uppercase tracking-wider text-[#765a18] hover:text-[#1b1c19] font-semibold transition-colors shrink-0"
-            title="Access Store Management Portal"
-          >
-            <Settings className="w-3 h-3" />
-            <span>Store Admin</span>
-          </button>
-        )}
       </div>
 
       {/* Main Header Row */}
@@ -91,36 +73,7 @@ export const Header: React.FC = () => {
             <span>PKR (₨)</span>
           </div>
 
-          {/* Manage Store Button — ONLY VISIBLE IN OWNER MODE */}
-          {isOwnerMode && (
-            <button
-              onClick={() => navigateTo('manage-store')}
-              className={`hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
-                currentView === 'manage-store'
-                  ? 'bg-[#9E7B32] text-white shadow-sm'
-                  : 'bg-[#1b1c19] text-white hover:bg-[#9E7B32]'
-              }`}
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Manage Store</span>
-            </button>
-          )}
-
-          {/* Orders History (in owner mode or if customer placed orders) */}
-          {orders.length > 0 && (
-            <button
-              onClick={() => navigateTo('orders')}
-              className="text-[#4d4545] hover:text-[#1b1c19] transition-colors relative p-1.5"
-              title={isOwnerMode ? 'Customer Orders' : 'My Order Receipt'}
-            >
-              <PackageCheck className="w-5 h-5 text-[#765a18]" />
-              <span className="absolute -top-1 -right-1 bg-[#765a18] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                {orders.length}
-              </span>
-            </button>
-          )}
-
-          {/* Cart Button for Customers */}
+          {/* Cart Button */}
           <button
             onClick={() => navigateTo('cart')}
             aria-label="View Shopping Cart"
@@ -166,29 +119,6 @@ export const Header: React.FC = () => {
             </button>
           ))}
 
-          {isOwnerMode ? (
-            <button
-              onClick={() => {
-                navigateTo('manage-store');
-                setIsMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-[#1b1c19] text-white text-xs uppercase tracking-wider font-semibold"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Manage Store &amp; Add Products</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                setIsOwnerMode(true);
-                navigateTo('manage-store');
-                setIsMobileMenuOpen(false);
-              }}
-              className="w-full text-center py-2 text-xs text-[#765a18] uppercase tracking-wider font-semibold"
-            >
-              Owner Portal Login
-            </button>
-          )}
         </div>
       )}
     </header>

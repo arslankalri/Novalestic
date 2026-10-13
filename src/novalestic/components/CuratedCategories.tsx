@@ -8,7 +8,7 @@ export const CuratedCategories: React.FC = () => {
   const categories = [
     {
       num: '01 / RINGS',
-      kicker: 'Solitaires & Bands',
+      kicker: 'Explore the collection',
       title: 'Fine Jewellery Rings',
       action: 'Explore Rings',
       view: 'rings',
@@ -16,7 +16,7 @@ export const CuratedCategories: React.FC = () => {
     },
     {
       num: '02 / EARRINGS',
-      kicker: 'Drops & Chandeliers',
+      kicker: 'Explore the collection',
       title: 'Solitaire & Drop Earrings',
       action: 'Explore Earrings',
       view: 'earrings',
@@ -24,7 +24,7 @@ export const CuratedCategories: React.FC = () => {
     },
     {
       num: '03 / NECKLACES',
-      kicker: 'Colliers & Pendants',
+      kicker: 'Explore the collection',
       title: 'Emerald Necklaces',
       action: 'Explore Necklaces',
       view: 'necklaces',
@@ -32,7 +32,7 @@ export const CuratedCategories: React.FC = () => {
     },
     {
       num: '04 / CATALOGUE',
-      kicker: 'Entire Collection',
+      kicker: 'Explore the collection',
       title: 'Browse All Jewellery',
       action: 'View All Pieces',
       view: 'shop',
@@ -48,7 +48,7 @@ export const CuratedCategories: React.FC = () => {
             CURATED CATEGORIES
           </span>
           <h2 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal">
-            Discover Exceptional Fine Jewellery
+            Find Your Next Favourite Piece
           </h2>
           <div className="w-12 h-[1px] bg-[#DFC27F] mt-4" />
         </div>
@@ -68,6 +68,7 @@ export const CuratedCategories: React.FC = () => {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-[#1b1c19]/0 transition-colors duration-300 group-hover:bg-[#1b1c19]/10" />
+                <span className="absolute bottom-3 right-3 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-2.5 py-1 text-[9px] uppercase tracking-[0.14em] font-semibold">Preview</span>
                 <span className="absolute top-4 left-4 text-[10px] tracking-widest uppercase bg-[#fbf9f4]/90 text-[#1b1c19] px-2.5 py-1 backdrop-blur-sm font-semibold">
                   {cat.num}
                 </span>

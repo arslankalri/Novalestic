@@ -69,7 +69,6 @@ export const CartView: React.FC = () => {
         if (typeof window !== 'undefined') {
           window.open(waUrl, '_blank');
           setSentToWhatsApp(true);
-          markOrderDelivered(order.id, 'whatsapp');
         }
       }, 700);
     }
@@ -80,7 +79,6 @@ export const CartView: React.FC = () => {
     const waUrl = getOrderWhatsAppUrl(confirmedOrder);
     window.open(waUrl, '_blank');
     setSentToWhatsApp(true);
-    markOrderDelivered(confirmedOrder.id, 'whatsapp');
   };
 
   const handleDeliverToEmail = () => {
@@ -88,7 +86,6 @@ export const CartView: React.FC = () => {
     const mailUrl = getOrderEmailUrl(confirmedOrder);
     window.location.href = mailUrl;
     setSentToEmail(true);
-    markOrderDelivered(confirmedOrder.id, 'email');
   };
 
   return (
@@ -114,7 +111,7 @@ export const CartView: React.FC = () => {
             </div>
 
             <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-              ORDER STORED IN STUDIO RECORDS
+              ORDER REQUEST PREPARED
             </span>
 
             <h2 className="font-serif-luxury text-3xl text-[#1b1c19] font-normal mb-3">
@@ -122,7 +119,7 @@ export const CartView: React.FC = () => {
             </h2>
 
             <p className="text-sm text-[#4d4545] leading-relaxed mb-6">
-              Your jewellery order <strong className="text-[#1b1c19]">#{confirmedOrder.id}</strong> has been stored securely in our system. Order details are being routed to our studio for insured packing and dispatch.
+              Your order request <strong className="text-[#1b1c19]">#{confirmedOrder.id}</strong> has been prepared in this browser. It has not been submitted to a central order system. Send the request through WhatsApp or email below to contact the seller.
             </p>
 
             {/* Direct Delivery to Owner WhatsApp & Email Box */}
@@ -159,7 +156,7 @@ export const CartView: React.FC = () => {
                 >
                   <MessageCircle className="w-4 h-4 shrink-0" />
                   <span>
-                    {sentToWhatsApp ? '✓ Delivered via WhatsApp' : 'Deliver to Owner WhatsApp'}
+                    {sentToWhatsApp ? 'WhatsApp opened — send message' : 'Prepare WhatsApp message'}
                   </span>
                 </button>
 
@@ -176,7 +173,7 @@ export const CartView: React.FC = () => {
                   >
                     <Mail className="w-4 h-4 text-[#765a18] shrink-0" />
                     <span>
-                      {sentToEmail ? '✓ Delivered via Email' : 'Deliver to Owner Email'}
+                      {sentToEmail ? 'Email app opened — send message' : 'Prepare email'}
                     </span>
                   </button>
                   {confirmedOrder && (
@@ -186,7 +183,6 @@ export const CartView: React.FC = () => {
                       rel="noopener noreferrer"
                       onClick={() => {
                         setSentToEmail(true);
-                        markOrderDelivered(confirmedOrder.id, 'email');
                       }}
                       className="text-[10px] text-[#765a18] hover:underline text-center block"
                     >
@@ -447,8 +443,7 @@ export const CartView: React.FC = () => {
                       >
                         <option value="cod">Cash on Delivery (Pay when you receive)</option>
                         <option value="bank_transfer">Direct Bank Transfer (HBL / Meezan / Alfalah)</option>
-                        <option value="card">Debit / Credit Card</option>
-                      </select>
+                                      </select>
                     </div>
                   </div>
 
@@ -488,12 +483,12 @@ export const CartView: React.FC = () => {
                   <span className="font-semibold text-[#1b1c19] tabular-nums">{formatPrice(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Insured Courier Delivery:</span>
-                  <span className="text-[#15803d] font-bold uppercase tracking-wider">FREE (Complimentary)</span>
+                  <span>Delivery:</span>
+                  <span className="text-[#15803d] font-bold uppercase tracking-wider">Confirm with seller</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Gold Purity Assay:</span>
-                  <span className="text-[#15803d] font-bold">18K Certified</span>
+                  <span>Product certification:</span>
+                  <span className="text-[#15803d] font-bold">See product details</span>
                 </div>
                 <div className="flex justify-between text-base font-serif-luxury font-bold text-[#1b1c19] pt-3 border-t border-[#DFC27F]/40">
                   <span>Total (PKR):</span>
@@ -503,7 +498,7 @@ export const CartView: React.FC = () => {
 
               <div className="p-3 bg-[#E8F4F0] border border-[#15803d]/20 text-[#15803d] text-xs flex items-center gap-2">
                 <Truck className="w-4 h-4 shrink-0" />
-                <span>Insured nationwide delivery with verification on arrival.</span>
+                <span>Confirm shipping method, cost, and insurance with the seller before payment.</span>
               </div>
             </div>
           </div>

@@ -15,9 +15,7 @@ import { GuaranteesSection } from './components/GuaranteesSection';
 import { NewsletterSection } from './components/NewsletterSection';
 import { CatalogView } from './components/CatalogView';
 import { ProductDetailView } from './components/ProductDetailView';
-import { ManageStoreView } from './components/ManageStoreView';
 import { CartView } from './components/CartView';
-import { OrdersView } from './components/OrdersView';
 import { NotificationToast } from './components/NotificationToast';
 
 const AppContent: React.FC = () => {
@@ -41,12 +39,6 @@ const AppContent: React.FC = () => {
 
       case 'cart':
         return <CartView />;
-
-      case 'orders':
-        return <OrdersView />;
-
-      case 'manage-store':
-        return <ManageStoreView />;
 
       case 'home':
       default:

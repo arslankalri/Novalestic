@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ShoppingBag, Eye, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Eye } from 'lucide-react';
 
 export const BestsellingGrid: React.FC = () => {
   const { products, formatPrice, addToCart, navigateTo } = useShop();
@@ -25,10 +25,10 @@ export const BestsellingGrid: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-              FEATURED CREATIONS
+              A FIRST LOOK AT NOVALESTIC
             </span>
             <h2 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal">
-              Bestselling Jewellery Pieces
+              Explore the Collection
             </h2>
           </div>
 
@@ -75,16 +75,10 @@ export const BestsellingGrid: React.FC = () => {
                   />
                 </button>
 
-                {/* Hallmark badge */}
-                {product.hallmarkBadge && (
-                  <div className="absolute top-3 left-3 bg-[#E8F4F0]/90 backdrop-blur-sm text-[#15803d] px-2.5 py-1 text-[10px] uppercase tracking-wider flex items-center gap-1 font-bold shadow-xs">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>{product.hallmarkBadge}</span>
-                  </div>
-                )}
+                
 
                 {/* Quick Add Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
+                <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
                   <button
                     onClick={() => addToCart(product)}
                     className="flex-1 py-2.5 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"

@@ -1,24 +1,24 @@
-# Hello World Page
+# Novalestic Jewellers
 
-small project helloworld html page
+A React, TypeScript, Vite, and TanStack Start storefront for fine jewellery with prices displayed in Pakistani rupees (PKR).
 
-This project was built with [Lovable](https://lovable.dev).
+## Current scope
 
-## Build with Lovable
+- Public jewellery catalogue and product details
+- Browser-local cart and order-request preview
+- No public admin portal
+- No central order database, authenticated owner dashboard, payment gateway, or newsletter delivery is configured yet
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/8281936d-8362-41cd-b9a5-d23b7adbfc8c).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+**Important:** order requests are currently prepared in the visitor's browser. They are not saved to a central server. Do not treat this as production checkout until a backend, owner authentication, server-side order persistence, and verified order delivery are implemented.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Use the package manager represented by the repository lockfile (Bun):
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+- Install dependencies: bun install
+- Start development: bun run dev
+- Lint: bun run lint
+- Tests: bun run test
+- Production build: bun run build
+
+This project is connected to Lovable. Changes pushed to the connected branch may sync to Lovable; avoid rewriting published Git history.

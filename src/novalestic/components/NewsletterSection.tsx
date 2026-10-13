@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { Mail, CheckCircle2, Phone, ShieldCheck } from 'lucide-react';
+import { Mail, Info } from 'lucide-react';
 
 export const NewsletterSection: React.FC = () => {
   const { showToast } = useShop();
@@ -10,9 +10,7 @@ export const NewsletterSection: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      setSubmitted(true);
-      showToast('Thank you for subscribing to Nova Lestic collection updates.');
-      setEmail('');
+      showToast('Newsletter sign-up is not connected yet. Please check back soon.');
     }
   };
 
@@ -37,15 +35,11 @@ export const NewsletterSection: React.FC = () => {
               Subscribe to receive first access to newly added handcrafted emerald and gold pieces, seasonal offers, and custom commission openings.
             </p>
 
-            {submitted ? (
-              <div className="w-full max-w-lg bg-[#E8F4F0] p-4 text-[#15803d] border border-[#15803d]/20 flex items-center justify-center gap-2.5">
-                <CheckCircle2 className="w-5 h-5" />
-                <span className="text-xs font-semibold uppercase tracking-wider">
-                  You are subscribed. We will email you when new collections arrive.
-                </span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="w-full max-w-lg flex flex-col sm:flex-row items-center gap-3">
+            <div className="w-full max-w-lg bg-white/70 p-4 text-[#765a18] border border-[#DFC27F]/40 flex items-center gap-2.5 text-left">
+              <Info className="w-5 h-5 shrink-0" />
+              <span className="text-xs">Newsletter sign-up is coming soon. It will be enabled once subscriber storage and email delivery are connected.</span>
+            </div>
+            <form onSubmit={handleSubmit} className="hidden w-full max-w-lg flex-col sm:flex-row items-center gap-3">
                 <input
                   type="email"
                   required
@@ -63,17 +57,7 @@ export const NewsletterSection: React.FC = () => {
               </form>
             )}
 
-            <div className="mt-8 flex flex-wrap justify-center items-center gap-6 text-[#4d4545] text-xs">
-              <span className="flex items-center gap-1.5 font-medium">
-                <Phone className="w-3.5 h-3.5 text-[#765a18]" />
-                Customer Support: +92 300 1234567
-              </span>
-              <span className="text-[#DFC27F]">•</span>
-              <span className="flex items-center gap-1.5 font-medium">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#15803d]" />
-                Direct WhatsApp Inquiries Available
-              </span>
-            </div>
+
           </div>
         </div>
       </div>

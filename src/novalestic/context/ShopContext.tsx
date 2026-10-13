@@ -33,7 +33,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEY_CART);
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
-        if (Array.isArray(parsed)) {\n          const publicProductIds = new Set(INITIAL_PRODUCTS.map((product) => product.id));\n          return (parsed as CartItem[]).filter((item) => publicProductIds.has(item?.product?.id));\n        }
+        if (Array.isArray(parsed)) {
+          const publicProductIds = new Set(INITIAL_PRODUCTS.map((product) => product.id));
+          return (parsed as CartItem[]).filter((item) => publicProductIds.has(item?.product?.id));
+        }
       }
     } catch {
       // Start with an empty cart if browser storage is unavailable or invalid.

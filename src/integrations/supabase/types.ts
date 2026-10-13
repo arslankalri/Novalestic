@@ -93,6 +93,7 @@ export type Database = {
           available_metals: string[]
           carat: string | null
           category: string
+          cost_price_pkr: number | null
           clarity: string | null
           created_at: string
           cut: string | null
@@ -121,6 +122,7 @@ export type Database = {
           available_metals?: string[]
           carat?: string | null
           category: string
+          cost_price_pkr?: number | null
           clarity?: string | null
           created_at?: string
           cut?: string | null
@@ -149,6 +151,7 @@ export type Database = {
           available_metals?: string[]
           carat?: string | null
           category?: string
+          cost_price_pkr?: number | null
           clarity?: string | null
           created_at?: string
           cut?: string | null

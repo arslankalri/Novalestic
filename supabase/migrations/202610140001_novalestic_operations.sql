@@ -4,10 +4,6 @@
 
 create sequence if not exists public.novalestic_order_number_seq;
 
-alter table public.products
-  add column if not exists cost_price_pkr numeric(14,2)
-  check (cost_price_pkr is null or cost_price_pkr >= 0);
-
 create table if not exists public.customers (
   id uuid primary key default gen_random_uuid(),
   full_name text not null check (length(trim(full_name)) > 0),
@@ -17,6 +13,12 @@ create table if not exists public.customers (
   address text,
   notes text,
   created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.product_costs (
+  product_id uuid primary key references public.products(id) on delete cascade,
+  cost_price_pkr numeric(14,2) not null check (cost_price_pkr >= 0),
   updated_at timestamptz not null default now()
 );
 
@@ -141,13 +143,18 @@ for each row execute function public.novalestic_touch_updated_at();
 
 alter table public.customers enable row level security;
 alter table public.enquiries enable row level security;
+alter table public.product_costs enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
 alter table public.inventory_movements enable row level security;
 
-grant select, insert, update, delete on public.customers, public.enquiries, public.orders,
+grant select, insert, update, delete on public.customers, public.enquiries, public.orders, public.product_costs,
   public.order_items, public.inventory_movements to authenticated;
 grant usage, select on sequence public.novalestic_order_number_seq to authenticated;
+
+drop policy if exists "Admins manage product costs" on public.product_costs;
+create policy "Admins manage product costs" on public.product_costs for all to authenticated
+using (public.novalestic_has_admin_access()) with check (public.novalestic_has_admin_access());
 
 drop policy if exists "Admins manage customers" on public.customers;
 create policy "Admins manage customers" on public.customers for all to authenticated

@@ -61,7 +61,7 @@ export const CartView: React.FC = () => {
     setCheckoutStep('success');
 
     // Auto-prompt / trigger delivery to owner's WhatsApp if enabled
-    if (false) {
+    if (ownerSettings.autoWhatsAppPrompt && false) {
       setTimeout(() => {
         const waUrl = getOrderWhatsAppUrl(order);
         if (typeof window !== 'undefined') {
@@ -342,10 +342,12 @@ export const CartView: React.FC = () => {
                       ← Continue Shopping
                     </button>
                     <button
-                      onClick={() => setCheckoutStep('checkout')}
-                      className="px-8 py-3.5 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+                      type="button"
+                      disabled
+                      title="Checkout will be enabled when real order processing is connected."
+                      className="px-8 py-3.5 bg-[#e4e2dd] text-[#7f7575] text-xs font-semibold uppercase tracking-wider cursor-not-allowed border border-[#d5d1c8]"
                     >
-                      Proceed to Checkout →
+                      Checkout Coming Soon
                     </button>
                   </div>
                 </div>

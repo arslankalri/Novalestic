@@ -12,7 +12,6 @@ export const CartView: React.FC = () => {
     updateCartQuantity,
     placeOrder,
     navigateTo,
-    ownerSettings,
     getOrderWhatsAppUrl,
     getOrderEmailUrl,
     getOrderGmailUrl,
@@ -62,7 +61,7 @@ export const CartView: React.FC = () => {
     setCheckoutStep('success');
 
     // Auto-prompt / trigger delivery to owner's WhatsApp if enabled
-    if (ownerSettings.autoWhatsAppPrompt && false) {
+    if (false) {
       setTimeout(() => {
         const waUrl = getOrderWhatsAppUrl(order);
         if (typeof window !== 'undefined') {

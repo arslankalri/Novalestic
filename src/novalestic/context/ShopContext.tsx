@@ -20,8 +20,8 @@ interface ShopContextType {
   // Shopping Cart
   cart: CartItem[];
   addToCart: (product: Product, quantity?: number, selectedMetal?: string, ringSize?: string) => void;
-  removeFromCart: (productId: string, selectedMetal: string) => void;
-  updateCartQuantity: (productId: string, selectedMetal: string, delta: number) => void;
+  removeFromCart: (productId: string, selectedMetal: string, ringSize?: string) => void;
+  updateCartQuantity: (productId: string, selectedMetal: string, delta: number, ringSize?: string) => void;
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
@@ -58,10 +58,10 @@ const STORAGE_KEY_ORDERS = 'nova_lestic_orders_pkr_v1';
 const STORAGE_KEY_SETTINGS = 'nova_lestic_settings_v1';
 
 const DEFAULT_SETTINGS: StoreSettings = {
-  ownerEmail: 'arslankalri@gmail.com',
-  ownerWhatsApp: '+923001234567',
+  ownerEmail: '',
+  ownerWhatsApp: '',
   businessName: 'Novalestic Jewellers',
-  autoWhatsAppPrompt: true,
+  autoWhatsAppPrompt: false,
 };
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -301,14 +301,14 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (existingIdx > -1) {
         const next = [...prev];
         const existing = next[existingIdx];
-        if (existing) existing.quantity += quantity;
+        if (existing) existing.quantity = Math.min(99, existing.quantity + Math.max(1, quantity));
         return next;
       }
       return [
         ...prev,
         {
           product,
-          quantity,
+          quantity: Math.min(99, Math.max(1, quantity)),
           selectedMetal,
           ringSize: size,
         },
@@ -318,20 +318,28 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     showToast(`“${product.title}” added to cart.`);
   };
 
-  const removeFromCart = (productId: string, selectedMetal: string) => {
-    setCart((prev) => prev.filter((i) => !(i.product.id === productId && i.selectedMetal === selectedMetal)));
+  const removeFromCart = (productId: string, selectedMetal: string, ringSize?: string) => {
+    setCart((prev) => prev.filter((item) => {
+      const matchesVariant =
+        item.product.id === productId &&
+        item.selectedMetal === selectedMetal &&
+        (ringSize === undefined || item.ringSize === ringSize);
+      return !matchesVariant;
+    }));
     showToast('Item removed from cart.');
   };
 
-  const updateCartQuantity = (productId: string, selectedMetal: string, delta: number) => {
+  const updateCartQuantity = (productId: string, selectedMetal: string, delta: number, ringSize?: string) => {
     setCart((prev) =>
       prev
         .map((item) => {
-          if (item.product.id === productId && item.selectedMetal === selectedMetal) {
-            const nextQty = item.quantity + delta;
-            return nextQty > 0 ? { ...item, quantity: nextQty } : null;
-          }
-          return item;
+          const matchesVariant =
+            item.product.id === productId &&
+            item.selectedMetal === selectedMetal &&
+            (ringSize === undefined || item.ringSize === ringSize);
+          if (!matchesVariant) return item;
+          const nextQty = Math.min(99, item.quantity + delta);
+          return nextQty > 0 ? { ...item, quantity: nextQty } : null;
         })
         .filter((item): item is CartItem => item !== null)
     );

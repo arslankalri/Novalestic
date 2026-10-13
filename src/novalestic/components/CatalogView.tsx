@@ -151,7 +151,9 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
                   />
                 </button>
 
-                
+                <span className="absolute top-3 left-3 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-2.5 py-1.5 text-[9px] uppercase tracking-[0.14em] font-semibold pointer-events-none">
+                  Sample
+                </span>
 
                 <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
                   <button

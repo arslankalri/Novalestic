@@ -102,6 +102,10 @@ export function AdminDashboard() {
       setMessage('Enter a valid PKR price, or choose enquiry-only pricing.');
       return;
     }
+    if (form.costPrice.trim() !== '' && (!Number.isFinite(Number(form.costPrice)) || Number(form.costPrice) < 0)) {
+      setMessage('Cost price must be a non-negative amount.');
+      return;
+    }
     const existingImages = images.filter((i) => i.product_id === form.id);
     if (existingImages.length === 0 && files.length === 0) {
       setMessage('Add at least one product photo before publishing.');

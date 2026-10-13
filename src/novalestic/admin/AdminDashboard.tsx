@@ -218,7 +218,7 @@ export function AdminDashboard() {
               <input type="number" min="0" step="1" placeholder="e.g. 250000" value={form.price} onChange={(e) => set('price', e.target.value)} className={input} />
             )}
           </fieldset>
-          <label className="block text-sm">Metal<input placeholder="e.g. 18k yellow gold" value={form.metal} onChange={(e) => set('metal', e.target.value)} className={input} /></label>
+          <label className="block text-sm">Cost price (PKR, private)<input type="number" min="0" step="0.01" placeholder="Optional — never shown publicly" value={form.costPrice} onChange={(e) => set('costPrice', e.target.value)} className={input} /></label>\n          <label className="block text-sm">Metal<input placeholder="e.g. 18k yellow gold" value={form.metal} onChange={(e) => set('metal', e.target.value)} className={input} /></label>
           <label className="block text-sm">Available metals (comma separated)<input value={form.availableMetals} onChange={(e) => set('availableMetals', e.target.value)} className={input} /></label>
           <label className="block text-sm">Carat / purity<input value={form.carat} onChange={(e) => set('carat', e.target.value)} className={input} /></label>
           <label className="block text-sm">Short description<input value={form.shortDesc} onChange={(e) => set('shortDesc', e.target.value)} className={input} /></label>

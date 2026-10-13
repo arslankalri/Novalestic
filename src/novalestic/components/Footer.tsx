@@ -1,7 +1,7 @@
 import React from 'react';
 import { useShop } from '../context/ShopContext';
 import { NovalesticLogo } from './NovalesticLogo';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Mail, MapPin, MessageCircle } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { navigateTo } = useShop();
@@ -12,6 +12,7 @@ export const Footer: React.FC = () => {
     { label: 'Earrings', view: 'earrings' },
     { label: 'Necklaces', view: 'necklaces' },
     { label: 'Bangles & Bracelets', view: 'bangles-bracelets' },
+    { label: 'Contact Us', view: 'contact' },
   ];
 
   return (
@@ -44,6 +45,16 @@ export const Footer: React.FC = () => {
                 </li>
               ))}
             </ul>
+          </div>
+
+          <div>
+            <h2 className="text-[11px] font-semibold uppercase text-[#4d4545] tracking-[0.2em] mb-5">Contact</h2>
+            <div className="space-y-3 text-sm text-[#4d4545]">
+              <a href="https://wa.me/923019653550" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-[#176b43]"><MessageCircle className="w-4 h-4" /> WhatsApp: 0301 9653550</a>
+              <a href="mailto:novalestic1@gmail.com" className="flex items-center gap-2 hover:text-[#9E7B32]"><Mail className="w-4 h-4" /> novalestic1@gmail.com</a>
+              <p className="flex items-start gap-2"><MapPin className="w-4 h-4 shrink-0 mt-0.5" /> Barrier 2, Wah Cantt, Taxila, Pakistan</p>
+              <button onClick={() => navigateTo('contact')} className="inline-flex items-center gap-1 text-xs uppercase tracking-wider text-[#765a18] hover:text-[#1b1c19]">Contact Us <ArrowUpRight className="w-3.5 h-3.5" /></button>
+            </div>
           </div>
 
           <div>

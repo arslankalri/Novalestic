@@ -10,3 +10,6 @@
 <!-- LOVABLE:END -->
 
 - The app is Novalestic Jewellers, a jewellery storefront ported from an external Vite SPA. Its code lives in `src/novalestic/` (App.tsx, components, context, data, types) and is mounted by the index route; it manages its own view switching internally via ShopContext (no TanStack routes per view). Shop state persists in localStorage; keep `typeof window` guards in state initializers for SSR. Store prices are in PKR.
+
+- Admin portal lives at /admin/login and /admin (client-only routes, src/novalestic/admin/); all catalogue writes go through the browser client and are enforced by database RLS via novalestic_has_admin_access() — why: no service key in the frontend, the database is the security boundary.
+- Product photos use a private bucket with long-lived signed URLs stored on rows — why: the workspace blocks public buckets.

@@ -9,6 +9,7 @@ type Customer = Database['public']['Tables']['customers']['Row'];
 type Order = Database['public']['Tables']['orders']['Row'];
 type Enquiry = Database['public']['Tables']['enquiries']['Row'];
 type Movement = Database['public']['Tables']['inventory_movements']['Row'];
+type OrderItem = Database['public']['Tables']['order_items']['Row'];
 
 const nav: { to: string; label: string }[] = [
   { to: '/admin/overview', label: 'Overview' }, { to: '/admin', label: 'Catalogue' }, { to: '/admin/orders', label: 'Orders' },
@@ -27,6 +28,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [movements, setMovements] = useState<Movement[]>([]);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [customerForm, setCustomerForm] = useState({ full_name: '', phone: '', email: '', city: '', address: '', notes: '' });
@@ -41,6 +43,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
       tasks.push((async () => { const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(100); if (error) throw error; setOrders(data ?? []); })());
       tasks.push((async () => { const { data, error } = await supabase.from('enquiries').select('*').order('created_at', { ascending: false }).limit(100); if (error) throw error; setEnquiries(data ?? []); })());
       tasks.push((async () => { const { data, error } = await supabase.from('products').select('*').order('title'); if (error) throw error; setProducts(data ?? []); })());
+      if (mode === 'reports') tasks.push((async () => { const { data, error } = await supabase.from('order_items').select('*').order('created_at', { ascending: false }).limit(1000); if (error) throw error; setOrderItems(data ?? []); })());
     }
     if (mode === 'orders') {
       tasks.push((async () => { const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false }).limit(200); if (error) throw error; setOrders(data ?? []); })());
@@ -60,6 +63,8 @@ export function AdminOperations({ mode }: { mode: Mode }) {
   const title = ({ dashboard: 'Business overview', orders: 'Orders & sales', customers: 'Customer book', enquiries: 'Customer enquiries', inventory: 'Inventory control', reports: 'Sales reports' } as const)[mode];
   const totalRevenue = useMemo(() => orders.filter(o => !['cancelled','refunded'].includes(o.status) && o.payment_status !== 'refunded').reduce((s, o) => s + Number(o.total_pkr), 0), [orders]);
   const collected = useMemo(() => orders.reduce((s, o) => s + Number(o.paid_amount_pkr), 0), [orders]);
+  const grossProfit = useMemo(() => orderItems.filter(i => i.unit_cost_pkr !== null && orders.some(o => o.id === i.order_id && o.status !== 'cancelled' && o.payment_status !== 'refunded')).reduce((s, i) => s + (Number(i.unit_price_pkr) - Number(i.unit_cost_pkr)) * i.quantity, 0), [orderItems, orders]);
+  const knownCostLines = orderItems.filter(i => i.unit_cost_pkr !== null).length;
   const openOrders = orders.filter(o => !['delivered','cancelled'].includes(o.status));
   const lowStock = products.filter(p => p.stock_quantity <= 2);
 
@@ -119,7 +124,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
       orderId = order.id;
       const { error: itemError } = await supabase.from('order_items').insert({
         order_id: order.id, product_id: product.id, product_title: product.title, sku: product.sku,
-        quantity, unit_price_pkr: price, line_total_pkr: subtotal,
+        quantity, unit_price_pkr: price, unit_cost_pkr: product.cost_price_pkr, line_total_pkr: subtotal,
       });
       if (itemError) throw itemError;
       setOrderForm({ customer_name: '', phone: '', email: '', product_id: '', quantity: '1', unit_price: '', shipping_fee: '0', discount: '0', paid: '0', source: 'whatsapp', payment_method: 'manual', shipping_address: '', city: '', notes: '' });
@@ -238,7 +243,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
           <label className={label}>Reason *<input required value={movementForm.reason} onChange={e=>setMovementForm({...movementForm,reason:e.target.value})} placeholder="Invoice, sale or reason" className={input}/></label>
           <div className="md:col-span-4"><button disabled={busy||products.length===0} className={btn}>{busy?'Saving…':'Record movement'}</button></div>
         </form></section>
-        <section className={panel}><h2 className={heading}>Current stock ({products.length} products)</h2>{products.length===0?<p className="text-sm text-[#7a7368]">Add products in the catalogue first.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Product</th><th>SKU</th><th>Visibility</th><th className="text-right">Units</th><th className="text-right">Attention</th></tr></thead><tbody>{products.map(p=><tr key={p.id} className="border-t border-[#eee8de]"><td className="py-3 font-medium">{p.title}</td><td>{p.sku||'—'}</td><td>{p.is_published?'Published':'Unpublished'}</td><td className="text-right"><span className={statusClass(p.stock_quantity<=2?'pending':'paid')}>{p.stock_quantity}</span></td><td className="text-right">{p.stock_quantity<=2?'Low stock':'Tracked'}</td></tr>)}</tbody></table></div>}<p className="mt-3 text-xs text-[#8a8174]">*Stock value is not calculated yet because product cost price is not yet collected. No profit estimate is shown until cost data exists.</p></section>
+        <section className={panel}><h2 className={heading}>Current stock ({products.length} products)</h2>{products.length===0?<p className="text-sm text-[#7a7368]">Add products in the catalogue first.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Product</th><th>SKU</th><th>Visibility</th><th className="text-right">Units</th><th className="text-right">Attention</th></tr></thead><tbody>{products.map(p=><tr key={p.id} className="border-t border-[#eee8de]"><td className="py-3 font-medium">{p.title}</td><td>{p.sku||'—'}</td><td>{p.is_published?'Published':'Unpublished'}</td><td className="text-right"><span className={statusClass(p.stock_quantity<=2?'pending':'paid')}>{p.stock_quantity}</span></td><td className="text-right">{p.stock_quantity<=2?'Low stock':'Tracked'}</td></tr>)}</tbody></table></div>}<p className="mt-3 text-xs text-[#8a8174]">Record private cost prices in the catalogue. Cost prices are never displayed on the public storefront.</p></section>
         <section className={panel}><h2 className={heading}>Recent stock ledger</h2>{movements.length===0?<p className="text-sm text-[#7a7368]">No stock movements recorded yet.</p>:<div className="overflow-x-auto"><table className={table}><thead><tr><th className="py-2">Date</th><th>Product</th><th>Type</th><th>Reason</th><th className="text-right">Change</th></tr></thead><tbody>{movements.map(m=><tr key={m.id} className="border-t border-[#eee8de]"><td className="py-3">{date(m.created_at)}</td><td>{products.find(p=>p.id===m.product_id)?.title||'Deleted product'}</td><td>{m.movement_type}</td><td>{m.reason}</td><td className="text-right">{m.quantity_delta>0?'+':''}{m.quantity_delta}</td></tr>)}</tbody></table></div>}</section>
       </>}
     </div>

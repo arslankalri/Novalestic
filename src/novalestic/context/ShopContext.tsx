@@ -33,7 +33,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(STORAGE_KEY_CART);
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed as CartItem[];
+        if (Array.isArray(parsed)) {\n          const publicProductIds = new Set(INITIAL_PRODUCTS.map((product) => product.id));\n          return (parsed as CartItem[]).filter((item) => publicProductIds.has(item?.product?.id));\n        }
       }
     } catch {
       // Start with an empty cart if browser storage is unavailable or invalid.
@@ -44,6 +44,19 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentView, setCurrentView] = useState<string>('home');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Remove legacy browser-only admin/order records from previous prototype versions.
+  // This public app no longer reads or writes those stores.
+  useEffect(() => {
+    try {
+      localStorage.removeItem('nova_lestic_products_pkr_v1');
+      localStorage.removeItem('nova_lestic_orders_pkr_v1');
+      localStorage.removeItem('nova_lestic_settings_v1');
+      localStorage.removeItem('nova_lestic_is_owner_mode');
+    } catch {
+      // The storefront remains usable if browser storage is unavailable.
+    }
+  }, []);
 
   useEffect(() => {
     const handleHashChange = () => {

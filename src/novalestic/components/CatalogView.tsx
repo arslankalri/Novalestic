@@ -1,35 +1,35 @@
 import React, { useState, useMemo } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ShoppingBag, Eye, ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { MessageCircle, Eye, ArrowLeft, SlidersHorizontal } from 'lucide-react';
 
 interface CatalogViewProps {
   category: 'all' | 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets';
 }
 
 export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
-  const { products, formatPrice, addToCart, navigateTo } = useShop();
+  const { products, navigateTo } = useShop();
 
   const [selectedMetal, setSelectedMetal] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc'>('featured');
 
   const categoryTitles: Record<string, { title: string; subtitle: string; description: string }> = {
     all: {
-      title: 'All Jewellery — Sample Catalogue',
+      title: 'All Jewellery',
       subtitle: 'THE NOVALESTIC COLLECTION',
       description: 'Explore the collection and discover pieces that suit your personal style.',
     },
     rings: {
-      title: 'Rings — Sample Catalogue',
+      title: 'Rings',
       subtitle: 'RING DESIGN PREVIEWS',
       description: 'Explore rings for everyday wear, meaningful gifts and special occasions.',
     },
     earrings: {
-      title: 'Earrings — Sample Catalogue',
+      title: 'Earrings',
       subtitle: 'EARRING DESIGN PREVIEWS',
       description: 'Explore earrings in a range of silhouettes, from subtle to statement-making.',
     },
     necklaces: {
-      title: 'Necklaces — Sample Catalogue',
+      title: 'Necklaces & Pendants',
       subtitle: 'NECKLACE DESIGN PREVIEWS',
       description: 'Explore necklaces and pendants to complement your own style.',
     },
@@ -92,7 +92,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
             {currentInfo.description}
           </p>
           <p className="mt-5 inline-flex items-center border border-[#C6A45B]/40 bg-[#fbf9f4]/70 px-3 py-2 text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-[#765a18]">
-            Store preview · Sample listings shown for design purposes
+            Prices and specifications available on enquiry
           </p>
         </div>
 
@@ -165,17 +165,17 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
                 </button>
 
                 <span className="absolute top-3 left-3 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-2.5 py-1.5 text-[9px] uppercase tracking-[0.14em] font-semibold pointer-events-none">
-                  Sample
+                  Price on enquiry
                 </span>
 
                 <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
-                  <button
-                    onClick={() => addToCart(product)}
-                    className="flex-1 py-2.5 bg-[#1b1c19] hover:bg-[#9E7B32] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"
+                  <a
+                    href={`https://wa.me/923019653550?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about ${product.title}. Please share the current price and availability.`)}`}
+                    target="_blank" rel="noreferrer"
+                    className="flex-1 py-2.5 bg-[#176b43] hover:bg-[#125637] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"
                   >
-                    <ShoppingBag className="w-3.5 h-3.5" />
-                    <span>ADD TO CART</span>
-                  </button>
+                    <MessageCircle className="w-3.5 h-3.5" /> Enquire
+                  </a>
                   <button
                     onClick={() => navigateTo('product-detail', product.id)}
                     aria-label="View Details"
@@ -213,9 +213,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
                   <span className="text-[10px] uppercase text-[#7f7575] tracking-wider font-medium">
                     Price
                   </span>
-                  <span className="font-serif-luxury text-base font-bold text-[#1b1c19] tabular-nums">
-                    {formatPrice(product.pricePKR)}
-                  </span>
+                  <span className="font-serif-luxury text-sm font-bold text-[#176b43]">Contact for price</span>
                 </div>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
 import { ArrowLeft, ShoppingBag, Info } from 'lucide-react';
 
@@ -14,6 +14,12 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
   const [selectedMetal, setSelectedMetal] = useState(product?.availableMetals?.[0] || product?.metal || '18k Yellow Gold');
   const [selectedRingSize, setSelectedRingSize] = useState('Size 14 (Standard)');
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    setSelectedMetal(product?.availableMetals?.[0] || product?.metal || '18k Yellow Gold');
+    setSelectedRingSize('Size 14 (Standard)');
+    setQuantity(1);
+  }, [productId, product?.availableMetals, product?.metal]);
 
   if (!product) {
     return (

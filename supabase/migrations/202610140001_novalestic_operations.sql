@@ -150,6 +150,7 @@ alter table public.inventory_movements enable row level security;
 
 grant select, insert, update, delete on public.customers, public.enquiries, public.orders, public.product_costs,
   public.order_items, public.inventory_movements to authenticated;
+revoke all on public.product_costs from anon;
 grant usage, select on sequence public.novalestic_order_number_seq to authenticated;
 
 drop policy if exists "Admins manage product costs" on public.product_costs;

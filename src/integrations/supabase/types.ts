@@ -6,43 +6,6 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-type OperationsTable<Row> = {
-  Row: Row
-  Insert: Partial<Row>
-  Update: Partial<Row>
-  Relationships: []
-}
-
-type ProductCostRow = { product_id: string; cost_price_pkr: number; updated_at: string }
-type CustomerRow = {
-  id: string; full_name: string; phone: string | null; email: string | null;
-  city: string | null; address: string | null; notes: string | null;
-  created_at: string; updated_at: string
-}
-type EnquiryRow = {
-  id: string; customer_id: string | null; customer_name: string; phone: string | null;
-  email: string | null; channel: string; status: string; subject: string | null;
-  message: string | null; product_id: string | null; follow_up_at: string | null;
-  notes: string | null; created_at: string; updated_at: string
-}
-type OrderRow = {
-  id: string; order_number: string; customer_id: string | null; customer_name: string;
-  phone: string | null; email: string | null; status: string; payment_status: string;
-  payment_method: string; subtotal_pkr: number; shipping_fee_pkr: number;
-  discount_pkr: number; total_pkr: number; paid_amount_pkr: number;
-  shipping_address: string | null; city: string | null; tracking_number: string | null;
-  source: string; notes: string | null; created_at: string; updated_at: string
-}
-type OrderItemRow = {
-  id: string; order_id: string; product_id: string | null; product_title: string;
-  sku: string | null; quantity: number; unit_price_pkr: number; unit_cost_pkr: number | null; line_total_pkr: number;
-  created_at: string
-}
-type InventoryMovementRow = {
-  id: string; product_id: string; movement_type: string; quantity_delta: number;
-  reason: string; order_id: string | null; created_at: string
-}
-
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
@@ -51,12 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      product_costs: OperationsTable<ProductCostRow>
-      customers: OperationsTable<CustomerRow>
-      enquiries: OperationsTable<EnquiryRow>
-      orders: OperationsTable<OrderRow>
-      order_items: OperationsTable<OrderItemRow>
-      inventory_movements: OperationsTable<InventoryMovementRow>
       product_images: {
         Row: {
           alt_text: string | null
@@ -205,7 +162,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      novalestic_has_admin_access: { Args: never; Returns: boolean }\n      novalestic_update_order_status: { Args: { p_order_id: string; p_status: string }; Returns: boolean }
+      novalestic_has_admin_access: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

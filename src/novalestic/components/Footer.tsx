@@ -86,6 +86,24 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAnalyticsPreferences }) =>
           </div>
         </div>
 
+        <nav aria-label="Policies and privacy" className="mt-12 flex flex-wrap gap-x-5 gap-y-3 text-xs text-muted-foreground">
+          {[
+            { label: "Privacy Notice", view: "privacy" },
+            { label: "Shipping & Delivery", view: "shipping" },
+            { label: "Returns & Exchanges", view: "returns" },
+            { label: "Website Terms", view: "terms" },
+          ].map((item) => (
+            <button
+              key={item.view}
+              type="button"
+              onClick={() => navigateTo(item.view)}
+              className="rounded-sm transition-colors hover:text-foreground"
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
         <div className="mt-14 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} Novalestic Jewellers</p>
           <div className="flex flex-wrap items-center justify-center gap-4">

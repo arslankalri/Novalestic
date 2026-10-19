@@ -4,8 +4,8 @@ import type { Database as GeneratedDatabase } from "@/integrations/supabase/type
 
 /**
  * Type-only extension describing the tables from
- * supabase/migrations/202610140001_novalestic_operations.sql, which is not yet
- * applied to the database (so the generated types do not include them).
+ * Supabase migrations for store operations and website analytics, which may not
+ * yet be applied to the database (so generated types may not include them).
  * Runtime behaviour is identical to the generated client; remove this file once
  * the migration is applied and types are regenerated.
  */
@@ -85,6 +85,14 @@ type MovementRow = {
   order_id: string | null;
   created_at: Ts;
 };
+type WebsitePageViewRow = {
+  id: string;
+  session_id: string;
+  page_path: string;
+  referrer_host: string | null;
+  device_type: "mobile" | "desktop" | "unknown";
+  created_at: Ts;
+};
 
 type G = GeneratedDatabase["public"];
 
@@ -97,6 +105,7 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
       orders: Tbl<OrderRow>;
       order_items: Tbl<OrderItemRow>;
       inventory_movements: Tbl<MovementRow>;
+      website_page_views: Tbl<WebsitePageViewRow>;
     };
     Functions: G["Functions"] & {
       novalestic_update_order_status: {

@@ -1,10 +1,14 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Product, CartItem } from '../types';
-import { INITIAL_PRODUCTS } from '../data/products';
 import { fetchPublishedProducts } from '../data/publishedProducts';
+
+export type ProductsStatus = 'loading' | 'ready' | 'error';
 
 interface ShopContextType {
   products: Product[];
+  productsStatus: ProductsStatus;
+  productsError: string | null;
+  reloadProducts: () => void;
   currentView: string;
   selectedProductId: string | null;
   navigateTo: (view: string, productId?: string) => void;
@@ -22,19 +26,35 @@ interface ShopContextType {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 const STORAGE_KEY_CART = 'nova_lestic_cart_pkr_v1';
+// IDs of the old design-preview fixtures; never real inventory.
+const isPreviewFixtureId = (id: string) => id.startsWith('sample-');
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Public storefront catalogue is intentionally read-only. A separate, authenticated
-  // admin portal can be added later without exposing management controls in this app.
-  // Published catalogue items replace the design-preview samples once any exist.
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  // The storefront shows only published catalogue items from the database.
+  // No sample fixtures are shown as a fallback, so loading, empty and error stay distinct.
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productsStatus, setProductsStatus] = useState<ProductsStatus>('loading');
+  const [productsError, setProductsError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const reloadProducts = useCallback(() => setReloadKey((k) => k + 1), []);
+
   useEffect(() => {
     let active = true;
-    fetchPublishedProducts().then((live) => {
-      if (active && live.length > 0) setProducts(live);
-    }).catch(() => { /* keep sample listings if the catalogue is unreachable */ });
+    setProductsStatus('loading');
+    setProductsError(null);
+    fetchPublishedProducts()
+      .then((live) => {
+        if (!active) return;
+        setProducts(live);
+        setProductsStatus('ready');
+      })
+      .catch((err: unknown) => {
+        if (!active) return;
+        setProductsError(err instanceof Error ? err.message : 'Unable to load the collection.');
+        setProductsStatus('error');
+      });
     return () => { active = false; };
-  }, []);
+  }, [reloadKey]);
 
   const [cart, setCart] = useState<CartItem[]>(() => {
     try {
@@ -43,7 +63,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          return (parsed as CartItem[]).filter((item) => typeof item?.product?.id === 'string');
+          return (parsed as CartItem[]).filter((item) =>
+            typeof item?.product?.id === 'string' && !isPreviewFixtureId(item.product.id));
         }
       }
     } catch {
@@ -101,7 +122,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (typeof window !== 'undefined') {
       const hash = view === 'home' ? '' : `#${view}`;
       if (window.location.hash !== hash) window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${hash}`);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
   };
 
@@ -159,7 +181,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <ShopContext.Provider value={{
-      products, currentView, selectedProductId, navigateTo, formatPrice,
+      products, productsStatus, productsError, reloadProducts, currentView, selectedProductId, navigateTo, formatPrice,
       cart, addToCart, removeFromCart, updateCartQuantity, clearCart,
       cartTotal, cartCount, toastMessage, showToast,
     }}>

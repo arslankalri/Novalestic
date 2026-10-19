@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
+import { ArrowLeft, MessageCircle, Info } from 'lucide-react';
+import { CollectionError } from './CollectionState';
 
 const WHATSAPP_NUMBER = '923019653550';
-import { ArrowLeft, MessageCircle, Info } from 'lucide-react';
 
 interface ProductDetailViewProps {
   productId: string;
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
-  const { products, navigateTo } = useShop();
+  const { products, productsStatus, navigateTo } = useShop();
 
-  const product = products.find((p) => p.id === productId);
+  const product = productId ? products.find((p) => p.id === productId) : undefined;
 
   const [selectedMetal, setSelectedMetal] = useState(product?.availableMetals?.[0] || product?.metal || '18k Yellow Gold');
   const [selectedRingSize, setSelectedRingSize] = useState('Size 14 (Standard)');
@@ -24,17 +25,38 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
   }, [productId, product?.availableMetals, product?.metal]);
 
   if (!product) {
+    const loading = productsStatus === 'loading' && !!productId;
     return (
-      <div className="pt-32 pb-20 text-center">
-        <p>Product not found.</p>
-        <button onClick={() => navigateTo('shop')} className="mt-4 underline">
-          Back to Shop
-        </button>
-      </div>
+      <main className="w-full bg-background min-h-screen pt-40 pb-24">
+        <div className="shell max-w-2xl">
+          {loading ? (
+            <div role="status" aria-busy="true" className="text-center py-20">
+              <span className="sr-only">Loading this piece…</span>
+              <div className="mx-auto aspect-[4/5] max-w-xs rounded-[1.5rem] bg-secondary animate-pulse" aria-hidden="true" />
+            </div>
+          ) : productsStatus === 'error' ? (
+            <CollectionError />
+          ) : (
+            <div role="status" className="rounded-[1.5rem] border border-border bg-card px-6 py-16 text-center">
+              <p className="eyebrow mb-3">Unavailable</p>
+              <h1 className="font-serif-luxury text-3xl text-foreground">This piece is not available</h1>
+              <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
+                It may have been removed from the collection. Browse the current collection or contact our team for help.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                <button onClick={() => navigateTo('shop')} className="rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-medium hover:opacity-90 transition-opacity">
+                  Back to Shop
+                </button>
+                <button onClick={() => navigateTo('contact')} className="rounded-full border border-foreground/15 px-6 py-3 text-sm font-medium hover:bg-secondary transition-colors">
+                  Contact us
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
     );
   }
-
-
 
   const ringSizes = [
     'Size 12 (Small)',
@@ -44,182 +66,123 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
     'Custom Size / Resizing on Request',
   ];
 
+  const optionBtn = (active: boolean) =>
+    `rounded-full px-4 py-2 text-sm border transition-colors ${
+      active ? 'border-foreground bg-foreground text-background' : 'border-border bg-card text-foreground hover:border-foreground/40'
+    }`;
+
   return (
-    <div className="w-full bg-[#fbf9f4] min-h-screen pt-36 pb-24">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
-        {/* Breadcrumb */}
-        <div className="mb-6 flex items-center gap-2 text-xs text-[#7f7575] uppercase tracking-wider">
-          <button
-            onClick={() => navigateTo('home')}
-            className="hover:text-[#1b1c19] flex items-center gap-1 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
+    <div className="w-full bg-background min-h-screen pt-32 pb-24">
+      <div className="shell">
+        <nav aria-label="Breadcrumb" className="mb-10 flex items-center gap-2 text-xs text-muted-foreground">
+          <button onClick={() => navigateTo('home')} className="hover:text-foreground flex items-center gap-1 transition-colors rounded-sm">
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Home</span>
           </button>
-          <span>/</span>
-          <button
-            onClick={() => navigateTo('shop')}
-            className="hover:text-[#1b1c19] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
-          >
-            Jewellery
-          </button>
-          <span>/</span>
-          <span className="text-[#1b1c19] font-semibold truncate max-w-xs">{product.title}</span>
-        </div>
+          <span aria-hidden="true">/</span>
+          <button onClick={() => navigateTo('shop')} className="hover:text-foreground transition-colors rounded-sm">Jewellery</button>
+          <span aria-hidden="true">/</span>
+          <span className="text-foreground font-medium truncate max-w-xs" aria-current="page">{product.title}</span>
+        </nav>
 
-        {/* 2-Column Split: Image Left, Purchase Module Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Left Column: Image */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="relative aspect-[4/5] bg-[#F2EDE3] overflow-hidden shadow-lg border border-[#e4e2dd]">
-              <img
-                alt={product.title}
-                src={product.image}
-                className="w-full h-full object-cover object-center"
-              />
-
-              <span className="absolute top-4 left-4 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-3 py-1.5 text-[10px] uppercase tracking-[0.16em] font-semibold">Sample listing</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+          <div className="lg:col-span-7">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-secondary">
+              {product.image ? (
+                <img alt={product.title} src={product.image} className="w-full h-full object-cover object-center" />
+              ) : (
+                <span className="flex w-full h-full items-center justify-center font-serif-luxury text-6xl text-champagne/60" aria-hidden="true">N</span>
+              )}
+              {product.hallmarkBadge && (
+                <span className="absolute top-4 left-4 rounded-full bg-card/90 backdrop-blur px-3.5 py-1.5 text-[11px] tracking-wide text-foreground">
+                  {product.hallmarkBadge}
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Right Column: Purchase Module */}
-          <div className="lg:col-span-5 flex flex-col justify-start">
-            <div className="border-b border-[#e4e2dd] pb-6 mb-6">
-              <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-                NOVALESTIC COLLECTION · {product.category.replace('-', ' ')}
-              </span>
+          <div className="lg:col-span-5 lg:sticky lg:top-32">
+            <p className="eyebrow mb-4">Novalestic Collection · {product.category.replace('-', ' ')}</p>
+            <h1 className="font-serif-luxury text-4xl sm:text-5xl text-foreground tracking-tight leading-[1.08]">
+              {product.title}
+            </h1>
 
-              <h1 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal mb-3">
-                {product.title}
-              </h1>
-
-              <div className="mt-4">
-                <span className="font-serif-luxury text-2xl font-bold text-[#1b1c19]">Contact for price</span>
-                <p className="text-xs text-[#7f7575] mt-1">Price and availability confirmed directly with our team.</p>
-              </div>
+            <div className="mt-6 pb-8 border-b border-border">
+              <p className="font-serif-luxury text-2xl text-emerald">Contact for price</p>
+              <p className="text-sm text-muted-foreground mt-1">Price and availability confirmed directly with our team.</p>
             </div>
 
-            <p className="text-sm text-[#4d4545] leading-relaxed mb-6 font-light">
-              {product.description}
-            </p>
+            {product.description && (
+              <p className="mt-8 text-base text-muted-foreground leading-relaxed">{product.description}</p>
+            )}
 
-            {/* Metal Selection */}
             {product.availableMetals && product.availableMetals.length > 0 && (
-              <div className="mb-6">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#1b1c19] mb-2">
-                  Select Option: <span className="font-normal text-[#765a18]">{selectedMetal}</span>
-                </label>
+              <fieldset className="mt-8">
+                <legend className="text-sm font-medium text-foreground mb-3">
+                  Option: <span className="font-normal text-muted-foreground">{selectedMetal}</span>
+                </legend>
                 <div className="flex flex-wrap gap-2">
                   {product.availableMetals.map((metal) => (
-                    <button
-                      key={metal}
-                      type="button"
-                      onClick={() => setSelectedMetal(metal)}
-                      aria-pressed={selectedMetal === metal}
-                      className={`px-3.5 py-2 text-xs border transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] ${
-                        selectedMetal === metal
-                          ? 'border-[#9E7B32] bg-[#F2EDE3] font-semibold text-[#1b1c19]'
-                          : 'border-[#e4e2dd] bg-[#f5f3ee] text-[#4d4545] hover:bg-[#eae8e3]'
-                      }`}
-                    >
+                    <button key={metal} type="button" onClick={() => setSelectedMetal(metal)} aria-pressed={selectedMetal === metal} className={optionBtn(selectedMetal === metal)}>
                       {metal}
                     </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
             )}
 
-            {/* Ring Sizing (If Ring) */}
             {product.category === 'rings' && (
-              <div className="mb-6">
-                <label className="block text-xs font-semibold uppercase tracking-wider text-[#1b1c19] mb-2">
-                  Select Ring Size
-                </label>
+              <div className="mt-8">
+                <label htmlFor="ring-size" className="block text-sm font-medium text-foreground mb-3">Ring size</label>
                 <select
+                  id="ring-size"
                   value={selectedRingSize}
                   onChange={(e) => setSelectedRingSize(e.target.value)}
-                  className="w-full bg-[#f5f3ee] border border-[#e4e2dd] px-3.5 py-2.5 text-xs text-[#1b1c19] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] focus:border-[#9E7B32]"
+                  className="w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground"
                 >
                   {ringSizes.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
+                    <option key={size} value={size}>{size}</option>
                   ))}
                 </select>
-                <span className="text-[10px] text-[#7f7575] mt-1 block">
-                  Sample sizing options for design preview.
-                </span>
+                <span className="text-xs text-muted-foreground mt-2 block">Exact sizing is confirmed with our team before an order is finalised.</span>
               </div>
             )}
 
-            {/* Quantity */}
-            <div className="mb-6 flex items-center gap-3">
-              <label className="text-xs font-semibold uppercase tracking-wider text-[#1b1c19]">
-                Quantity:
-              </label>
-              <div className="flex items-center border border-[#e4e2dd] bg-[#f5f3ee]">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-                  aria-label="Decrease quantity"
-                  disabled={quantity <= 1}
-                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  −
-                </button>
-                <span aria-live="polite" className="px-4 py-1.5 text-xs font-bold font-mono">{quantity}</span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((current) => Math.min(99, current + 1))}
-                  aria-label="Increase quantity"
-                  disabled={quantity >= 99}
-                  className="px-3 py-1.5 text-sm hover:bg-[#eae8e3] disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  +
-                </button>
+            <div className="mt-8 flex items-center gap-4">
+              <span id="qty-label" className="text-sm font-medium text-foreground">Quantity</span>
+              <div role="group" aria-labelledby="qty-label" className="flex items-center rounded-full border border-border bg-card">
+                <button type="button" onClick={() => setQuantity((c) => Math.max(1, c - 1))} aria-label="Decrease quantity" disabled={quantity <= 1} className="w-10 h-10 rounded-full text-lg hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed">−</button>
+                <span aria-live="polite" className="min-w-8 text-center text-sm font-medium tabular-nums">{quantity}</span>
+                <button type="button" onClick={() => setQuantity((c) => Math.min(99, c + 1))} aria-label="Increase quantity" disabled={quantity >= 99} className="w-10 h-10 rounded-full text-lg hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed">+</button>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-3 mb-8">
+            <div className="mt-10 space-y-3">
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about: ${product.title}. Please share the current price, availability, materials and specifications.`)}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full py-4 bg-[#176b43] hover:bg-[#125637] text-white text-xs font-semibold uppercase tracking-[0.16em] transition-colors flex items-center justify-center gap-2 shadow-lg"
+                className="w-full rounded-full bg-emerald hover:bg-emerald-hover text-emerald-foreground py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2"
               >
-                <MessageCircle className="w-4 h-4" /> Enquire on WhatsApp
+                <MessageCircle className="w-4 h-4" aria-hidden="true" /> Enquire on WhatsApp
               </a>
-              <button type="button" onClick={() => navigateTo('contact')} className="w-full py-3.5 border border-[#C6A45B] text-[#765a18] hover:bg-[#F2EDE3] text-xs font-semibold uppercase tracking-[0.16em] transition-colors">Other Contact Options</button>
+              <button type="button" onClick={() => navigateTo('contact')} className="w-full rounded-full border border-foreground/15 py-3.5 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
+                Other Contact Options
+              </button>
             </div>
 
-            {/* Preview notice */}
-            <div className="bg-[#F2EDE3]/70 p-4 border border-[#C6A45B]/35 flex items-start gap-3 text-xs text-[#5d5750] mb-6">
-              <Info className="w-4 h-4 text-[#9E7B32] shrink-0 mt-0.5" />
+            <div className="mt-8 flex items-start gap-3 text-sm text-muted-foreground">
+              <Info className="w-4 h-4 text-champagne shrink-0 mt-0.5" aria-hidden="true" />
               <p className="leading-relaxed">Product details, availability, materials and final pricing are confirmed directly before an order is finalised.</p>
             </div>
 
-            {/* Specifications */}
-            <div className="border-t border-[#e4e2dd] pt-6">
-              <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1b1c19] mb-4">
-                Jewellery Specifications
-              </h4>
-
-              <div className="space-y-2.5 text-xs text-[#4d4545]">
-                <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
-                  <span className="text-[#7f7575]">Gold Metal:</span>
-                  <span className="font-medium text-[#1b1c19]">{selectedMetal}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
-                  <span className="text-[#7f7575]">Gemstone:</span>
-                  <span className="font-medium text-[#1b1c19]">{product.carat || 'To be confirmed'}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-[#e4e2dd]/60">
-                  <span className="text-[#7f7575]">Stone Origin:</span>
-                  <span className="font-medium text-[#1b1c19]">{product.origin || 'To be confirmed'}</span>
-                </div>
-
-              </div>
+            <div className="mt-10 pt-8 border-t border-border">
+              <h2 className="eyebrow font-sans text-muted-foreground mb-4">Jewellery Specifications</h2>
+              <dl className="text-sm divide-y divide-border">
+                <div className="flex justify-between py-3"><dt className="text-muted-foreground">Gold Metal</dt><dd className="text-foreground">{selectedMetal}</dd></div>
+                <div className="flex justify-between py-3"><dt className="text-muted-foreground">Gemstone</dt><dd className="text-foreground">{product.carat || 'To be confirmed'}</dd></div>
+                <div className="flex justify-between py-3"><dt className="text-muted-foreground">Stone Origin</dt><dd className="text-foreground">{product.origin || 'To be confirmed'}</dd></div>
+              </dl>
             </div>
           </div>
         </div>

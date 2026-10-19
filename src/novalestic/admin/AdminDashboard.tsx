@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import { adminDb as supabase } from './opsDatabase';
+import type { Database } from './opsDatabase';
 
 type ProductRow = Database['public']['Tables']['products']['Row'];
 type ImageRow = Database['public']['Tables']['product_images']['Row'];
@@ -44,7 +44,8 @@ const blank = (s: string) => (s.trim() === '' ? null : s.trim());
 export function AdminDashboard() {
   const navigate = useNavigate();
   const [products, setProducts] = useState<ProductRow[]>([]);
-  const [images, setImages] = useState<ImageRow[]>([]);\n  const [costs, setCosts] = useState<Database['public']['Tables']['product_costs']['Row'][]>([]);
+  const [images, setImages] = useState<ImageRow[]>([]);
+  const [costs, setCosts] = useState<Database['public']['Tables']['product_costs']['Row'][]>([]);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);

@@ -155,10 +155,68 @@
   --color-emerald-subtle: #e8f4f0;
 }
 
+/* Novalestic storefront tokens (warm ivory, charcoal, restrained champagne, emerald for enquiries) */
+:root {
+  --background: oklch(0.982 0.006 85);
+  --foreground: oklch(0.22 0.006 75);
+  --card: oklch(0.995 0.003 85);
+  --card-foreground: oklch(0.22 0.006 75);
+  --popover: oklch(0.995 0.003 85);
+  --popover-foreground: oklch(0.22 0.006 75);
+  --primary: oklch(0.22 0.006 75);
+  --primary-foreground: oklch(0.985 0.005 85);
+  --secondary: oklch(0.952 0.01 85);
+  --secondary-foreground: oklch(0.22 0.006 75);
+  --muted: oklch(0.952 0.01 85);
+  --muted-foreground: oklch(0.48 0.014 75);
+  --accent: oklch(0.935 0.025 85);
+  --accent-foreground: oklch(0.22 0.006 75);
+  --border: oklch(0.9 0.01 85);
+  --input: oklch(0.88 0.012 85);
+  --ring: oklch(0.52 0.09 80);
+  --champagne: oklch(0.5 0.085 80);
+  --champagne-soft: oklch(0.82 0.07 85);
+  --emerald: oklch(0.42 0.075 158);
+  --emerald-hover: oklch(0.36 0.07 158);
+  --emerald-foreground: oklch(0.985 0.005 85);
+  --shadow-soft: 0 1px 2px oklch(0.22 0.006 75 / 0.04), 0 12px 32px -12px oklch(0.22 0.006 75 / 0.12);
+  --shadow-lift: 0 2px 4px oklch(0.22 0.006 75 / 0.04), 0 24px 48px -16px oklch(0.22 0.006 75 / 0.18);
+}
+
+@theme inline {
+  --color-champagne: var(--champagne);
+  --color-champagne-soft: var(--champagne-soft);
+  --color-emerald: var(--emerald);
+  --color-emerald-hover: var(--emerald-hover);
+  --color-emerald-foreground: var(--emerald-foreground);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--champagne);
+}
+
+@utility shell {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
 body {
   font-family: var(--font-sans);
-  background-color: #fbf9f4;
-  color: #1b1c19;
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
@@ -166,4 +224,25 @@ h2,
 h3,
 .font-serif-luxury {
   font-family: var(--font-serif);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--champagne-soft);
+  color: var(--foreground);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

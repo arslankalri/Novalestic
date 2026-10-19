@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { MessageCircle, Eye } from 'lucide-react';
+import { ProductCard } from './ProductCard';
+import { CollectionEmpty, CollectionError, CollectionLoading } from './CollectionState';
 
 export const BestsellingGrid: React.FC = () => {
-  const { products, navigateTo } = useShop();
+  const { products, productsStatus } = useShop();
   const [activeTab, setActiveTab] = useState<'all' | 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets'>('all');
 
   const filterTabs = [
-    { id: 'all', label: 'ALL PIECES' },
-    { id: 'rings', label: 'RINGS' },
-    { id: 'earrings', label: 'EARRINGS' },
-    { id: 'necklaces', label: 'NECKLACES' },
-    { id: 'bangles-bracelets', label: 'BANGLES & BRACELETS' },
+    { id: 'all', label: 'All Pieces' },
+    { id: 'rings', label: 'Rings' },
+    { id: 'earrings', label: 'Earrings' },
+    { id: 'necklaces', label: 'Necklaces' },
+    { id: 'bangles-bracelets', label: 'Bangles & Bracelets' },
   ] as const;
 
   const filteredProducts = products.filter((item) => {
@@ -19,127 +20,56 @@ export const BestsellingGrid: React.FC = () => {
     return item.category === activeTab;
   });
 
+  const showTabs = productsStatus === 'ready' && products.length > 0;
+
   return (
-    <section className="w-full py-16 lg:py-24 bg-[#F2EDE3]" id="bestselling-section">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16">
-        {/* Header & Tabs */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+    <section className="w-full py-20 lg:py-28 bg-secondary/60" id="bestselling-section" aria-labelledby="collection-heading">
+      <div className="shell">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
           <div>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#765a18] block mb-2">
-              COLLECTION PREVIEW
-            </span>
-            <h2 className="font-serif-luxury text-3xl sm:text-4xl text-[#1b1c19] font-normal">
+            <p className="eyebrow mb-3">The Collection</p>
+            <h2 id="collection-heading" className="font-serif-luxury text-3xl sm:text-5xl text-foreground tracking-tight">
               Explore the Collection
             </h2>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#fbf9f4] shadow-sm border border-[#e4e2dd]">
-            {filterTabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  aria-pressed={isActive}
-                  className={`px-4 py-2 text-xs font-semibold tracking-[0.12em] uppercase transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32] ${
-                    isActive
-                      ? 'bg-[#1b1c19] text-white shadow-sm'
-                      : 'text-[#4d4545] hover:text-[#1b1c19]'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 4-Column Luxury Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="group flex flex-col bg-[#fbf9f4] shadow-sm hover:shadow-xl transition-all duration-300 border border-[#e4e2dd]/60"
-            >
-              {/* Product Image */}
-              <div className="relative w-full aspect-[4/5] bg-[#eae8e3] overflow-hidden">
-                <button
-                  onClick={() => navigateTo('product-detail', product.id)}
-                  className="w-full h-full block focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#9E7B32]"
-                  aria-label={`View details of ${product.title}`}
-                >
-                  <img
-                    alt={product.title}
-                    src={product.image}
-                    className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </button>
-
-                <span className="absolute top-3 left-3 bg-[#fbf9f4]/95 border border-[#C6A45B]/40 text-[#765a18] px-2.5 py-1.5 text-[9px] uppercase tracking-[0.14em] font-semibold pointer-events-none">
-                  Price on enquiry
-                </span>
-
-                {/* Quick Add Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-3 bg-[#fbf9f4]/95 backdrop-blur-md translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between gap-2 shadow-lg">
-                  <a
-                    href={`https://wa.me/923019653550?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about ${product.title}. Please share the current price and availability.`)}`}
-                    target="_blank" rel="noreferrer"
-                    className="flex-1 py-2.5 bg-[#176b43] hover:bg-[#125637] text-white text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5" /> Enquire
-                  </a>
+          {showTabs && (
+            <div role="group" aria-label="Filter by category" className="flex flex-wrap gap-1.5 rounded-full bg-card p-1.5 shadow-soft w-fit">
+              {filterTabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                return (
                   <button
-                    onClick={() => navigateTo('product-detail', product.id)}
-                    aria-label="View Details"
-                    className="w-10 h-10 bg-[#eae8e3] hover:bg-[#dbdad5] flex items-center justify-center text-[#1b1c19] transition-colors shrink-0"
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    aria-pressed={isActive}
+                    className={`rounded-full px-4 py-2 text-xs font-medium tracking-wide transition-colors duration-200 ${
+                      isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                    }`}
                   >
-                    <Eye className="w-4 h-4" />
+                    {tab.label}
                   </button>
-                </div>
-              </div>
-
-              {/* Card Details */}
-              <div className="p-6 flex flex-col flex-grow justify-between bg-[#fbf9f4]">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-semibold uppercase text-[#765a18] tracking-widest">
-                      {product.metal}
-                    </span>
-
-                  </div>
-
-                  <button
-                    onClick={() => navigateTo('product-detail', product.id)}
-                    className="text-left w-full group/title focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9E7B32]"
-                  >
-                    <h3 className="font-serif-luxury text-[17px] text-[#1b1c19] font-medium mb-1 group-hover/title:text-[#9E7B32] transition-colors line-clamp-1">
-                      {product.title}
-                    </h3>
-                  </button>
-
-                  <p className="text-xs text-[#4d4545] mb-4 line-clamp-2 leading-relaxed">
-                    {product.shortDesc}
-                  </p>
-                </div>
-
-                {/* Price in PKR */}
-                <div className="pt-3 flex items-baseline justify-between bg-[#f5f3ee] px-3.5 py-2.5 border-t border-[#e4e2dd]">
-                  <span className="text-[10px] uppercase text-[#7f7575] tracking-wider font-medium">
-                    Price
-                  </span>
-                  <span className="font-serif-luxury text-sm font-bold text-[#176b43]">Contact for price</span>
-                </div>
-              </div>
+                );
+              })}
             </div>
-          ))}
+          )}
         </div>
-        {filteredProducts.length === 0 && (
-          <p className="mt-8 text-center text-sm text-[#5d5750]" role="status">
-            No sample pieces are available in this category yet.
-          </p>
+
+        {productsStatus === 'loading' && <CollectionLoading />}
+        {productsStatus === 'error' && <CollectionError />}
+        {productsStatus === 'ready' && products.length === 0 && <CollectionEmpty />}
+
+        {productsStatus === 'ready' && products.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+              {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+            </div>
+            {filteredProducts.length === 0 && (
+              <p className="mt-4 text-center text-sm text-muted-foreground" role="status">
+                No pieces are available in this category yet.
+              </p>
+            )}
+          </>
         )}
       </div>
     </section>

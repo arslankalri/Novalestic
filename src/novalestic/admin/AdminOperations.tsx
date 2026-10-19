@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import { adminDb as supabase } from './opsDatabase';
+import type { Database } from './opsDatabase';
 
 type Mode = 'dashboard' | 'orders' | 'customers' | 'enquiries' | 'inventory' | 'reports';
 type Product = Database['public']['Tables']['products']['Row'];
@@ -24,7 +24,8 @@ const btn = 'inline-flex items-center justify-center rounded bg-[#062c21] px-4 p
 const label = 'block space-y-1 text-sm text-[#5d554b]';
 
 export function AdminOperations({ mode }: { mode: Mode }) {
-  const [products, setProducts] = useState<Product[]>([]);\n  const [productCosts, setProductCosts] = useState<ProductCost[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productCosts, setProductCosts] = useState<ProductCost[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);

@@ -36,7 +36,7 @@ const AppContent: React.FC = () => {
         return <CatalogView category="bangles-bracelets" />;
 
       case 'product-detail':
-        return <ProductDetailView productId={selectedProductId || 'sample-ring'} />;
+        return <ProductDetailView productId={selectedProductId ?? ''} />;
 
       case 'cart':
         return <CartView />;
@@ -46,7 +46,7 @@ const AppContent: React.FC = () => {
       case 'home':
       default:
         return (
-          <main className="w-full bg-[#fbf9f4]">
+          <main className="w-full bg-background">
             {/* 1. Hero Campaign Section */}
             <HeroSection />
 
@@ -70,7 +70,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbf9f4] text-[#1b1c19] selection:bg-[#fed88a] selection:text-[#785d1b]">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       {/* Top Header */}
       <Header />
 

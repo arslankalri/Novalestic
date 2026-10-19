@@ -1,14 +1,18 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Product } from '../types';
 
-/** Loads only published products (the database also enforces this for visitors). */
+/**
+ * Loads only published products (the database also enforces this for visitors).
+ * Throws on a failed request so callers can tell "could not load" apart from "empty".
+ */
 export async function fetchPublishedProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
     .eq('is_published', true)
     .order('created_at', { ascending: false });
-  if (error || !data) return [];
+  if (error) throw new Error(error.message || 'Unable to load the collection.');
+  if (!data) return [];
   return data.map((r) => ({
     id: r.id,
     title: r.title,

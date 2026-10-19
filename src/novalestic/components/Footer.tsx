@@ -51,9 +51,9 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <h2 className="eyebrow font-sans text-muted-foreground mb-5">A note about this preview</h2>
+            <h2 className="eyebrow font-sans text-muted-foreground mb-5">Before you enquire</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              This storefront is being prepared. Materials, availability, shipping and payment details are confirmed individually before orders open.
+              Current prices, product details and availability are confirmed by our team. Shipping and payment arrangements are discussed directly before an order is placed.
             </p>
           </div>
         </div>

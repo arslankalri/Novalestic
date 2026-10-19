@@ -122,7 +122,8 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (typeof window !== 'undefined') {
       const hash = view === 'home' ? '' : `#${view}`;
       if (window.location.hash !== hash) window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${hash}`);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
   };
 
@@ -180,7 +181,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <ShopContext.Provider value={{
-      products, currentView, selectedProductId, navigateTo, formatPrice,
+      products, productsStatus, productsError, reloadProducts, currentView, selectedProductId, navigateTo, formatPrice,
       cart, addToCart, removeFromCart, updateCartQuantity, clearCart,
       cartTotal, cartCount, toastMessage, showToast,
     }}>

@@ -34,17 +34,23 @@ jobs:
         run: |
           bunx prettier --check "src/novalestic/**/*.{ts,tsx,js,jsx,json,css,md}" "src/styles.css"
           bunx vitest run
-          bunx tsgo -p .
+          bunx tsc --noEmit
           bun run build
 
       - name: Commit formatting and remove this temporary workflow
         run: |
-          git rm .github/workflows/one-time-storefront-format.yml
           git add src/novalestic src/styles.css
+          if [ -f .github/workflows/one-time-storefront-format.yml ]; then
+            git rm .github/workflows/one-time-storefront-format.yml
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Format Novalestic storefront and admin source"
-          git push origin HEAD:main
+          if ! git diff --cached --quiet; then
+            git commit -m "Format Novalestic storefront and admin source"
+            git push origin HEAD:main
+          else
+            echo "Formatting already committed; no additional changes."
+          fi
 
       - name: Delete merged redesign branches
         uses: actions/github-script@v7

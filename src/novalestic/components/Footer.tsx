@@ -3,7 +3,7 @@ import { useShop } from "../context/ShopContext";
 import { NovalesticLogo } from "./NovalesticLogo";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
 
-export const Footer: React.FC = () => {
+interface FooterProps {\n  onOpenAnalyticsPreferences: () => void;\n}\n\nexport const Footer: React.FC<FooterProps> = ({ onOpenAnalyticsPreferences }) => {
   const { navigateTo } = useShop();
 
   const links = [
@@ -84,12 +84,22 @@ export const Footer: React.FC = () => {
 
         <div className="mt-14 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} Novalestic Jewellers</p>
-          <button
-            onClick={() => navigateTo("home")}
-            className="hover:text-foreground transition-colors rounded-sm"
-          >
-            Back to top ↑
-          </button>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <button
+              type="button"
+              onClick={onOpenAnalyticsPreferences}
+              className="hover:text-foreground transition-colors rounded-sm"
+            >
+              Privacy preferences
+            </button>
+            <button
+              type="button"
+              onClick={() => navigateTo("home")}
+              className="hover:text-foreground transition-colors rounded-sm"
+            >
+              Back to top ↑
+            </button>
+          </div>
         </div>
       </div>
     </footer>

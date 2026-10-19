@@ -57,8 +57,10 @@ export function recordStorefrontPageView(pagePath: string): void {
         referrer_host: referrerHost,
         device_type: deviceType,
       })
-      .then(() => undefined)
-      .catch(() => undefined);
+      .then(
+        () => undefined,
+        () => undefined,
+      );
   } catch {
     // Tracking is optional: blocked browser storage or missing browser APIs are ignored.
   }

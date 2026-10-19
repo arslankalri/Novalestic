@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Format, test, lint, type-check and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Check formatting
+        run: bunx prettier --check .
+
+      - name: Run tests
+        run: bunx vitest run
+
+      - name: Check TypeScript
+        run: bunx tsc --noEmit
+
+      - name: Run ESLint
+        run: bun run lint
+
+      - name: Build
+        run: bun run build

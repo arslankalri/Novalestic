@@ -3,45 +3,45 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { ShopProvider, useShop } from './context/ShopContext';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { HeroSection } from './components/HeroSection';
-import { CuratedCategories } from './components/CuratedCategories';
-import { BestsellingGrid } from './components/BestsellingGrid';
-import { CraftsmanshipSection } from './components/CraftsmanshipSection';
-import { CatalogView } from './components/CatalogView';
-import { ProductDetailView } from './components/ProductDetailView';
-import { CartView } from './components/CartView';
-import { ContactView } from './components/ContactView';
-import { NotificationToast } from './components/NotificationToast';
+import React from "react";
+import { ShopProvider, useShop } from "./context/ShopContext";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { HeroSection } from "./components/HeroSection";
+import { CuratedCategories } from "./components/CuratedCategories";
+import { BestsellingGrid } from "./components/BestsellingGrid";
+import { CraftsmanshipSection } from "./components/CraftsmanshipSection";
+import { CatalogView } from "./components/CatalogView";
+import { ProductDetailView } from "./components/ProductDetailView";
+import { CartView } from "./components/CartView";
+import { ContactView } from "./components/ContactView";
+import { NotificationToast } from "./components/NotificationToast";
 
 const AppContent: React.FC = () => {
   const { currentView, selectedProductId } = useShop();
 
   const renderCurrentView = () => {
     switch (currentView) {
-      case 'shop':
+      case "shop":
         return <CatalogView category="all" />;
-      case 'rings':
+      case "rings":
         return <CatalogView category="rings" />;
-      case 'earrings':
+      case "earrings":
         return <CatalogView category="earrings" />;
-      case 'necklaces':
+      case "necklaces":
         return <CatalogView category="necklaces" />;
-      case 'bangles-bracelets':
+      case "bangles-bracelets":
         return <CatalogView category="bangles-bracelets" />;
 
-      case 'product-detail':
-        return <ProductDetailView productId={selectedProductId ?? ''} />;
+      case "product-detail":
+        return <ProductDetailView productId={selectedProductId ?? ""} />;
 
-      case 'cart':
+      case "cart":
         return <CartView />;
-      case 'contact':
+      case "contact":
         return <ContactView />;
 
-      case 'home':
+      case "home":
       default:
         return (
           <main className="w-full bg-background">
@@ -56,7 +56,6 @@ const AppContent: React.FC = () => {
 
             {/* 4. Four Decades of Gemstone Mastery */}
             <CraftsmanshipSection />
-
           </main>
         );
     }
@@ -68,9 +67,7 @@ const AppContent: React.FC = () => {
       <Header />
 
       {/* Main Dynamic View Content */}
-      <div className="flex-grow">
-        {renderCurrentView()}
-      </div>
+      <div className="flex-grow">{renderCurrentView()}</div>
 
       {/* Footer */}
       <Footer />

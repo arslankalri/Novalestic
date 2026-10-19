@@ -1,9 +1,9 @@
-export type CategorySlug = 'all' | 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets';
+export type CategorySlug = "all" | "rings" | "earrings" | "necklaces" | "bangles-bracelets";
 
 export interface Product {
   id: string;
   title: string;
-  category: 'rings' | 'earrings' | 'necklaces' | 'bangles-bracelets';
+  category: "rings" | "earrings" | "necklaces" | "bangles-bracelets";
   pricePKR: number;
   hallmarkBadge?: string;
   metal: string;

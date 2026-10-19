@@ -1,26 +1,47 @@
-import React from 'react';
-import { useShop } from '../context/ShopContext';
-import { ArrowLeft, Info, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import React from "react";
+import { useShop } from "../context/ShopContext";
+import { ArrowLeft, Info, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
 export const CartView: React.FC = () => {
-  const { cart, cartTotal, cartCount, formatPrice, removeFromCart, updateCartQuantity, navigateTo } = useShop();
+  const {
+    cart,
+    cartTotal,
+    cartCount,
+    formatPrice,
+    removeFromCart,
+    updateCartQuantity,
+    navigateTo,
+  } = useShop();
 
   return (
     <main className="w-full bg-background min-h-screen pt-32 pb-24">
       <div className="shell max-w-6xl">
-        <nav aria-label="Breadcrumb" className="mb-10 flex items-center gap-2 text-xs text-muted-foreground">
-          <button type="button" onClick={() => navigateTo('home')} className="hover:text-foreground flex items-center gap-1 transition-colors rounded-sm">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-10 flex items-center gap-2 text-xs text-muted-foreground"
+        >
+          <button
+            type="button"
+            onClick={() => navigateTo("home")}
+            className="hover:text-foreground flex items-center gap-1 transition-colors rounded-sm"
+          >
             <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Home</span>
           </button>
           <span aria-hidden="true">/</span>
-          <span className="text-foreground font-medium" aria-current="page">Shopping Cart</span>
+          <span className="text-foreground font-medium" aria-current="page">
+            Shopping Cart
+          </span>
         </nav>
 
         <header className="mb-10">
           <p className="eyebrow mb-3">Your Selection</p>
-          <h1 className="font-serif-luxury text-4xl sm:text-6xl text-foreground tracking-tight">Shopping Cart</h1>
-          <p className="text-sm text-muted-foreground mt-3">{cartCount} {cartCount === 1 ? 'item' : 'items'} in your cart</p>
+          <h1 className="font-serif-luxury text-4xl sm:text-6xl text-foreground tracking-tight">
+            Shopping Cart
+          </h1>
+          <p className="text-sm text-muted-foreground mt-3">
+            {cartCount} {cartCount === 1 ? "item" : "items"} in your cart
+          </p>
         </header>
 
         {cart.length === 0 ? (
@@ -29,8 +50,14 @@ export const CartView: React.FC = () => {
               <ShoppingBag className="w-6 h-6" aria-hidden="true" />
             </div>
             <h2 className="font-serif-luxury text-3xl text-foreground mb-3">Your cart is empty</h2>
-            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-8">Browse the collection and contact us to enquire about a piece.</p>
-            <button type="button" onClick={() => navigateTo('shop')} className="rounded-full bg-primary text-primary-foreground px-7 py-3.5 text-sm font-medium hover:opacity-90 transition-opacity">
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mb-8">
+              Browse the collection and contact us to enquire about a piece.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigateTo("shop")}
+              className="rounded-full bg-primary text-primary-foreground px-7 py-3.5 text-sm font-medium hover:opacity-90 transition-opacity"
+            >
               Browse Jewellery
             </button>
           </section>
@@ -39,60 +66,146 @@ export const CartView: React.FC = () => {
             <section className="lg:col-span-8" aria-label="Cart items">
               <div className="divide-y divide-border border-y border-border">
                 {cart.map((item) => (
-                  <article key={item.product.id + '-' + item.selectedMetal + '-' + (item.ringSize || '')} className="py-6 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-4 sm:gap-6 items-center">
+                  <article
+                    key={item.product.id + "-" + item.selectedMetal + "-" + (item.ringSize || "")}
+                    className="py-6 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-4 sm:gap-6 items-center"
+                  >
                     <div className="flex gap-5 min-w-0">
                       {item.product.image ? (
-                        <img alt={item.product.title} src={item.product.image} loading="lazy" className="w-24 h-28 sm:w-28 sm:h-32 rounded-2xl object-cover bg-secondary shrink-0" />
+                        <img
+                          alt={item.product.title}
+                          src={item.product.image}
+                          loading="lazy"
+                          className="w-24 h-28 sm:w-28 sm:h-32 rounded-2xl object-cover bg-secondary shrink-0"
+                        />
                       ) : (
-                        <span className="w-24 h-28 sm:w-28 sm:h-32 rounded-2xl bg-secondary shrink-0" aria-hidden="true" />
+                        <span
+                          className="w-24 h-28 sm:w-28 sm:h-32 rounded-2xl bg-secondary shrink-0"
+                          aria-hidden="true"
+                        />
                       )}
                       <div className="min-w-0">
-                        <button type="button" onClick={() => navigateTo('product-detail', item.product.id)} className="text-left font-serif-luxury text-lg sm:text-xl text-foreground hover:text-champagne transition-colors rounded-sm">
+                        <button
+                          type="button"
+                          onClick={() => navigateTo("product-detail", item.product.id)}
+                          className="text-left font-serif-luxury text-lg sm:text-xl text-foreground hover:text-champagne transition-colors rounded-sm"
+                        >
                           {item.product.title}
                         </button>
-                        <p className="text-xs text-muted-foreground mt-1">{item.selectedMetal}{item.ringSize ? ' · ' + item.ringSize : ''}</p>
-                        <p className="text-sm text-foreground mt-2">{formatPrice(item.product.pricePKR)} <span className="text-muted-foreground">each</span></p>
-                        <button type="button" onClick={() => removeFromCart(item.product.id, item.selectedMetal, item.ringSize)} className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive mt-3 transition-colors rounded-sm">
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {item.selectedMetal}
+                          {item.ringSize ? " · " + item.ringSize : ""}
+                        </p>
+                        <p className="text-sm text-foreground mt-2">
+                          {formatPrice(item.product.pricePKR)}{" "}
+                          <span className="text-muted-foreground">each</span>
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removeFromCart(item.product.id, item.selectedMetal, item.ringSize)
+                          }
+                          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive mt-3 transition-colors rounded-sm"
+                        >
                           <Trash2 className="w-3.5 h-3.5" aria-hidden="true" /> Remove
                         </button>
                       </div>
                     </div>
                     <div className="flex sm:flex-col items-center sm:items-end justify-between gap-3">
                       <div className="flex items-center rounded-full border border-border bg-card">
-                        <button type="button" aria-label={'Decrease quantity of ' + item.product.title} disabled={item.quantity <= 1} onClick={() => updateCartQuantity(item.product.id, item.selectedMetal, -1, item.ringSize)} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed">
+                        <button
+                          type="button"
+                          aria-label={"Decrease quantity of " + item.product.title}
+                          disabled={item.quantity <= 1}
+                          onClick={() =>
+                            updateCartQuantity(
+                              item.product.id,
+                              item.selectedMetal,
+                              -1,
+                              item.ringSize,
+                            )
+                          }
+                          className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
                           <Minus className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
-                        <span aria-live="polite" className="min-w-8 text-center text-sm font-medium tabular-nums">{item.quantity}</span>
-                        <button type="button" aria-label={'Increase quantity of ' + item.product.title} disabled={item.quantity >= 99} onClick={() => updateCartQuantity(item.product.id, item.selectedMetal, 1, item.ringSize)} className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed">
+                        <span
+                          aria-live="polite"
+                          className="min-w-8 text-center text-sm font-medium tabular-nums"
+                        >
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label={"Increase quantity of " + item.product.title}
+                          disabled={item.quantity >= 99}
+                          onClick={() =>
+                            updateCartQuantity(
+                              item.product.id,
+                              item.selectedMetal,
+                              1,
+                              item.ringSize,
+                            )
+                          }
+                          className="w-9 h-9 rounded-full flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
                           <Plus className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
                       </div>
-                      <p className="text-sm font-semibold text-foreground tabular-nums">{formatPrice(item.product.pricePKR * item.quantity)}</p>
+                      <p className="text-sm font-semibold text-foreground tabular-nums">
+                        {formatPrice(item.product.pricePKR * item.quantity)}
+                      </p>
                     </div>
                   </article>
                 ))}
               </div>
-              <button type="button" onClick={() => navigateTo('shop')} className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-sm">← Continue shopping</button>
+              <button
+                type="button"
+                onClick={() => navigateTo("shop")}
+                className="mt-6 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-sm"
+              >
+                ← Continue shopping
+              </button>
             </section>
 
-            <aside className="lg:col-span-4 lg:sticky lg:top-32 rounded-[1.5rem] bg-card shadow-soft p-6 sm:p-8 space-y-5" aria-label="Order summary">
+            <aside
+              className="lg:col-span-4 lg:sticky lg:top-32 rounded-[1.5rem] bg-card shadow-soft p-6 sm:p-8 space-y-5"
+              aria-label="Order summary"
+            >
               <h2 className="font-serif-luxury text-2xl text-foreground">Order Summary</h2>
               <div className="flex justify-between gap-4 text-sm text-muted-foreground">
-                <span>Subtotal ({cartCount} {cartCount === 1 ? 'item' : 'items'})</span>
+                <span>
+                  Subtotal ({cartCount} {cartCount === 1 ? "item" : "items"})
+                </span>
                 <span className="text-foreground tabular-nums">{formatPrice(cartTotal)}</span>
               </div>
               <div className="flex justify-between gap-4 text-sm text-muted-foreground">
-                <span>Delivery</span><span className="text-champagne">To be confirmed</span>
+                <span>Delivery</span>
+                <span className="text-champagne">To be confirmed</span>
               </div>
               <div className="flex justify-between gap-4 pt-5 border-t border-border text-lg font-serif-luxury text-foreground">
-                <span>Subtotal (PKR)</span><span className="tabular-nums">{formatPrice(cartTotal)}</span>
+                <span>Subtotal (PKR)</span>
+                <span className="tabular-nums">{formatPrice(cartTotal)}</span>
               </div>
-              <button type="button" disabled aria-disabled="true" aria-describedby="checkout-note" title="Checkout will be enabled after secure order processing is connected." className="w-full rounded-full bg-secondary text-muted-foreground py-4 text-sm font-medium cursor-not-allowed">
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                aria-describedby="checkout-note"
+                title="Checkout will be enabled after secure order processing is connected."
+                className="w-full rounded-full bg-secondary text-muted-foreground py-4 text-sm font-medium cursor-not-allowed"
+              >
                 Checkout coming soon
               </button>
-              <p id="checkout-note" className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed">
+              <p
+                id="checkout-note"
+                className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"
+              >
                 <Info className="w-4 h-4 shrink-0 text-champagne mt-0.5" aria-hidden="true" />
-                <span>Online checkout is not available yet. Store preview only. Prices are confirmed by our team on WhatsApp. For help with your selection, contact us directly.</span>
+                <span>
+                  Online checkout is not available yet. Store preview only. Prices are confirmed by
+                  our team on WhatsApp. For help with your selection, contact us directly.
+                </span>
               </p>
             </aside>
           </div>

@@ -1,17 +1,22 @@
-import React from 'react';
-import { MessageCircle, ArrowUpRight } from 'lucide-react';
-import { useShop } from '../context/ShopContext';
-import type { Product } from '../types';
+import React from "react";
+import { MessageCircle, ArrowUpRight } from "lucide-react";
+import { useShop } from "../context/ShopContext";
+import type { Product } from "../types";
 
 /** Shared storefront card used by the home collection grid and the catalogue. */
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const { navigateTo } = useShop();
-  const open = () => navigateTo('product-detail', product.id);
+  const open = () => navigateTo("product-detail", product.id);
 
   return (
     <article className="group flex flex-col">
       <div className="relative w-full aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-secondary">
-        <button type="button" onClick={open} className="block w-full h-full rounded-[1.25rem]" aria-label={`View details of ${product.title}`}>
+        <button
+          type="button"
+          onClick={open}
+          className="block w-full h-full rounded-[1.25rem]"
+          aria-label={`View details of ${product.title}`}
+        >
           {product.image ? (
             <img
               alt={product.title}
@@ -20,7 +25,12 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
               loading="lazy"
             />
           ) : (
-            <span className="flex w-full h-full items-center justify-center font-serif-luxury text-4xl text-champagne/60" aria-hidden="true">N</span>
+            <span
+              className="flex w-full h-full items-center justify-center font-serif-luxury text-4xl text-champagne/60"
+              aria-hidden="true"
+            >
+              N
+            </span>
           )}
         </button>
 
@@ -56,7 +66,9 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           </h3>
         </button>
         {product.shortDesc && (
-          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed line-clamp-2">{product.shortDesc}</p>
+          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed line-clamp-2">
+            {product.shortDesc}
+          </p>
         )}
         <p className="mt-3 text-sm font-medium text-emerald">Contact for price</p>
       </div>

@@ -1,14 +1,17 @@
-import React from 'react';
+import React from "react";
 
 interface NovalesticLogoProps {
-  variant?: 'horizontal' | 'crest' | 'icon';
+  variant?: "horizontal" | "crest" | "icon";
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: "sm" | "md" | "lg" | "xl";
   inverted?: boolean;
 }
 
 // Faceted Round Emerald Gemstone SVG Component
-export const EmeraldGem: React.FC<{ size?: number; className?: string }> = ({ size = 28, className = '' }) => (
+export const EmeraldGem: React.FC<{ size?: number; className?: string }> = ({
+  size = 28,
+  className = "",
+}) => (
   <svg
     width={size}
     height={size}
@@ -69,49 +72,47 @@ export const EmeraldGem: React.FC<{ size?: number; className?: string }> = ({ si
     />
 
     {/* Inner Star Highlight Point */}
-    <polygon
-      points="50,40 56,50 50,60 44,50"
-      fill="#ffffff"
-      opacity="0.35"
-    />
+    <polygon points="50,40 56,50 50,60 44,50" fill="#ffffff" opacity="0.35" />
     <circle cx="43" cy="42" r="3" fill="#ffffff" opacity="0.7" />
   </svg>
 );
 
 export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
-  variant = 'horizontal',
-  className = '',
-  size = 'md',
+  variant = "horizontal",
+  className = "",
+  size = "md",
   inverted = false,
 }) => {
-  const textColor = inverted ? 'text-white' : 'text-[#1b1c19]';
-  const subColor = inverted ? 'text-[#DFC27F]' : 'text-[#765a18]';
+  const textColor = inverted ? "text-white" : "text-[#1b1c19]";
+  const subColor = inverted ? "text-[#DFC27F]" : "text-[#765a18]";
 
   // Variant 1: Horizontal Wordmark with Emerald as 'O' (as in Image 1: NOVALESTIC JEWELLERS)
-  if (variant === 'horizontal') {
-    const gemSize = size === 'sm' ? 20 : size === 'lg' ? 36 : size === 'xl' ? 44 : 26;
+  if (variant === "horizontal") {
+    const gemSize = size === "sm" ? 20 : size === "lg" ? 36 : size === "xl" ? 44 : 26;
     const textSize =
-      size === 'sm'
-        ? 'text-lg tracking-[0.14em]'
-        : size === 'lg'
-        ? 'text-3xl sm:text-4xl tracking-[0.16em]'
-        : size === 'xl'
-        ? 'text-4xl sm:text-5xl tracking-[0.18em]'
-        : 'text-2xl tracking-[0.15em]';
+      size === "sm"
+        ? "text-lg tracking-[0.14em]"
+        : size === "lg"
+          ? "text-3xl sm:text-4xl tracking-[0.16em]"
+          : size === "xl"
+            ? "text-4xl sm:text-5xl tracking-[0.18em]"
+            : "text-2xl tracking-[0.15em]";
 
     const subTextSize =
-      size === 'sm'
-        ? 'text-[8px] tracking-[0.38em]'
-        : size === 'lg'
-        ? 'text-[11px] tracking-[0.45em]'
-        : size === 'xl'
-        ? 'text-[13px] tracking-[0.48em]'
-        : 'text-[9.5px] tracking-[0.42em]';
+      size === "sm"
+        ? "text-[8px] tracking-[0.38em]"
+        : size === "lg"
+          ? "text-[11px] tracking-[0.45em]"
+          : size === "xl"
+            ? "text-[13px] tracking-[0.48em]"
+            : "text-[9.5px] tracking-[0.42em]";
 
     return (
       <div className={`flex flex-col items-center select-none ${className}`}>
         {/* Main Brand Title: N + [Gemstone O] + VALESTIC */}
-        <div className={`font-serif-luxury ${textSize} font-medium leading-none flex items-center ${textColor}`}>
+        <div
+          className={`font-serif-luxury ${textSize} font-medium leading-none flex items-center ${textColor}`}
+        >
           <span className="font-serif">N</span>
           <span className="inline-flex items-center justify-center mx-[1px]">
             <EmeraldGem size={gemSize} />
@@ -128,8 +129,8 @@ export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
   }
 
   // Variant 2: Circular Crest / Seal Emblem (as in Image 2: Gold Ring, Top Star, Stylized N with Emerald in swoop)
-  if (variant === 'crest' || variant === 'icon') {
-    const crestDiameter = size === 'sm' ? 60 : size === 'lg' ? 120 : size === 'xl' ? 160 : 80;
+  if (variant === "crest" || variant === "icon") {
+    const crestDiameter = size === "sm" ? 60 : size === "lg" ? 120 : size === "xl" ? 160 : 80;
 
     return (
       <div className={`flex flex-col items-center select-none text-center ${className}`}>
@@ -155,14 +156,8 @@ export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
           </defs>
 
           {/* Top 4-point Diamond Star */}
-          <path
-            d="M 100 4 L 102 18 L 100 32 L 98 18 Z"
-            fill="url(#goldGradient)"
-          />
-          <path
-            d="M 86 18 L 100 16 L 114 18 L 100 20 Z"
-            fill="url(#goldGradient)"
-          />
+          <path d="M 100 4 L 102 18 L 100 32 L 98 18 Z" fill="url(#goldGradient)" />
+          <path d="M 86 18 L 100 16 L 114 18 L 100 20 Z" fill="url(#goldGradient)" />
 
           {/* Outer Gold Circular Ring */}
           <circle
@@ -189,7 +184,7 @@ export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
           {/* Left Vertical Stem of N */}
           <path
             d="M 70 64 L 70 144 M 64 64 L 78 64 M 64 144 L 84 144"
-            stroke={inverted ? '#ffffff' : '#1b1c19'}
+            stroke={inverted ? "#ffffff" : "#1b1c19"}
             strokeWidth="4"
             strokeLinecap="square"
           />
@@ -197,7 +192,7 @@ export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
           {/* Right Vertical Stem of N with Serif Terminal */}
           <path
             d="M 124 64 L 124 136 M 116 64 L 132 64"
-            stroke={inverted ? '#ffffff' : '#1b1c19'}
+            stroke={inverted ? "#ffffff" : "#1b1c19"}
             strokeWidth="3.5"
             strokeLinecap="square"
           />
@@ -206,7 +201,7 @@ export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
           <path
             d="M 70 68 C 88 100, 110 134, 112 144 C 114 154, 98 156, 94 140 C 90 126, 108 116, 114 122"
             fill="none"
-            stroke={inverted ? '#ffffff' : '#1b1c19'}
+            stroke={inverted ? "#ffffff" : "#1b1c19"}
             strokeWidth="8"
             strokeLinecap="round"
           />
@@ -244,9 +239,11 @@ export const NovalesticLogo: React.FC<NovalesticLogoProps> = ({
           </g>
         </svg>
 
-        {variant === 'crest' && (
+        {variant === "crest" && (
           <div className="mt-2 flex flex-col items-center">
-            <span className={`font-serif-luxury text-sm tracking-[0.24em] font-semibold uppercase ${textColor}`}>
+            <span
+              className={`font-serif-luxury text-sm tracking-[0.24em] font-semibold uppercase ${textColor}`}
+            >
               NOVALESTIC
             </span>
             <div className="flex items-center gap-1.5 text-[8.5px] uppercase tracking-[0.3em] text-[#765a18] mt-0.5">

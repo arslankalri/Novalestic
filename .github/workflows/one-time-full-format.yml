@@ -36,7 +36,7 @@ jobs:
         run: bunx vitest run
 
       - name: Check TypeScript
-        run: bunx tsgo -p .
+        run: bunx tsc --noEmit
 
       - name: Run ESLint
         run: bun run lint

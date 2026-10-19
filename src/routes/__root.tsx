@@ -79,9 +79,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Novalestic Jewellers" },
-      { name: "description", content: "Novalestic Jewellers — fine handcrafted gemstone jewellery." },
+      {
+        name: "description",
+        content: "Novalestic Jewellers — fine handcrafted gemstone jewellery.",
+      },
       { property: "og:title", content: "Novalestic Jewellers" },
-      { property: "og:description", content: "Novalestic Jewellers — fine handcrafted gemstone jewellery." },
+      {
+        property: "og:description",
+        content: "Novalestic Jewellers — fine handcrafted gemstone jewellery.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

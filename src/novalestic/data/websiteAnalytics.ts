@@ -20,7 +20,11 @@ export function readAnalyticsConsent(): AnalyticsConsentChoice {
  * Analytics failures must never interrupt shopping or cart behaviour.
  */
 export function recordStorefrontPageView(pagePath: string): void {
-  if (typeof window === "undefined" || !pagePath.startsWith("/") || /^\/admin(?:\/|$)/i.test(pagePath)) {
+  if (
+    typeof window === "undefined" ||
+    !pagePath.startsWith("/") ||
+    /^\/admin(?:\/|$)/i.test(pagePath)
+  ) {
     return;
   }
 

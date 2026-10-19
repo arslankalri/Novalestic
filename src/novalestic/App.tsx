@@ -72,10 +72,10 @@ const AppContent: React.FC = () => {
     };
     const pageTitle =
       currentView === "product-detail"
-        ? product?.title ?? "Jewellery Piece"
-        : titles[currentView] ?? "Fine Gemstone Jewellery";
+        ? (product?.title ?? "Jewellery Piece")
+        : (titles[currentView] ?? "Fine Gemstone Jewellery");
     document.title =
-      currentView === "home" || currentView === "product-detail" && !product
+      currentView === "home" || (currentView === "product-detail" && !product)
         ? "Novalestic Jewellers — Fine Gemstone Jewellery"
         : `${pageTitle} | Novalestic Jewellers`;
   }, [currentView, selectedProductId, products]);

@@ -91,14 +91,19 @@ export function WebsiteAnalyticsPanel() {
   const maxDayCount = Math.max(1, ...days.map((day) => day.count));
 
   return (
-    <section className="space-y-4 rounded-lg border border-[#e6dfd3] bg-white p-4 shadow-sm sm:p-5" aria-labelledby="visitor-analytics-heading">
+    <section
+      className="space-y-4 rounded-lg border border-[#e6dfd3] bg-white p-4 shadow-sm sm:p-5"
+      aria-labelledby="visitor-analytics-heading"
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs uppercase tracking-[.2em] text-[#94763c]">Storefront traffic</p>
           <h2 id="visitor-analytics-heading" className="mt-1 font-serif text-xl text-[#1c2b23]">
             Visitor analytics
           </h2>
-          <p className="mt-1 text-sm text-[#71695d]">Last 30 days · opt-in, first-party page views</p>
+          <p className="mt-1 text-sm text-[#71695d]">
+            Last 30 days · opt-in, first-party page views
+          </p>
         </div>
         <button
           type="button"
@@ -111,9 +116,14 @@ export function WebsiteAnalyticsPanel() {
       </div>
 
       {loadState === "unavailable" ? (
-        <div role="status" className="rounded border border-[#e6d8b5] bg-[#fff8e6] p-4 text-sm text-[#5d554b]">
+        <div
+          role="status"
+          className="rounded border border-[#e6d8b5] bg-[#fff8e6] p-4 text-sm text-[#5d554b]"
+        >
           Visitor analytics is not connected yet. Apply the migration
-          <code className="mx-1 rounded bg-white px-1 py-0.5">202610190001_novalestic_website_analytics.sql</code>
+          <code className="mx-1 rounded bg-white px-1 py-0.5">
+            202610190001_novalestic_website_analytics.sql
+          </code>
           to the intended Supabase project, then refresh this panel.
         </div>
       ) : loadState === "loading" ? (
@@ -127,7 +137,11 @@ export function WebsiteAnalyticsPanel() {
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               ["Page views", number.format(views.length), "Most recent 5,000 events at most"],
-              ["Tab sessions", number.format(sessions), "Approximate sessions, not verified people"],
+              [
+                "Tab sessions",
+                number.format(sessions),
+                "Approximate sessions, not verified people",
+              ],
               ["Views today", number.format(viewsToday), "Based on UTC date boundaries"],
             ].map(([label, value, note]) => (
               <div key={label} className="rounded-lg border border-[#eee8de] bg-[#fcfbf8] p-4">
@@ -146,9 +160,16 @@ export function WebsiteAnalyticsPanel() {
             <div className="grid gap-5 lg:grid-cols-2">
               <div className="rounded-lg border border-[#eee8de] p-4">
                 <h3 className="mb-4 font-medium text-[#1c2b23]">Page views by day</h3>
-                <div className="flex h-36 items-end gap-2" role="img" aria-label="Page views during the last seven days">
+                <div
+                  className="flex h-36 items-end gap-2"
+                  role="img"
+                  aria-label="Page views during the last seven days"
+                >
                   {days.map((day) => (
-                    <div key={day.day} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
+                    <div
+                      key={day.day}
+                      className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2"
+                    >
                       <span className="text-[11px] tabular-nums text-[#71695d]">{day.count}</span>
                       <div className="flex h-24 w-full items-end">
                         <div
@@ -166,9 +187,16 @@ export function WebsiteAnalyticsPanel() {
                 <h3 className="mb-3 font-medium text-[#1c2b23]">Top pages</h3>
                 <div className="space-y-3">
                   {topPages.map((item) => (
-                    <div key={item.label} className="flex items-center justify-between gap-3 text-sm">
-                      <span className="min-w-0 truncate text-[#5d554b]" title={item.label}>{item.label}</span>
-                      <span className="shrink-0 tabular-nums text-[#1c2b23]">{number.format(item.count)}</span>
+                    <div
+                      key={item.label}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <span className="min-w-0 truncate text-[#5d554b]" title={item.label}>
+                        {item.label}
+                      </span>
+                      <span className="shrink-0 tabular-nums text-[#1c2b23]">
+                        {number.format(item.count)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -178,9 +206,16 @@ export function WebsiteAnalyticsPanel() {
                 <h3 className="mb-3 font-medium text-[#1c2b23]">Referring sources</h3>
                 <div className="space-y-3">
                   {topSources.map((item) => (
-                    <div key={item.label} className="flex items-center justify-between gap-3 text-sm">
-                      <span className="min-w-0 truncate text-[#5d554b]" title={item.label}>{item.label}</span>
-                      <span className="shrink-0 tabular-nums text-[#1c2b23]">{number.format(item.count)}</span>
+                    <div
+                      key={item.label}
+                      className="flex items-center justify-between gap-3 text-sm"
+                    >
+                      <span className="min-w-0 truncate text-[#5d554b]" title={item.label}>
+                        {item.label}
+                      </span>
+                      <span className="shrink-0 tabular-nums text-[#1c2b23]">
+                        {number.format(item.count)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -203,8 +238,9 @@ export function WebsiteAnalyticsPanel() {
       )}
 
       <p className="text-xs leading-relaxed text-[#8a8174]">
-        Analytics is only recorded after a visitor opts in. These figures are best-effort, may be limited to the latest 5,000 events,
-        and should be treated as directional rather than billing or audit records.
+        Analytics is only recorded after a visitor opts in. These figures are best-effort, may be
+        limited to the latest 5,000 events, and should be treated as directional rather than billing
+        or audit records.
       </p>
     </section>
   );

@@ -265,7 +265,11 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 className="w-full rounded-full bg-primary text-primary-foreground py-4 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <ShoppingBag className="w-4 h-4" aria-hidden="true" />{" "}
-                {product.inStock ? (product.pricePKR > 0 ? "Add to Bag" : "Add to Enquiry List") : "Currently Unavailable"}
+                {product.inStock
+                  ? product.pricePKR > 0
+                    ? "Add to Bag"
+                    : "Add to Enquiry List"
+                  : "Currently Unavailable"}
               </button>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(

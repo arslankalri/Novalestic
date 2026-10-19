@@ -34,7 +34,8 @@ export const AnalyticsConsentBanner: React.FC<AnalyticsConsentBannerProps> = ({
           </p>
           {choice !== "unset" && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Current preference: {choice === "accepted" ? "analytics allowed" : "analytics declined"}.
+              Current preference:{" "}
+              {choice === "accepted" ? "analytics allowed" : "analytics declined"}.
             </p>
           )}
         </div>

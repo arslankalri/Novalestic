@@ -197,7 +197,11 @@ export const CartView: React.FC = () => {
             >
               <h2 className="font-serif-luxury text-2xl text-foreground">Order Summary</h2>
               <div className="flex justify-between gap-4 text-sm text-muted-foreground">
-                <span>{hasUnpricedItems ? "Merchandise pricing" : `Subtotal (${cartCount} ${cartCount === 1 ? "item" : "items"})`}</span>
+                <span>
+                  {hasUnpricedItems
+                    ? "Merchandise pricing"
+                    : `Subtotal (${cartCount} ${cartCount === 1 ? "item" : "items"})`}
+                </span>
                 <span className="text-foreground tabular-nums">
                   {hasUnpricedItems ? "To be confirmed" : formatPrice(cartTotal)}
                 </span>

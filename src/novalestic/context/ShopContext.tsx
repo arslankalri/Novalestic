@@ -117,6 +117,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         "bangles-bracelets",
         "cart",
         "contact",
+        "privacy",
+        "shipping",
+        "returns",
+        "terms",
       ];
       if (publicViews.includes(view)) {
         setCurrentView(view);
@@ -152,6 +156,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       "product-detail",
       "cart",
       "contact",
+      "privacy",
+      "shipping",
+      "returns",
+      "terms",
     ];
     if (!publicViews.includes(view)) {
       setCurrentView("home");

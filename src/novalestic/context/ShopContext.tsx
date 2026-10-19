@@ -61,7 +61,10 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          return (parsed as CartItem[]).filter((item) => typeof item?.product?.id === 'string');
+          // Discard only legacy demo items; keep real saved cart items intact.
+          return (parsed as CartItem[]).filter(
+            (item) => typeof item?.product?.id === 'string' && !item.product.id.startsWith('sample-'),
+          );
         }
       }
     } catch {
@@ -73,19 +76,6 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentView, setCurrentView] = useState<string>('home');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Remove legacy browser-only admin/order records from previous prototype versions.
-  // This public app no longer reads or writes those stores.
-  useEffect(() => {
-    try {
-      localStorage.removeItem('nova_lestic_products_pkr_v1');
-      localStorage.removeItem('nova_lestic_orders_pkr_v1');
-      localStorage.removeItem('nova_lestic_settings_v1');
-      localStorage.removeItem('nova_lestic_is_owner_mode');
-    } catch {
-      // The storefront remains usable if browser storage is unavailable.
-    }
-  }, []);
 
   useEffect(() => {
     const handleHashChange = () => {

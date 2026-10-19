@@ -5,7 +5,11 @@ import type { Product } from "../types";
 
 /** Shared storefront card used by the home collection grid and the catalogue. */
 export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
-  const { navigateTo } = useShop();
+  const { navigateTo, formatPrice } = useShop();
+  const enquiryText =
+    product.pricePKR > 0
+      ? `Hello NOVALESTIC JEWELLERS, I am interested in ${product.title}. The listed price is ${formatPrice(product.pricePKR)}. Please confirm current availability and product details.`
+      : `Hello NOVALESTIC JEWELLERS, I would like to enquire about ${product.title}. Please share the current price, availability and product details.`;
   const open = () => navigateTo("product-detail", product.id);
 
   return (
@@ -35,12 +39,12 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
         </button>
 
         <span className="pointer-events-none absolute top-3 left-3 rounded-full bg-card/90 backdrop-blur px-3 py-1 text-[10px] font-medium tracking-[0.12em] uppercase text-muted-foreground">
-          Price on enquiry
+          {product.pricePKR > 0 ? "PKR price listed" : "Price on enquiry"}
         </span>
 
         <div className="absolute inset-x-3 bottom-3 flex items-center gap-2 transition-all duration-300 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 sm:group-focus-within:translate-y-0 sm:group-focus-within:opacity-100">
           <a
-            href={`https://wa.me/923019653550?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about ${product.title}. Please share the current price and availability.`)}`}
+            href={`https://wa.me/923019653550?text=${encodeURIComponent(enquiryText)}`}
             target="_blank"
             rel="noreferrer"
             className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-emerald hover:bg-emerald-hover text-emerald-foreground py-2.5 text-xs font-semibold tracking-wide transition-colors"
@@ -70,7 +74,7 @@ export const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             {product.shortDesc}
           </p>
         )}
-        <p className="mt-3 text-sm font-medium text-emerald">Contact for price</p>
+        <p className="mt-3 text-sm font-medium text-emerald">{formatPrice(product.pricePKR)}</p>
       </div>
     </article>
   );

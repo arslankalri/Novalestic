@@ -10,7 +10,7 @@ interface ProductDetailViewProps {
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
-  const { products, productsStatus, navigateTo, addToCart } = useShop();
+  const { products, productsStatus, navigateTo, addToCart, formatPrice } = useShop();
 
   const product = productId ? products.find((p) => p.id === productId) : undefined;
 
@@ -161,12 +161,21 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               <button
                 type="button"
                 onClick={() => addToCart(product, quantity, selectedMetal, product.category === 'rings' ? selectedRingSize : undefined)}
-                className="w-full rounded-full bg-primary text-primary-foreground py-4 text-sm font-medium transition-opacity hover:opacity-90 flex items-center justify-center gap-2"
+                disabled={!product.inStock}
+                className="w-full rounded-full bg-primary text-primary-foreground py-4 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                <ShoppingBag className="w-4 h-4" aria-hidden="true" /> Add to Bag
+                <ShoppingBag className="w-4 h-4" aria-hidden="true" /> {product.inStock ? 'Add to Bag' : 'Currently Unavailable'}
               </button>
               <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about: ${product.title}. Please share the current price, availability, materials and specifications.`)}`}
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent([
+                  'Hello NOVALESTIC JEWELLERS, I would like to enquire about:',
+                  `Piece: ${product.title}`,
+                  `Option: ${selectedMetal}`,
+                  ...(product.category === 'rings' ? [`Ring size: ${selectedRingSize}`] : []),
+                  `Quantity: ${quantity}`,
+                  `Listed price: ${formatPrice(product.pricePKR)}`,
+                  'Please confirm current price, availability, materials and specifications.'
+                ].join('\\n'))}`}
                 target="_blank"
                 rel="noreferrer"
                 className="w-full rounded-full bg-emerald hover:bg-emerald-hover text-emerald-foreground py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2"

@@ -11,8 +11,6 @@ import { HeroSection } from './components/HeroSection';
 import { CuratedCategories } from './components/CuratedCategories';
 import { BestsellingGrid } from './components/BestsellingGrid';
 import { CraftsmanshipSection } from './components/CraftsmanshipSection';
-import { GuaranteesSection } from './components/GuaranteesSection';
-import { NewsletterSection } from './components/NewsletterSection';
 import { CatalogView } from './components/CatalogView';
 import { ProductDetailView } from './components/ProductDetailView';
 import { CartView } from './components/CartView';
@@ -59,11 +57,6 @@ const AppContent: React.FC = () => {
             {/* 4. Four Decades of Gemstone Mastery */}
             <CraftsmanshipSection />
 
-            {/* 5. Authentic Quality & Purity Guarantees (No fake reviews) */}
-            <GuaranteesSection />
-
-            {/* 6. Store Updates Newsletter */}
-            <NewsletterSection />
           </main>
         );
     }

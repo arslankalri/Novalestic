@@ -8,13 +8,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Novalestic Jewellers — handcrafted rings, earrings, necklaces and bangles with four decades of gemstone mastery.",
+          "Explore fine jewellery from Novalestic Jewellers, including rings, earrings, necklaces and bangles.",
       },
       { property: "og:title", content: "Novalestic Jewellers — Fine Gemstone Jewellery" },
       {
         property: "og:description",
         content:
-          "Handcrafted rings, earrings, necklaces and bangles with four decades of gemstone mastery.",
+          "Explore fine jewellery from Novalestic Jewellers, including rings, earrings, necklaces and bangles.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

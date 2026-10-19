@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react
 import { Link } from "@tanstack/react-router";
 import { adminDb as supabase } from "./opsDatabase";
 import type { Database } from "./opsDatabase";
+import { WebsiteAnalyticsPanel } from "./WebsiteAnalyticsPanel";
 
 type Mode = "dashboard" | "orders" | "customers" | "enquiries" | "inventory" | "reports";
 type Product = Database["public"]["Tables"]["products"]["Row"];
@@ -574,6 +575,7 @@ export function AdminOperations({ mode }: { mode: Mode }) {
             {message}
           </p>
         )}
+        {mode === "dashboard" && <WebsiteAnalyticsPanel />}
         {(mode === "dashboard" || mode === "reports") && (
           <>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

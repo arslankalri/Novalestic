@@ -3,7 +3,11 @@ import { useShop } from "../context/ShopContext";
 import { NovalesticLogo } from "./NovalesticLogo";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
 
-interface FooterProps {\n  onOpenAnalyticsPreferences: () => void;\n}\n\nexport const Footer: React.FC<FooterProps> = ({ onOpenAnalyticsPreferences }) => {
+interface FooterProps {
+  onOpenAnalyticsPreferences: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenAnalyticsPreferences }) => {
   const { navigateTo } = useShop();
 
   const links = [

@@ -26,8 +26,6 @@ interface ShopContextType {
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 const STORAGE_KEY_CART = 'nova_lestic_cart_pkr_v1';
-// IDs of the old design-preview fixtures; never real inventory.
-const isPreviewFixtureId = (id: string) => id.startsWith('sample-');
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // The storefront shows only published catalogue items from the database.
@@ -63,8 +61,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          return (parsed as CartItem[]).filter((item) =>
-            typeof item?.product?.id === 'string' && !isPreviewFixtureId(item.product.id));
+          return (parsed as CartItem[]).filter((item) => typeof item?.product?.id === 'string');
         }
       }
     } catch {

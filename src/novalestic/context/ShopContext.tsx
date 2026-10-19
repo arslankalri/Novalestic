@@ -91,9 +91,23 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleHashChange = () => {
+    const handleLocationChange = () => {
       if (typeof window === "undefined") return;
-      const hash = window.location.hash.toLowerCase().replace(/^#/, "");
+      const rawHash = window.location.hash.replace(/^#/, "");
+      const [rawView = "", encodedProductId] = rawHash.split("/", 2);
+      const view = rawView.toLowerCase();
+
+      if (view === "product-detail") {
+        setCurrentView(view);
+        try {
+          setSelectedProductId(encodedProductId ? decodeURIComponent(encodedProductId) : null);
+        } catch {
+          setSelectedProductId(null);
+          setCurrentView("shop");
+        }
+        return;
+      }
+
       const publicViews = [
         "home",
         "shop",
@@ -104,11 +118,19 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
         "cart",
         "contact",
       ];
-      if (publicViews.includes(hash)) setCurrentView(hash);
+      if (publicViews.includes(view)) {
+        setCurrentView(view);
+        setSelectedProductId(null);
+      }
     };
-    handleHashChange();
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+
+    handleLocationChange();
+    window.addEventListener("hashchange", handleLocationChange);
+    window.addEventListener("popstate", handleLocationChange);
+    return () => {
+      window.removeEventListener("hashchange", handleLocationChange);
+      window.removeEventListener("popstate", handleLocationChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -139,13 +161,19 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentView(view);
     setSelectedProductId(view === "product-detail" ? (productId ?? null) : null);
     if (typeof window !== "undefined") {
-      const hash = view === "home" ? "" : `#${view}`;
-      if (window.location.hash !== hash)
-        window.history.replaceState(
+      const hash =
+        view === "home"
+          ? ""
+          : view === "product-detail"
+            ? `#product-detail/${encodeURIComponent(productId ?? "")}`
+            : `#${view}`;
+      if (window.location.hash !== hash) {
+        window.history.pushState(
           null,
           "",
           `${window.location.pathname}${window.location.search}${hash}`,
         );
+      }
       const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
       window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
     }

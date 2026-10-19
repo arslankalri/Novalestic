@@ -1,6 +1,8 @@
 import React from "react";
 import { useShop } from "../context/ShopContext";
-import { ArrowLeft, Info, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowLeft, Info, MessageCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+
+const WHATSAPP_NUMBER = "923019653550";
 
 export const CartView: React.FC = () => {
   const {
@@ -12,6 +14,27 @@ export const CartView: React.FC = () => {
     updateCartQuantity,
     navigateTo,
   } = useShop();
+
+  const hasUnpricedItems = cart.some((item) => item.product.pricePKR <= 0);
+  const whatsappMessage = [
+    "Hello NOVALESTIC JEWELLERS, I would like to enquire about these items:",
+    "",
+    ...cart.map((item, index) =>
+      [
+        `${index + 1}. ${item.product.title}`,
+        `   Option: ${item.selectedMetal}`,
+        ...(item.ringSize ? [`   Ring size: ${item.ringSize}`] : []),
+        `   Quantity: ${item.quantity}`,
+        `   Listed price each: ${formatPrice(item.product.pricePKR)}`,
+      ].join("\\n"),
+    ),
+    "",
+    hasUnpricedItems
+      ? "One or more items are enquiry-priced. Please confirm each item's current price."
+      : `Listed merchandise subtotal: ${formatPrice(cartTotal)}`,
+    "Please confirm availability, final pricing, delivery charges and timing, and payment options. This is an enquiry, not a confirmed order.",
+  ].join("\\n");
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
     <main className="w-full bg-background min-h-screen pt-32 pb-24">
@@ -174,37 +197,38 @@ export const CartView: React.FC = () => {
             >
               <h2 className="font-serif-luxury text-2xl text-foreground">Order Summary</h2>
               <div className="flex justify-between gap-4 text-sm text-muted-foreground">
-                <span>
-                  Subtotal ({cartCount} {cartCount === 1 ? "item" : "items"})
+                <span>{hasUnpricedItems ? "Merchandise pricing" : `Subtotal (${cartCount} ${cartCount === 1 ? "item" : "items"})`}</span>
+                <span className="text-foreground tabular-nums">
+                  {hasUnpricedItems ? "To be confirmed" : formatPrice(cartTotal)}
                 </span>
-                <span className="text-foreground tabular-nums">{formatPrice(cartTotal)}</span>
               </div>
               <div className="flex justify-between gap-4 text-sm text-muted-foreground">
                 <span>Delivery</span>
                 <span className="text-champagne">To be confirmed</span>
               </div>
               <div className="flex justify-between gap-4 pt-5 border-t border-border text-lg font-serif-luxury text-foreground">
-                <span>Subtotal (PKR)</span>
-                <span className="tabular-nums">{formatPrice(cartTotal)}</span>
+                <span>Total after confirmation</span>
+                <span className="tabular-nums">To be confirmed</span>
               </div>
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-describedby="checkout-note"
-                title="Checkout will be enabled after secure order processing is connected."
-                className="w-full rounded-full bg-secondary text-muted-foreground py-4 text-sm font-medium cursor-not-allowed"
+                className="w-full rounded-full bg-emerald hover:bg-emerald-hover text-emerald-foreground py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2"
               >
-                Checkout coming soon
-              </button>
+                <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                Send enquiry on WhatsApp
+              </a>
               <p
                 id="checkout-note"
                 className="flex items-start gap-2 text-xs text-muted-foreground leading-relaxed"
               >
                 <Info className="w-4 h-4 shrink-0 text-champagne mt-0.5" aria-hidden="true" />
                 <span>
-                  Online checkout is not available yet. Store preview only. Prices are confirmed by
-                  our team on WhatsApp. For help with your selection, contact us directly.
+                  This sends your selection to our team for confirmation. It does not place an order
+                  or take payment. Final prices, delivery arrangements and payment options are
+                  confirmed before an order is accepted.
                 </span>
               </p>
             </aside>

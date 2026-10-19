@@ -86,7 +86,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAnalyticsPreferences }) =>
           </div>
         </div>
 
-        <nav aria-label="Policies and privacy" className="mt-12 flex flex-wrap gap-x-5 gap-y-3 text-xs text-muted-foreground">
+        <nav
+          aria-label="Policies and privacy"
+          className="mt-12 flex flex-wrap gap-x-5 gap-y-3 text-xs text-muted-foreground"
+        >
           {[
             { label: "Privacy Notice", view: "privacy" },
             { label: "Shipping & Delivery", view: "shipping" },

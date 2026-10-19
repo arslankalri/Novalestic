@@ -139,7 +139,10 @@ export const PolicyView: React.FC<PolicyViewProps> = ({ kind }) => {
   return (
     <main className="min-h-screen bg-background pb-24 pt-32">
       <div className="shell max-w-4xl">
-        <nav aria-label="Breadcrumb" className="mb-10 flex items-center gap-2 text-xs text-muted-foreground">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-10 flex items-center gap-2 text-xs text-muted-foreground"
+        >
           <button
             type="button"
             onClick={() => navigateTo("home")}
@@ -167,7 +170,10 @@ export const PolicyView: React.FC<PolicyViewProps> = ({ kind }) => {
 
         <div className="space-y-10">
           {policy.sections.map((section) => (
-            <section key={section.title} aria-labelledby={`policy-${section.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+            <section
+              key={section.title}
+              aria-labelledby={`policy-${section.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+            >
               <h2
                 id={`policy-${section.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
                 className="font-serif-luxury text-2xl text-foreground sm:text-3xl"
@@ -191,7 +197,9 @@ export const PolicyView: React.FC<PolicyViewProps> = ({ kind }) => {
         </div>
 
         <div className="mt-14 rounded-2xl border border-border bg-card p-6 sm:p-8">
-          <h2 className="font-serif-luxury text-2xl text-foreground">Have a question before you order?</h2>
+          <h2 className="font-serif-luxury text-2xl text-foreground">
+            Have a question before you order?
+          </h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Contact the team to confirm the terms that apply to your piece before making a payment.
           </p>

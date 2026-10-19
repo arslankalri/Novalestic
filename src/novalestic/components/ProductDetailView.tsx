@@ -175,7 +175,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                   `Quantity: ${quantity}`,
                   `Listed price: ${formatPrice(product.pricePKR)}`,
                   'Please confirm current price, availability, materials and specifications.'
-                ].join('\\n'))}`}
+                ].join('\n'))}`}
                 target="_blank"
                 rel="noreferrer"
                 className="w-full rounded-full bg-emerald hover:bg-emerald-hover text-emerald-foreground py-4 text-sm font-medium transition-colors flex items-center justify-center gap-2"

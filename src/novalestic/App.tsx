@@ -15,6 +15,7 @@ import { CatalogView } from "./components/CatalogView";
 import { ProductDetailView } from "./components/ProductDetailView";
 import { CartView } from "./components/CartView";
 import { ContactView } from "./components/ContactView";
+import { PolicyView } from "./components/PolicyView";
 import { NotificationToast } from "./components/NotificationToast";
 import { AnalyticsConsentBanner } from "./components/AnalyticsConsentBanner";
 import {
@@ -69,6 +70,10 @@ const AppContent: React.FC = () => {
       "bangles-bracelets": "Bangles & Bracelets",
       cart: "Shopping Bag",
       contact: "Contact Us",
+      privacy: "Privacy Notice",
+      shipping: "Shipping & Delivery",
+      returns: "Returns & Exchanges",
+      terms: "Website & Enquiry Terms",
     };
     const pageTitle =
       currentView === "product-detail"
@@ -100,6 +105,14 @@ const AppContent: React.FC = () => {
         return <CartView />;
       case "contact":
         return <ContactView />;
+      case "privacy":
+        return <PolicyView kind="privacy" />;
+      case "shipping":
+        return <PolicyView kind="shipping" />;
+      case "returns":
+        return <PolicyView kind="returns" />;
+      case "terms":
+        return <PolicyView kind="terms" />;
 
       case "home":
       default:
@@ -114,7 +127,7 @@ const AppContent: React.FC = () => {
             {/* 3. Bestselling High Jewellery Icons */}
             <BestsellingGrid />
 
-            {/* 4. Four Decades of Gemstone Mastery */}
+            {/* 4. Editorial brand and design section */}
             <CraftsmanshipSection />
           </main>
         );

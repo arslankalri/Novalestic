@@ -26,14 +26,14 @@ export const CartView: React.FC = () => {
         ...(item.ringSize ? [`   Ring size: ${item.ringSize}`] : []),
         `   Quantity: ${item.quantity}`,
         `   Listed price each: ${formatPrice(item.product.pricePKR)}`,
-      ].join("\\n"),
+      ].join("\n"),
     ),
     "",
     hasUnpricedItems
       ? "One or more items are enquiry-priced. Please confirm each item's current price."
       : `Listed merchandise subtotal: ${formatPrice(cartTotal)}`,
     "Please confirm availability, final pricing, delivery charges and timing, and payment options. This is an enquiry, not a confirmed order.",
-  ].join("\\n");
+  ].join("\n");
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useShop } from '../context/ShopContext';
 import { NovalesticLogo } from './NovalesticLogo';
-import { ArrowUpRight, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Mail, MapPin, MessageCircle } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { navigateTo } = useShop();
@@ -16,60 +16,51 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="w-full bg-[#F2EDE3] text-[#1b1c19] mt-20 border-t border-[#DFC27F]/30">
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-16 py-12 lg:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-16">
-          <div className="flex flex-col items-start">
-            <button onClick={() => navigateTo('home')} aria-label="Novalestic home" className="mb-5">
+    <footer className="w-full bg-secondary/70 text-foreground border-t border-border">
+      <div className="shell py-16 lg:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-4">
+            <button onClick={() => navigateTo('home')} aria-label="Novalestic home" className="mb-5 rounded-sm">
               <NovalesticLogo variant="horizontal" size="sm" />
             </button>
-            <p className="max-w-sm text-sm text-[#5d5750] leading-relaxed">
+            <p className="max-w-xs text-sm text-muted-foreground leading-relaxed">
               Jewellery, considered. Discover the Novalestic collection and find pieces that feel like you.
             </p>
           </div>
 
-          <div>
-            <h2 className="text-[11px] font-semibold uppercase text-[#4d4545] tracking-[0.2em] mb-5">
-              Explore
-            </h2>
-            <ul className="space-y-3 text-sm text-[#4d4545]">
+          <nav aria-label="Footer" className="lg:col-span-2">
+            <h2 className="eyebrow text-muted-foreground mb-5">Explore</h2>
+            <ul className="space-y-3 text-sm">
               {links.map((link) => (
                 <li key={link.view}>
-                  <button
-                    onClick={() => navigateTo(link.view)}
-                    className="inline-flex items-center gap-2 hover:text-[#9E7B32] transition-colors"
-                  >
+                  <button onClick={() => navigateTo(link.view)} className="text-muted-foreground hover:text-foreground transition-colors rounded-sm">
                     {link.label}
-                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </button>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          <div>
-            <h2 className="text-[11px] font-semibold uppercase text-[#4d4545] tracking-[0.2em] mb-5">Contact</h2>
-            <div className="space-y-3 text-sm text-[#4d4545]">
-              <a href="https://wa.me/923019653550" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-[#176b43]"><MessageCircle className="w-4 h-4" /> WhatsApp: 0301 9653550</a>
-              <a href="mailto:novalestic1@gmail.com" className="flex items-center gap-2 hover:text-[#9E7B32]"><Mail className="w-4 h-4" /> novalestic1@gmail.com</a>
-              <p className="flex items-start gap-2"><MapPin className="w-4 h-4 shrink-0 mt-0.5" /> Barrier 2, Wah Cantt, Taxila, Pakistan</p>
-              <button onClick={() => navigateTo('contact')} className="inline-flex items-center gap-1 text-xs uppercase tracking-wider text-[#765a18] hover:text-[#1b1c19]">Contact Us <ArrowUpRight className="w-3.5 h-3.5" /></button>
+          <div className="lg:col-span-3">
+            <h2 className="eyebrow text-muted-foreground mb-5">Contact</h2>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <a href="https://wa.me/923019653550" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-emerald transition-colors"><MessageCircle className="w-4 h-4" aria-hidden="true" /> WhatsApp: 0301 9653550</a>
+              <a href="mailto:novalestic1@gmail.com" className="flex items-center gap-2 hover:text-foreground transition-colors"><Mail className="w-4 h-4" aria-hidden="true" /> novalestic1@gmail.com</a>
+              <p className="flex items-start gap-2"><MapPin className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" /> Barrier 2, Wah Cantt, Taxila, Pakistan</p>
             </div>
           </div>
 
-          <div>
-            <h2 className="text-[11px] font-semibold uppercase text-[#4d4545] tracking-[0.2em] mb-5">
-              A note about this preview
-            </h2>
-            <p className="text-sm text-[#5d5750] leading-relaxed">
-              This storefront is being prepared. Product listings are samples for design review; materials, availability, shipping and payment details will be confirmed before orders open.
+          <div className="lg:col-span-3">
+            <h2 className="eyebrow text-muted-foreground mb-5">A note about this preview</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              This storefront is being prepared. Materials, availability, shipping and payment details are confirmed individually before orders open.
             </p>
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-[#DFC27F]/25 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-[#7f7575] uppercase tracking-[0.16em]">
-          <p>© {new Date().getFullYear()} NOVALESTIC JEWELLERS</p>
-          <button onClick={() => navigateTo('home')} className="hover:text-[#1b1c19] transition-colors">
+        <div className="mt-14 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} Novalestic Jewellers</p>
+          <button onClick={() => navigateTo('home')} className="hover:text-foreground transition-colors rounded-sm">
             Back to top ↑
           </button>
         </div>

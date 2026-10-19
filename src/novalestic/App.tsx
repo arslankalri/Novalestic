@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ShopProvider, useShop } from "./context/ShopContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
@@ -16,9 +16,47 @@ import { ProductDetailView } from "./components/ProductDetailView";
 import { CartView } from "./components/CartView";
 import { ContactView } from "./components/ContactView";
 import { NotificationToast } from "./components/NotificationToast";
+import { AnalyticsConsentBanner } from "./components/AnalyticsConsentBanner";
+import {
+  ANALYTICS_CONSENT_STORAGE_KEY,
+  readAnalyticsConsent,
+  recordStorefrontPageView,
+  type AnalyticsConsentChoice,
+} from "./data/websiteAnalytics";
 
 const AppContent: React.FC = () => {
   const { currentView, selectedProductId, products } = useShop();
+  const [analyticsConsent, setAnalyticsConsent] = useState<AnalyticsConsentChoice>("unset");
+  const [showAnalyticsPreferences, setShowAnalyticsPreferences] = useState(false);
+
+  useEffect(() => {
+    const savedChoice = readAnalyticsConsent();
+    setAnalyticsConsent(savedChoice);
+    setShowAnalyticsPreferences(savedChoice === "unset");
+  }, []);
+
+  useEffect(() => {
+    if (analyticsConsent !== "accepted") return;
+    const pagePath =
+      currentView === "home"
+        ? "/"
+        : currentView === "product-detail"
+          ? selectedProductId
+            ? `/product/${selectedProductId}`
+            : "/product/unavailable"
+          : `/${currentView}`;
+    recordStorefrontPageView(pagePath);
+  }, [analyticsConsent, currentView, selectedProductId]);
+
+  const chooseAnalyticsConsent = (choice: "accepted" | "declined") => {
+    try {
+      window.localStorage.setItem(ANALYTICS_CONSENT_STORAGE_KEY, choice);
+    } catch {
+      // The selection still applies for the current page session.
+    }
+    setAnalyticsConsent(choice);
+    setShowAnalyticsPreferences(false);
+  };
 
   useEffect(() => {
     const product = products.find((item) => item.id === selectedProductId);
@@ -92,7 +130,13 @@ const AppContent: React.FC = () => {
       <div className="flex-grow">{renderCurrentView()}</div>
 
       {/* Footer */}
-      <Footer />
+      <Footer onOpenAnalyticsPreferences={() => setShowAnalyticsPreferences(true)} />
+
+      <AnalyticsConsentBanner
+        visible={showAnalyticsPreferences}
+        choice={analyticsConsent}
+        onChoose={chooseAnalyticsConsent}
+      />
 
       {/* Toast Notification */}
       <NotificationToast />

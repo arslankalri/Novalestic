@@ -52,7 +52,7 @@ export const Header: React.FC = () => {
     >
       <div className="h-8 flex items-center justify-center border-b border-border/70 px-4">
         <p className="text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
-          Novalestic Jewellers <span className="text-champagne mx-2" aria-hidden="true">·</span> The Collection Preview
+          Novalestic Jewellers <span className="text-champagne mx-2" aria-hidden="true">·</span> Jewellery, considered
         </p>
       </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { adminDb as supabase } from "./opsDatabase";
+import { adminDb as supabase } from "./adminDatabase";
 import type { Database } from "./opsDatabase";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
@@ -66,16 +66,33 @@ export function AdminDashboard() {
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = async () => {
-    const [{ data: p }, { data: i }, { data: c }] = await Promise.all([
+    const [
+      { data: p, error: productsError },
+      { data: i, error: imagesError },
+      { data: c, error: costsError },
+    ] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("product_images").select("*").order("sort_order"),
       supabase.from("product_costs").select("*"),
     ]);
+
+    if (productsError) {
+      setLoadError(`Could not load products: ${productsError.message}`);
+      return;
+    }
+
+    setLoadError(null);
     setProducts(p ?? []);
     setImages(i ?? []);
     setCosts(c ?? []);
+
+    const relatedError = imagesError ?? costsError;
+    if (relatedError) {
+      setMessage(`Some product details could not be loaded: ${relatedError.message}`);
+    }
   };
 
   useEffect(() => {
@@ -109,7 +126,13 @@ export function AdminDashboard() {
   const uploadImages = async (productId: string, startOrder: number) => {
     const uploaded: string[] = [];
     for (const [idx, file] of files.entries()) {
-      const ext = file.name.split(".").pop() ?? "jpg";
+      const extensionByType: Record<string, string> = {
+        "image/jpeg": "jpg",
+        "image/png": "png",
+        "image/webp": "webp",
+      };
+      const ext = extensionByType[file.type];
+      if (!ext) throw new Error("Product photos must be JPEG, PNG or WebP images.");
       const path = `products/${productId}/${crypto.randomUUID()}.${ext}`;
       const { error: upErr } = await supabase.storage
         .from("product-images")
@@ -137,7 +160,7 @@ export function AdminDashboard() {
     setMessage(null);
     if (
       form.pricingMode === "fixed" &&
-      (form.price === "" || Number(form.price) < 0 || Number.isNaN(Number(form.price)))
+      (form.price === "" || !Number.isFinite(Number(form.price)) || Number(form.price) < 0)
     ) {
       setMessage("Enter a valid PKR price, or choose enquiry-only pricing.");
       return;
@@ -149,9 +172,19 @@ export function AdminDashboard() {
       setMessage("Cost price must be a non-negative amount.");
       return;
     }
+    const invalidPhoto = files.find(
+      (file) =>
+        !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+        file.size > 10 * 1024 * 1024,
+    );
+    if (invalidPhoto) {
+      setMessage("Each product photo must be JPEG, PNG or WebP and 10 MB or smaller.");
+      return;
+    }
+
     const existingImages = images.filter((i) => i.product_id === form.id);
     if (existingImages.length === 0 && files.length === 0) {
-      setMessage("Add at least one product photo before publishing.");
+      setMessage("Add at least one product photo before saving.");
       return;
     }
     setBusy(true);
@@ -205,16 +238,20 @@ export function AdminDashboard() {
       const uploaded = await uploadImages(id, nextOrder);
       const primary = existingImages[0]?.image_url ?? uploaded[0];
 
-      // Saving publishes immediately.
-      const { error: pubErr } = await supabase
+      const { error: imageError } = await supabase
         .from("products")
-        .update({ primary_image_url: primary ?? null, is_published: true })
+        .update({ primary_image_url: primary ?? null })
         .eq("id", id);
-      if (pubErr) throw pubErr;
+      if (imageError) throw imageError;
 
+      const wasPublished = products.some((product) => product.id === id && product.is_published);
       setForm(EMPTY);
       setFiles([]);
-      setMessage("Saved and published.");
+      setMessage(
+        wasPublished
+          ? "Product saved."
+          : "Product saved as a draft. Publish it from the product list when ready.",
+      );
       await load();
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Save failed.");
@@ -272,26 +309,9 @@ export function AdminDashboard() {
           </button>
         </div>
       </header>
-      <nav className="flex gap-2 overflow-x-auto border-b border-[#e4e2dd] bg-white px-6 py-3 text-sm">
-        <a href="/admin/overview" className="whitespace-nowrap underline">
-          Business overview
-        </a>
-        <a href="/admin/orders" className="whitespace-nowrap underline">
-          Orders
-        </a>
-        <a href="/admin/enquiries" className="whitespace-nowrap underline">
-          Enquiries
-        </a>
-        <a href="/admin/customers" className="whitespace-nowrap underline">
-          Customers
-        </a>
-        <a href="/admin/inventory" className="whitespace-nowrap underline">
-          Inventory
-        </a>
-        <a href="/admin/reports" className="whitespace-nowrap underline">
-          Reports
-        </a>
-      </nav>
+      <div className="border-b border-[#e4e2dd] bg-white px-6 py-3 text-sm text-[#7f7575]">
+        Manage your product listings, photos, prices and publication status here.
+      </div>
 
       <div className="max-w-6xl mx-auto p-6 grid gap-8 lg:grid-cols-[420px_1fr]">
         <form onSubmit={save} className="bg-white border border-[#e4e2dd] p-6 space-y-4 self-start">
@@ -501,7 +521,11 @@ export function AdminDashboard() {
 
         <section>
           <h2 className="serif-luxury text-lg mb-3">Products ({products.length})</h2>
-          {products.length === 0 ? (
+          {loadError ? (
+            <p className="text-sm text-red-700" role="alert">
+              {loadError}
+            </p>
+          ) : products.length === 0 ? (
             <p className="text-sm text-[#7f7575]">
               No products yet. Add your first piece using the form.
             </p>

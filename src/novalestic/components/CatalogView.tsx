@@ -71,7 +71,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
     if (sortBy === "price-desc") {
       return [...items].sort((a, b) => b.pricePKR - a.pricePKR);
     }
-    return items;
+    return [...items].sort((a, b) => Number(b.featured) - Number(a.featured));
   }, [categoryProducts, selectedMetal, sortBy]);
 
   const ready = productsStatus === "ready";

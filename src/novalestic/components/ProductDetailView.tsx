@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useShop } from '../context/ShopContext';
-import { ArrowLeft, MessageCircle, Info } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Info, ShoppingBag } from 'lucide-react';
 import { CollectionError } from './CollectionState';
 
 const WHATSAPP_NUMBER = '923019653550';
@@ -10,7 +10,7 @@ interface ProductDetailViewProps {
 }
 
 export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId }) => {
-  const { products, productsStatus, navigateTo } = useShop();
+  const { products, productsStatus, navigateTo, addToCart } = useShop();
 
   const product = productId ? products.find((p) => p.id === productId) : undefined;
 
@@ -158,6 +158,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
             </div>
 
             <div className="mt-10 space-y-3">
+              <button
+                type="button"
+                onClick={() => addToCart(product, quantity, selectedMetal, product.category === 'rings' ? selectedRingSize : undefined)}
+                className="w-full rounded-full bg-primary text-primary-foreground py-4 text-sm font-medium transition-opacity hover:opacity-90 flex items-center justify-center gap-2"
+              >
+                <ShoppingBag className="w-4 h-4" aria-hidden="true" /> Add to Bag
+              </button>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hello NOVALESTIC JEWELLERS, I would like to enquire about: ${product.title}. Please share the current price, availability, materials and specifications.`)}`}
                 target="_blank"

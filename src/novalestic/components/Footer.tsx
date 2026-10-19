@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <nav aria-label="Footer" className="lg:col-span-2">
-            <h2 className="eyebrow text-muted-foreground mb-5">Explore</h2>
+            <h2 className="eyebrow font-sans text-muted-foreground mb-5">Explore</h2>
             <ul className="space-y-3 text-sm">
               {links.map((link) => (
                 <li key={link.view}>
@@ -42,7 +42,7 @@ export const Footer: React.FC = () => {
           </nav>
 
           <div className="lg:col-span-3">
-            <h2 className="eyebrow text-muted-foreground mb-5">Contact</h2>
+            <h2 className="eyebrow font-sans text-muted-foreground mb-5">Contact</h2>
             <div className="space-y-3 text-sm text-muted-foreground">
               <a href="https://wa.me/923019653550" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-emerald transition-colors"><MessageCircle className="w-4 h-4" aria-hidden="true" /> WhatsApp: 0301 9653550</a>
               <a href="mailto:novalestic1@gmail.com" className="flex items-center gap-2 hover:text-foreground transition-colors"><Mail className="w-4 h-4" aria-hidden="true" /> novalestic1@gmail.com</a>
@@ -51,7 +51,7 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="lg:col-span-3">
-            <h2 className="eyebrow text-muted-foreground mb-5">A note about this preview</h2>
+            <h2 className="eyebrow font-sans text-muted-foreground mb-5">A note about this preview</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               This storefront is being prepared. Materials, availability, shipping and payment details are confirmed individually before orders open.
             </p>

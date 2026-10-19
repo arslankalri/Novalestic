@@ -177,7 +177,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
             </div>
 
             <div className="mt-10 pt-8 border-t border-border">
-              <h2 className="eyebrow text-muted-foreground mb-4">Jewellery Specifications</h2>
+              <h2 className="eyebrow font-sans text-muted-foreground mb-4">Jewellery Specifications</h2>
               <dl className="text-sm divide-y divide-border">
                 <div className="flex justify-between py-3"><dt className="text-muted-foreground">Gold Metal</dt><dd className="text-foreground">{selectedMetal}</dd></div>
                 <div className="flex justify-between py-3"><dt className="text-muted-foreground">Gemstone</dt><dd className="text-foreground">{product.carat || 'To be confirmed'}</dd></div>

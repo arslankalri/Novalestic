@@ -151,9 +151,13 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
             </h1>
 
             <div className="mt-6 pb-8 border-b border-border">
-              <p className="font-serif-luxury text-2xl text-emerald">Contact for price</p>
+              <p className="font-serif-luxury text-2xl text-emerald">
+                {product.pricePKR > 0 ? formatPrice(product.pricePKR) : "Contact for price"}
+              </p>
               <p className="text-sm text-muted-foreground mt-1">
-                Price and availability confirmed directly with our team.
+                {product.pricePKR > 0
+                  ? "Listed price in PKR. Availability and final details are confirmed with our team."
+                  : "Price and availability are confirmed directly with our team."}
               </p>
             </div>
 
@@ -261,7 +265,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                 className="w-full rounded-full bg-primary text-primary-foreground py-4 text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <ShoppingBag className="w-4 h-4" aria-hidden="true" />{" "}
-                {product.inStock ? "Add to Bag" : "Currently Unavailable"}
+                {product.inStock ? (product.pricePKR > 0 ? "Add to Bag" : "Add to Enquiry List") : "Currently Unavailable"}
               </button>
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(

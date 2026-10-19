@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { ShopProvider, useShop } from "./context/ShopContext";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
@@ -18,7 +18,29 @@ import { ContactView } from "./components/ContactView";
 import { NotificationToast } from "./components/NotificationToast";
 
 const AppContent: React.FC = () => {
-  const { currentView, selectedProductId } = useShop();
+  const { currentView, selectedProductId, products } = useShop();
+
+  useEffect(() => {
+    const product = products.find((item) => item.id === selectedProductId);
+    const titles: Record<string, string> = {
+      home: "Fine Gemstone Jewellery",
+      shop: "All Jewellery",
+      rings: "Rings",
+      earrings: "Earrings",
+      necklaces: "Necklaces & Pendants",
+      "bangles-bracelets": "Bangles & Bracelets",
+      cart: "Shopping Bag",
+      contact: "Contact Us",
+    };
+    const pageTitle =
+      currentView === "product-detail"
+        ? product?.title ?? "Jewellery Piece"
+        : titles[currentView] ?? "Fine Gemstone Jewellery";
+    document.title =
+      currentView === "home" || currentView === "product-detail" && !product
+        ? "Novalestic Jewellers — Fine Gemstone Jewellery"
+        : `${pageTitle} | Novalestic Jewellers`;
+  }, [currentView, selectedProductId, products]);
 
   const renderCurrentView = () => {
     switch (currentView) {

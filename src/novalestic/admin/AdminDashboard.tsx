@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { adminDb as supabase } from "./adminDatabase";
-import type { Database } from "./opsDatabase";
+import type { Database } from "./adminDatabase";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type ImageRow = Database["public"]["Tables"]["product_images"]["Row"];
@@ -13,9 +13,6 @@ const CATEGORIES: { value: Category; label: string }[] = [
   { value: "necklaces", label: "Necklaces" },
   { value: "bangles-bracelets", label: "Bangles & Bracelets" },
 ];
-
-// Long-lived signed links so photos display on the storefront while the storage bucket is private.
-const SIGNED_URL_SECONDS = 60 * 60 * 24 * 365 * 10;
 
 interface FormState {
   id: string | null;
@@ -138,19 +135,18 @@ export function AdminDashboard() {
         .from("product-images")
         .upload(path, file, { contentType: file.type });
       if (upErr) throw upErr;
-      const { data: signed, error: signErr } = await supabase.storage
-        .from("product-images")
-        .createSignedUrl(path, SIGNED_URL_SECONDS);
-      if (signErr || !signed) throw signErr ?? new Error("Could not create image link");
+      const { data: publicImage } = supabase.storage.from("product-images").getPublicUrl(path);
+      const imageUrl = publicImage.publicUrl;
+      if (!imageUrl) throw new Error("Could not create product image URL");
       const { error: rowErr } = await supabase.from("product_images").insert({
         product_id: productId,
-        image_url: signed.signedUrl,
+        image_url: imageUrl,
         storage_path: path,
         sort_order: startOrder + idx,
         alt_text: form.title,
       });
       if (rowErr) throw rowErr;
-      uploaded.push(signed.signedUrl);
+      uploaded.push(imageUrl);
     }
     return uploaded;
   };

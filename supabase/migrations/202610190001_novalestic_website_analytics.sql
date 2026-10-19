@@ -23,8 +23,9 @@ create index if not exists website_page_views_session_created_at_idx
 
 alter table public.website_page_views enable row level security;
 
-revoke all on public.website_page_views from public;
-grant insert on public.website_page_views to anon, authenticated;
+revoke all on public.website_page_views from public, anon, authenticated;
+grant insert (session_id, page_path, referrer_host, device_type)
+  on public.website_page_views to anon, authenticated;
 grant select on public.website_page_views to authenticated;
 
 drop policy if exists "Storefront may record anonymous page views" on public.website_page_views;

@@ -38,7 +38,7 @@ jobs:
       - name: Check TypeScript types
         run: bunx tsc --noEmit
 
-      - name: Run ESLint
+      - name: Run ESLint after timer cleanup
         run: bun run lint
 
       - name: Build production bundle

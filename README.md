@@ -27,6 +27,8 @@ A responsive, luxury-styled jewellery storefront built with React, TypeScript, T
 
 ## Development
 
+GitHub Actions checks formatting, tests, TypeScript, lint and the production build on pushes to `main` and pull requests targeting `main`.
+
 Install dependencies using Bun and the repository lockfile:
 
 ```sh

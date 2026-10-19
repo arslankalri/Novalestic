@@ -1,7 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import { adminDb as supabase } from './opsDatabase';
+import type { Database } from './opsDatabase';
 
 type ProductRow = Database['public']['Tables']['products']['Row'];
 type ImageRow = Database['public']['Tables']['product_images']['Row'];

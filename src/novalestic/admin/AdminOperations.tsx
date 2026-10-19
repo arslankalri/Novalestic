@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from '@tanstack/react-router';
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/integrations/supabase/types';
+import { adminDb as supabase } from './opsDatabase';
+import type { Database } from './opsDatabase';
 
 type Mode = 'dashboard' | 'orders' | 'customers' | 'enquiries' | 'inventory' | 'reports';
 type Product = Database['public']['Tables']['products']['Row'];

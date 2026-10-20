@@ -268,7 +268,9 @@ export function AdminDashboard() {
 
   const formImages = images.filter((i) => i.product_id === form.id);
   const visibleProducts = products.filter((product) =>
-    `${product.title} ${product.category}`.toLowerCase().includes(productSearch.trim().toLowerCase()),
+    `${product.title} ${product.category}`
+      .toLowerCase()
+      .includes(productSearch.trim().toLowerCase()),
   );
   const input = "mt-1 w-full border border-[#d0c4c3] px-3 py-2 bg-white text-sm";
 
@@ -344,7 +346,7 @@ export function AdminDashboard() {
                 ))}
               </select>
             </label>
-</div>
+          </div>
           <fieldset className="text-sm space-y-2">
             <legend>Pricing *</legend>
             <label className="mr-4">
@@ -375,7 +377,7 @@ export function AdminDashboard() {
               />
             )}
           </fieldset>
-<label className="block text-sm">
+          <label className="block text-sm">
             Metal
             <input
               placeholder="e.g. 18k yellow gold"

@@ -64,10 +64,7 @@ export function AdminDashboard() {
   const [productSearch, setProductSearch] = useState("");
 
   const load = async () => {
-    const [
-      { data: p, error: productsError },
-      { data: i, error: imagesError },
-    ] = await Promise.all([
+    const [{ data: p, error: productsError }, { data: i, error: imagesError }] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("product_images").select("*").order("sort_order"),
     ]);

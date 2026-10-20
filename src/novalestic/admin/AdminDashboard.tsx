@@ -4,7 +4,29 @@ import { adminDb as supabase } from "./adminDatabase";
 import type { Database } from "./adminDatabase";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
+type AdminProductRow = Pick<
+  ProductRow,
+  | "id"
+  | "title"
+  | "category"
+  | "pricing_mode"
+  | "price_pkr"
+  | "metal"
+  | "available_metals"
+  | "carat"
+  | "short_desc"
+  | "description"
+  | "primary_image_url"
+  | "in_stock"
+  | "is_featured"
+  | "is_published"
+  | "created_at"
+>;
 type ImageRow = Database["public"]["Tables"]["product_images"]["Row"];
+type AdminImageRow = Pick<
+  ImageRow,
+  "id" | "product_id" | "image_url" | "storage_path" | "alt_text" | "sort_order"
+>;
 type Category = "rings" | "earrings" | "necklaces" | "bangles-bracelets";
 
 const CATEGORIES: { value: Category; label: string }[] = [
@@ -54,8 +76,8 @@ const blank = (s: string) => (s.trim() === "" ? null : s.trim());
 
 export function AdminDashboard() {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<ProductRow[]>([]);
-  const [images, setImages] = useState<ImageRow[]>([]);
+  const [products, setProducts] = useState<AdminProductRow[]>([]);
+  const [images, setImages] = useState<AdminImageRow[]>([]);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
@@ -65,8 +87,16 @@ export function AdminDashboard() {
 
   const load = async () => {
     const [{ data: p, error: productsError }, { data: i, error: imagesError }] = await Promise.all([
-      supabase.from("products").select("*").order("created_at", { ascending: false }),
-      supabase.from("product_images").select("*").order("sort_order"),
+      supabase
+        .from("products")
+        .select(
+          "id,title,category,pricing_mode,price_pkr,metal,available_metals,carat,short_desc,description,primary_image_url,in_stock,is_featured,is_published,created_at",
+        )
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("product_images")
+        .select("id,product_id,image_url,storage_path,alt_text,sort_order")
+        .order("sort_order"),
     ]);
 
     if (productsError) {
@@ -90,7 +120,7 @@ export function AdminDashboard() {
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
-  const edit = (p: ProductRow) => {
+  const edit = (p: AdminProductRow) => {
     setFiles([]);
     setMessage(null);
     setForm({
@@ -226,7 +256,7 @@ export function AdminDashboard() {
     }
   };
 
-  const togglePublish = async (p: ProductRow) => {
+  const togglePublish = async (p: AdminProductRow) => {
     if (!p.is_published && !p.primary_image_url) {
       setMessage("Add a product photo before publishing this item.");
       return;
@@ -241,7 +271,7 @@ export function AdminDashboard() {
     await load();
   };
 
-  const removeImage = async (img: ImageRow) => {
+  const removeImage = async (img: AdminImageRow) => {
     if (img.storage_path) await supabase.storage.from("product-images").remove([img.storage_path]);
     await supabase.from("product_images").delete().eq("id", img.id);
     const remaining = images.filter((i) => i.product_id === img.product_id && i.id !== img.id);

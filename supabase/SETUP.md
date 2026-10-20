@@ -15,17 +15,18 @@ Before changing the database, confirm that the foundation already exists:
 
 If these do not exist, review and apply `supabase/migrations/202610130001_novalestic_admin_foundation.sql` once first. Do not re-run it on a database where it is already installed.
 
-## 2. Apply the current catalogue migration
+## 2. Apply the catalogue security migrations in order
 
-In the **same project's** Supabase SQL Editor, review and run:
+In the **same project's** Supabase SQL Editor, review and run both files in this order:
 
-`supabase/migrations/202610200001_restrict_public_product_columns.sql`
+1. `supabase/migrations/202610200001_restrict_public_product_columns.sql` — configures the product photo bucket and limits anonymous catalogue columns.
+2. `supabase/migrations/202610200002_harden_authenticated_catalogue_access.sql` — removes table-wide product reads from signed-in users, restricts product-photo metadata to administrators, and keeps dashboard reads to the fields it needs.
 
-[Open this migration on GitHub](https://github.com/arslankalri/Novalestic/blob/main/supabase/migrations/202610200001_restrict_public_product_columns.sql)
+[Open migration 1](https://github.com/arslankalri/Novalestic/blob/main/supabase/migrations/202610200001_restrict_public_product_columns.sql) · [Open migration 2](https://github.com/arslankalri/Novalestic/blob/main/supabase/migrations/202610200002_harden_authenticated_catalogue_access.sql)
 
-It sets the product image bucket to public-read with a 10 MB limit and JPEG/PNG/WebP types, and limits anonymous catalogue reads to the fields the storefront needs. Run it only against the intended Novalestic database, not a different project.
+The second migration addresses a permissions gap: the foundation migration grants table-level product reads to authenticated users, which can expose internal fields even if anonymous access is narrowed. Do not apply these migrations to a different database. Review active policies and permissions first if you made manual database changes.
 
-This migration does not create products, provision an administrator account, or deploy the website.
+These migrations do not create products, provision an administrator account, or deploy the website.
 
 ## 3. Confirm administrator access
 

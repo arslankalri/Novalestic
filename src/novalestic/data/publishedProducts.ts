@@ -26,8 +26,7 @@ export async function fetchPublishedProducts(): Promise<Product[]> {
       pricePKR: r.pricing_mode === "fixed" && r.price_pkr !== null ? Number(r.price_pkr) : 0,
       ...(r.hallmark_badge ? { hallmarkBadge: r.hallmark_badge } : {}),
       metal: r.metal ?? "",
-      availableMetals:
-        availableMetals.length > 0 ? availableMetals : r.metal ? [r.metal] : [],
+      availableMetals: availableMetals.length > 0 ? availableMetals : r.metal ? [r.metal] : [],
       carat: r.carat ?? "",
       origin: r.origin ?? "",
       cut: r.cut ?? "",

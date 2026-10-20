@@ -17,6 +17,7 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
   const { products, productsStatus, navigateTo } = useShop();
 
   const [selectedMetal, setSelectedMetal] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc">("featured");
 
   const categoryTitles: Record<string, { title: string; subtitle: string; description: string }> = {
@@ -56,6 +57,14 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
 
   const filteredProducts = useMemo(() => {
     let items = categoryProducts;
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
+      items = items.filter((p) =>
+        [p.title, p.shortDesc, p.description, p.metal, ...(p.availableMetals ?? [])]
+          .filter(Boolean)
+          .some((value) => value!.toLowerCase().includes(query)),
+      );
+    }
 
     if (selectedMetal !== "all") {
       items = items.filter((p) =>
@@ -66,13 +75,17 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
     }
 
     if (sortBy === "price-asc") {
-      return [...items].sort((a, b) => a.pricePKR - b.pricePKR);
+      return [...items].sort((a, b) => {
+        const priceA = a.pricePKR > 0 ? a.pricePKR : Number.POSITIVE_INFINITY;
+        const priceB = b.pricePKR > 0 ? b.pricePKR : Number.POSITIVE_INFINITY;
+        return priceA - priceB;
+      });
     }
     if (sortBy === "price-desc") {
       return [...items].sort((a, b) => b.pricePKR - a.pricePKR);
     }
     return [...items].sort((a, b) => Number(b.featured) - Number(a.featured));
-  }, [categoryProducts, selectedMetal, sortBy]);
+  }, [categoryProducts, selectedMetal, searchQuery, sortBy]);
 
   const ready = productsStatus === "ready";
 
@@ -105,12 +118,23 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
             {currentInfo.description}
           </p>
           <p className="mt-6 text-xs tracking-[0.14em] uppercase text-champagne">
-            Prices and specifications available on enquiry
+            Prices shown where available · ask us about current availability
           </p>
         </header>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 mb-10 border-y border-border">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 flex-1">
+            <label htmlFor="catalog-search" className="sr-only">
+              Search jewellery
+            </label>
+            <input
+              id="catalog-search"
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search jewellery…"
+              className="w-full sm:max-w-xs rounded-full border border-border bg-card px-4 py-2 text-sm text-foreground"
+            />
             <label htmlFor="catalog-metal-filter" className="text-xs text-muted-foreground">
               Metal
             </label>
@@ -188,10 +212,13 @@ export const CatalogView: React.FC<CatalogViewProps> = ({ category }) => {
                   Nothing here just yet
                 </h2>
                 <p className="text-sm text-muted-foreground mb-6">
-                  Try another category or clear your metal filter.
+                  Try another search term or clear your filters.
                 </p>
                 <button
-                  onClick={() => setSelectedMetal("all")}
+                  onClick={() => {
+                    setSelectedMetal("all");
+                    setSearchQuery("");
+                  }}
                   className="rounded-full border border-foreground/15 px-6 py-3 text-sm font-medium hover:bg-secondary transition-colors"
                 >
                   Clear filters

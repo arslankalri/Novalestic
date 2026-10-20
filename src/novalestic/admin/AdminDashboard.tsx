@@ -18,32 +18,30 @@ interface FormState {
   id: string | null;
   title: string;
   category: Category;
-  sku: string;
   pricingMode: "fixed" | "enquiry";
   price: string;
-  costPrice: string;
   metal: string;
   availableMetals: string;
   carat: string;
   shortDesc: string;
   description: string;
   featured: boolean;
+  inStock: boolean;
 }
 
 const EMPTY: FormState = {
   id: null,
   title: "",
   category: "rings",
-  sku: "",
   pricingMode: "enquiry",
   price: "",
-  costPrice: "",
   metal: "",
   availableMetals: "",
   carat: "",
   shortDesc: "",
   description: "",
   featured: false,
+  inStock: true,
 };
 
 const slugify = (s: string) =>
@@ -58,22 +56,20 @@ export function AdminDashboard() {
   const navigate = useNavigate();
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [images, setImages] = useState<ImageRow[]>([]);
-  const [costs, setCosts] = useState<Database["public"]["Tables"]["product_costs"]["Row"][]>([]);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [productSearch, setProductSearch] = useState("");
 
   const load = async () => {
     const [
       { data: p, error: productsError },
       { data: i, error: imagesError },
-      { data: c, error: costsError },
     ] = await Promise.all([
       supabase.from("products").select("*").order("created_at", { ascending: false }),
       supabase.from("product_images").select("*").order("sort_order"),
-      supabase.from("product_costs").select("*"),
     ]);
 
     if (productsError) {
@@ -84,11 +80,9 @@ export function AdminDashboard() {
     setLoadError(null);
     setProducts(p ?? []);
     setImages(i ?? []);
-    setCosts(c ?? []);
 
-    const relatedError = imagesError ?? costsError;
-    if (relatedError) {
-      setMessage(`Some product details could not be loaded: ${relatedError.message}`);
+    if (imagesError) {
+      setMessage(`Product photos could not be loaded: ${imagesError.message}`);
     }
   };
 
@@ -106,16 +100,15 @@ export function AdminDashboard() {
       id: p.id,
       title: p.title,
       category: p.category as Category,
-      sku: p.sku ?? "",
       pricingMode: p.pricing_mode as "fixed" | "enquiry",
       price: p.price_pkr?.toString() ?? "",
-      costPrice: costs.find((cost) => cost.product_id === p.id)?.cost_price_pkr.toString() ?? "",
       metal: p.metal ?? "",
       availableMetals: (p.available_metals ?? []).join(", "),
       carat: p.carat ?? "",
       shortDesc: p.short_desc ?? "",
       description: p.description ?? "",
       featured: p.is_featured,
+      inStock: p.in_stock,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -161,13 +154,6 @@ export function AdminDashboard() {
       setMessage("Enter a valid PKR price, or choose enquiry-only pricing.");
       return;
     }
-    if (
-      form.costPrice.trim() !== "" &&
-      (!Number.isFinite(Number(form.costPrice)) || Number(form.costPrice) < 0)
-    ) {
-      setMessage("Cost price must be a non-negative amount.");
-      return;
-    }
     const invalidPhoto = files.find(
       (file) =>
         !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
@@ -188,7 +174,6 @@ export function AdminDashboard() {
       const base = {
         title: form.title.trim(),
         category: form.category,
-        sku: blank(form.sku),
         pricing_mode: form.pricingMode,
         price_pkr: form.pricingMode === "fixed" ? Number(form.price) : null,
         metal: blank(form.metal),
@@ -200,6 +185,7 @@ export function AdminDashboard() {
         short_desc: blank(form.shortDesc),
         description: blank(form.description),
         is_featured: form.featured,
+        in_stock: form.inStock,
       };
 
       let id = form.id;
@@ -215,19 +201,6 @@ export function AdminDashboard() {
       } else {
         const { error } = await supabase.from("products").update(base).eq("id", id);
         if (error) throw error;
-      }
-
-      if (form.costPrice.trim() === "") {
-        const { error: costError } = await supabase
-          .from("product_costs")
-          .delete()
-          .eq("product_id", id);
-        if (costError) throw costError;
-      } else {
-        const { error: costError } = await supabase
-          .from("product_costs")
-          .upsert({ product_id: id, cost_price_pkr: Number(form.costPrice) });
-        if (costError) throw costError;
       }
 
       const nextOrder = existingImages.reduce((m, i) => Math.max(m, i.sort_order + 1), 0);
@@ -257,12 +230,16 @@ export function AdminDashboard() {
   };
 
   const togglePublish = async (p: ProductRow) => {
+    if (!p.is_published && !p.primary_image_url) {
+      setMessage("Add a product photo before publishing this item.");
+      return;
+    }
     const { error } = await supabase
       .from("products")
       .update({ is_published: !p.is_published })
       .eq("id", p.id);
     setMessage(
-      error ? error.message : p.is_published ? "Product unpublished." : "Product published.",
+      error ? error.message : p.is_published ? "Product moved to drafts." : "Product published.",
     );
     await load();
   };
@@ -290,6 +267,9 @@ export function AdminDashboard() {
   };
 
   const formImages = images.filter((i) => i.product_id === form.id);
+  const visibleProducts = products.filter((product) =>
+    `${product.title} ${product.category}`.toLowerCase().includes(productSearch.trim().toLowerCase()),
+  );
   const input = "mt-1 w-full border border-[#d0c4c3] px-3 py-2 bg-white text-sm";
 
   return (
@@ -306,7 +286,21 @@ export function AdminDashboard() {
         </div>
       </header>
       <div className="border-b border-[#e4e2dd] bg-white px-6 py-3 text-sm text-[#7f7575]">
-        Manage your product listings, photos, prices and publication status here.
+        Add a product, upload its photo, set the price and publish it when it is ready.
+      </div>
+      <div className="max-w-6xl mx-auto px-6 pt-6 grid grid-cols-3 gap-3">
+        <div className="border border-[#e4e2dd] bg-white p-4">
+          <p className="text-xs text-[#7f7575]">Total products</p>
+          <p className="text-2xl font-semibold">{products.length}</p>
+        </div>
+        <div className="border border-[#e4e2dd] bg-white p-4">
+          <p className="text-xs text-[#7f7575]">Published</p>
+          <p className="text-2xl font-semibold">{products.filter((p) => p.is_published).length}</p>
+        </div>
+        <div className="border border-[#e4e2dd] bg-white p-4">
+          <p className="text-xs text-[#7f7575]">Drafts</p>
+          <p className="text-2xl font-semibold">{products.filter((p) => !p.is_published).length}</p>
+        </div>
       </div>
 
       <div className="max-w-6xl mx-auto p-6 grid gap-8 lg:grid-cols-[420px_1fr]">
@@ -350,15 +344,7 @@ export function AdminDashboard() {
                 ))}
               </select>
             </label>
-            <label className="block text-sm">
-              SKU
-              <input
-                value={form.sku}
-                onChange={(e) => set("sku", e.target.value)}
-                className={input}
-              />
-            </label>
-          </div>
+</div>
           <fieldset className="text-sm space-y-2">
             <legend>Pricing *</legend>
             <label className="mr-4">
@@ -389,32 +375,7 @@ export function AdminDashboard() {
               />
             )}
           </fieldset>
-          <label className="block text-sm">
-            Cost price (PKR, private)
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Optional — never shown publicly"
-              value={form.costPrice}
-              onChange={(e) => set("costPrice", e.target.value)}
-              className={input}
-            />
-          </label>
-          \n{" "}
-          <label className="block text-sm">
-            Cost price (PKR, private)
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Optional — never shown publicly"
-              value={form.costPrice}
-              onChange={(e) => set("costPrice", e.target.value)}
-              className={input}
-            />
-          </label>
-          <label className="block text-sm">
+<label className="block text-sm">
             Metal
             <input
               placeholder="e.g. 18k yellow gold"
@@ -463,12 +424,16 @@ export function AdminDashboard() {
                 checked={form.featured}
                 onChange={(e) => set("featured", e.target.checked)}
               />{" "}
-              Featured
+              Feature this item
             </label>
-            <p className="text-xs text-[#7f7575]">
-              Record opening stock under Inventory; stock availability updates from the stock
-              ledger.
-            </p>
+            <label>
+              <input
+                type="checkbox"
+                checked={form.inStock}
+                onChange={(e) => set("inStock", e.target.checked)}
+              />{" "}
+              In stock
+            </label>
           </div>
           {formImages.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -501,6 +466,9 @@ export function AdminDashboard() {
               className="mt-1 block text-sm"
             />
           </label>
+          <p className="text-xs text-[#7f7575]">
+            New products are saved as drafts. Publish them from the product list when ready.
+          </p>
           {message && (
             <p role="status" className="text-sm text-[#9E7B32]">
               {message}
@@ -511,12 +479,34 @@ export function AdminDashboard() {
             disabled={busy}
             className="w-full bg-[#002118] text-[#DFC27F] py-2.5 text-sm tracking-widest uppercase disabled:opacity-60"
           >
-            {busy ? "Saving…" : "Save & publish"}
+            {busy ? "Saving…" : "Save product"}
           </button>
         </form>
 
         <section>
-          <h2 className="serif-luxury text-lg mb-3">Products ({products.length})</h2>
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h2 className="serif-luxury text-lg">Products ({products.length})</h2>
+            <button
+              type="button"
+              onClick={() => {
+                setForm(EMPTY);
+                setFiles([]);
+                setMessage(null);
+              }}
+              className="text-sm underline"
+            >
+              Add new
+            </button>
+          </div>
+          <label className="block text-sm mb-4">
+            <span className="sr-only">Search products</span>
+            <input
+              value={productSearch}
+              onChange={(e) => setProductSearch(e.target.value)}
+              placeholder="Search products…"
+              className={input}
+            />
+          </label>
           {loadError ? (
             <p className="text-sm text-red-700" role="alert">
               {loadError}
@@ -525,9 +515,11 @@ export function AdminDashboard() {
             <p className="text-sm text-[#7f7575]">
               No products yet. Add your first piece using the form.
             </p>
+          ) : visibleProducts.length === 0 ? (
+            <p className="text-sm text-[#7f7575]">No matching products.</p>
           ) : (
             <ul className="space-y-3">
-              {products.map((p) => (
+              {visibleProducts.map((p) => (
                 <li
                   key={p.id}
                   className="bg-white border border-[#e4e2dd] p-3 flex items-center gap-3"
@@ -540,8 +532,7 @@ export function AdminDashboard() {
                   <div className="flex-1 min-w-0 text-sm">
                     <p className="font-semibold truncate">{p.title}</p>
                     <p className="text-[#7f7575]">
-                      {CATEGORIES.find((c) => c.value === p.category)?.label} · {p.sku || "No SKU"}{" "}
-                      ·{" "}
+                      {CATEGORIES.find((c) => c.value === p.category)?.label} ·{" "}
                       {p.pricing_mode === "fixed" && p.price_pkr !== null
                         ? `Rs. ${Number(p.price_pkr).toLocaleString("en-PK")}`
                         : "Price on enquiry"}

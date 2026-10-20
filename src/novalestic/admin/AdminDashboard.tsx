@@ -793,7 +793,7 @@ export function AdminDashboard() {
         )}
 
         {section === "editor" && (
-          <section className="mx-auto max-w-4xl space-y-6">
+          <section className="mx-auto min-w-0 max-w-4xl space-y-6">
             <div>
               <button
                 type="button"
@@ -817,7 +817,7 @@ export function AdminDashboard() {
               </p>
             </div>
 
-            <form onSubmit={save} className={cardClass + " space-y-6"}>
+            <form onSubmit={save} className={cardClass + " min-w-0 max-w-full space-y-6"}>
               <section className="space-y-4">
                 <div className="border-b border-[#eee7dd] pb-3">
                   <h2 className="serif-luxury text-xl">Product details</h2>
@@ -1016,7 +1016,7 @@ export function AdminDashboard() {
                     multiple
                     accept="image/jpeg,image/png,image/webp"
                     onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-                    className="mt-2 block w-full rounded-md border border-dashed border-[#d9d0c3] bg-[#fbf9f4] p-3 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-[#002118] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#dfc27f]"
+                    className="mt-2 block w-full min-w-0 max-w-full rounded-md border border-dashed border-[#d9d0c3] bg-[#fbf9f4] p-3 text-sm file:mr-2 file:rounded-md file:border-0 file:bg-[#002118] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#dfc27f] sm:file:mr-4"
                   />
                   <span className="mt-2 block text-xs font-normal text-[#7f7575]">
                     {files.length > 0

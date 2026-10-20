@@ -1,160 +1,153 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { adminDb as supabase } from "./opsDatabase";
-import type { Database } from "./opsDatabase";
+import {
+  ArrowUpRight,
+  CircleAlert,
+  Eye,
+  FileText,
+  Gem,
+  LayoutDashboard,
+  LogOut,
+  Package,
+  Plus,
+  Search,
+  RefreshCw,
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { CatalogueProductList } from "./CatalogueProductList";
+import { CatalogueEditor } from "./CatalogueEditor";
+import {
+  EMPTY,
+  canPublish,
+  catalogueCounts,
+  filterProducts,
+  validateProduct,
+  type FormState,
+  type ImageRow,
+  type ProductFilter,
+  type ProductRow,
+} from "./catalogue";
 
-type ProductRow = Database["public"]["Tables"]["products"]["Row"];
-type ImageRow = Database["public"]["Tables"]["product_images"]["Row"];
-type Category = "rings" | "earrings" | "necklaces" | "bangles-bracelets";
-
-const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "rings", label: "Rings" },
-  { value: "earrings", label: "Earrings" },
-  { value: "necklaces", label: "Necklaces" },
-  { value: "bangles-bracelets", label: "Bangles & Bracelets" },
-];
-
-// Long-lived signed links so photos display on the storefront while the storage bucket is private.
 const SIGNED_URL_SECONDS = 60 * 60 * 24 * 365 * 10;
-
-interface FormState {
-  id: string | null;
-  title: string;
-  category: Category;
-  sku: string;
-  pricingMode: "fixed" | "enquiry";
-  price: string;
-  costPrice: string;
-  metal: string;
-  availableMetals: string;
-  carat: string;
-  shortDesc: string;
-  description: string;
-  featured: boolean;
-}
-
-const EMPTY: FormState = {
-  id: null,
-  title: "",
-  category: "rings",
-  sku: "",
-  pricingMode: "enquiry",
-  price: "",
-  costPrice: "",
-  metal: "",
-  availableMetals: "",
-  carat: "",
-  shortDesc: "",
-  description: "",
-  featured: false,
-};
-
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-const blank = (s: string) => (s.trim() === "" ? null : s.trim());
+const PRODUCT_COLUMNS =
+  "id,title,slug,sku,category,price_pkr,pricing_mode,hallmark_badge,metal,available_metals,carat,origin,cut,clarity,dimensions,tag,short_desc,description,primary_image_url,stock_quantity,in_stock,is_published,is_featured,created_at,updated_at,published_at";
+const FILTERS: { value: ProductFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "published", label: "Published" },
+  { value: "drafts", label: "Drafts" },
+  { value: "outOfStock", label: "Out of stock" },
+];
+const blank = (value: string) => value.trim() || null;
 
 export function AdminDashboard() {
   const navigate = useNavigate();
+  const [section, setSection] = useState<"overview" | "products" | "editor">("overview");
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [images, setImages] = useState<ImageRow[]>([]);
-  const [costs, setCosts] = useState<Database["public"]["Tables"]["product_costs"]["Row"][]>([]);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  const load = async () => {
-    const [{ data: p }, { data: i }, { data: c }] = await Promise.all([
-      supabase.from("products").select("*").order("created_at", { ascending: false }),
-      supabase.from("product_images").select("*").order("sort_order"),
-      supabase.from("product_costs").select("*"),
-    ]);
-    setProducts(p ?? []);
-    setImages(i ?? []);
-    setCosts(c ?? []);
-  };
-
+  const [isError, setIsError] = useState(false);
+  const [filter, setFilter] = useState<ProductFilter>("all");
+  const [search, setSearch] = useState("");
+  const uploadCompleted = useRef(new Set<File>());
+  const load = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const [p, i] = await Promise.all([
+        supabase.from("products").select(PRODUCT_COLUMNS).order("created_at", { ascending: false }),
+        supabase
+          .from("product_images")
+          .select("id,product_id,image_url,storage_path,alt_text,sort_order,created_at")
+          .order("sort_order"),
+      ]);
+      if (p.error) throw p.error;
+      if (i.error) throw i.error;
+      setProducts(p.data ?? []);
+      setImages(i.data ?? []);
+    } catch (error) {
+      setLoadError(
+        error instanceof Error ? error.message : "Unable to load your catalogue. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
   useEffect(() => {
     void load();
-  }, []);
-
-  const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
-    setForm((f) => ({ ...f, [k]: v }));
-
-  const edit = (p: ProductRow) => {
+  }, [load]);
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
+    setForm((f) => ({ ...f, [key]: value }));
+  const notify = (text: string, error = false) => {
+    setMessage(text);
+    setIsError(error);
+  };
+  const reset = () => {
+    setForm(EMPTY);
     setFiles([]);
+    uploadCompleted.current.clear();
+  };
+  const openNew = () => {
+    reset();
+    setMessage(null);
+    setSection("editor");
+  };
+  const edit = (p: ProductRow) => {
+    reset();
     setMessage(null);
     setForm({
       id: p.id,
       title: p.title,
-      category: p.category as Category,
+      category: p.category,
       sku: p.sku ?? "",
-      pricingMode: p.pricing_mode as "fixed" | "enquiry",
+      pricingMode: p.pricing_mode === "fixed" ? "fixed" : "enquiry",
       price: p.price_pkr?.toString() ?? "",
-      costPrice: costs.find((cost) => cost.product_id === p.id)?.cost_price_pkr.toString() ?? "",
       metal: p.metal ?? "",
-      availableMetals: (p.available_metals ?? []).join(", "),
+      availableMetals: p.available_metals.join(", "),
       carat: p.carat ?? "",
       shortDesc: p.short_desc ?? "",
       description: p.description ?? "",
       featured: p.is_featured,
     });
+    setSection("editor");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
-  const uploadImages = async (productId: string, startOrder: number) => {
-    const uploaded: string[] = [];
-    for (const [idx, file] of files.entries()) {
-      const ext = file.name.split(".").pop() ?? "jpg";
-      const path = `products/${productId}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage
-        .from("product-images")
-        .upload(path, file, { contentType: file.type });
-      if (upErr) throw upErr;
-      const { data: signed, error: signErr } = await supabase.storage
-        .from("product-images")
-        .createSignedUrl(path, SIGNED_URL_SECONDS);
-      if (signErr || !signed) throw signErr ?? new Error("Could not create image link");
-      const { error: rowErr } = await supabase.from("product_images").insert({
-        product_id: productId,
-        image_url: signed.signedUrl,
-        storage_path: path,
-        sort_order: startOrder + idx,
-        alt_text: form.title,
-      });
-      if (rowErr) throw rowErr;
-      uploaded.push(signed.signedUrl);
-    }
-    return uploaded;
+  const review = (value: ProductFilter) => {
+    setFilter(value);
+    setSearch("");
+    setSection("products");
   };
-
-  const save = async (e: FormEvent) => {
-    e.preventDefault();
-    setMessage(null);
-    if (
-      form.pricingMode === "fixed" &&
-      (form.price === "" || Number(form.price) < 0 || Number.isNaN(Number(form.price)))
-    ) {
-      setMessage("Enter a valid PKR price, or choose enquiry-only pricing.");
-      return;
-    }
-    if (
-      form.costPrice.trim() !== "" &&
-      (!Number.isFinite(Number(form.costPrice)) || Number(form.costPrice) < 0)
-    ) {
-      setMessage("Cost price must be a non-negative amount.");
-      return;
-    }
+  const save = async (event: FormEvent) => {
+    event.preventDefault();
+    if (busy) return;
     const existingImages = images.filter((i) => i.product_id === form.id);
-    if (existingImages.length === 0 && files.length === 0) {
-      setMessage("Add at least one product photo before publishing.");
+    const existingProduct = products.find((p) => p.id === form.id);
+    const validation = validateProduct(
+      form,
+      Boolean(existingImages.length || existingProduct?.primary_image_url || files.length),
+    );
+    if (validation) {
+      notify(validation, true);
+      return;
+    }
+    if (
+      files.some(
+        (file) =>
+          !["image/jpeg", "image/png", "image/webp"].includes(file.type) ||
+          file.size > 10 * 1024 * 1024,
+      )
+    ) {
+      notify("Choose JPEG, PNG or WebP photos no larger than 10 MB each.", true);
       return;
     }
     setBusy(true);
+    setMessage(null);
     try {
       const base = {
         title: form.title.trim(),
@@ -172,10 +165,15 @@ export function AdminDashboard() {
         description: blank(form.description),
         is_featured: form.featured,
       };
-
       let id = form.id;
       if (!id) {
-        const slug = `${slugify(form.title) || "product"}-${crypto.randomUUID().slice(0, 6)}`;
+        const slug = `${
+          form.title
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-|-$/g, "") || "product"
+        }-${crypto.randomUUID().slice(0, 6)}`;
         const { data, error } = await supabase
           .from("products")
           .insert({ ...base, slug, is_published: false })
@@ -183,368 +181,451 @@ export function AdminDashboard() {
           .single();
         if (error) throw error;
         id = data.id;
+        setForm((f) => ({ ...f, id }));
       } else {
         const { error } = await supabase.from("products").update(base).eq("id", id);
         if (error) throw error;
       }
-
-      if (form.costPrice.trim() === "") {
-        const { error: costError } = await supabase
-          .from("product_costs")
-          .delete()
-          .eq("product_id", id);
-        if (costError) throw costError;
-      } else {
-        const { error: costError } = await supabase
-          .from("product_costs")
-          .upsert({ product_id: id, cost_price_pkr: Number(form.costPrice) });
-        if (costError) throw costError;
+      let primary = existingProduct?.primary_image_url ?? existingImages[0]?.image_url ?? null;
+      const nextOrder = existingImages.reduce(
+        (max, image) => Math.max(max, image.sort_order + 1),
+        0,
+      );
+      for (const [index, file] of files.entries()) {
+        if (uploadCompleted.current.has(file)) continue;
+        const extension =
+          file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+        const path = `products/${id}/${crypto.randomUUID()}.${extension}`;
+        const { error: uploadError } = await supabase.storage
+          .from("product-images")
+          .upload(path, file, { contentType: file.type });
+        if (uploadError) throw uploadError;
+        const { data: signed, error: signError } = await supabase.storage
+          .from("product-images")
+          .createSignedUrl(path, SIGNED_URL_SECONDS);
+        if (signError || !signed) throw signError ?? new Error("Could not create image link.");
+        const { data: image, error: imageError } = await supabase
+          .from("product_images")
+          .insert({
+            product_id: id,
+            image_url: signed.signedUrl,
+            storage_path: path,
+            sort_order: nextOrder + index,
+            alt_text: form.title.trim(),
+          })
+          .select("id,product_id,image_url,storage_path,alt_text,sort_order,created_at")
+          .single();
+        if (imageError) throw imageError;
+        uploadCompleted.current.add(file);
+        setFiles((current) => current.filter((selected) => selected !== file));
+        setImages((current) => [...current, image]);
+        primary ??= signed.signedUrl;
       }
-
-      const nextOrder = existingImages.reduce((m, i) => Math.max(m, i.sort_order + 1), 0);
-      const uploaded = await uploadImages(id, nextOrder);
-      const primary = existingImages[0]?.image_url ?? uploaded[0];
-
-      // Saving publishes immediately.
-      const { error: pubErr } = await supabase
+      const { error } = await supabase
         .from("products")
-        .update({ primary_image_url: primary ?? null, is_published: true })
+        .update({ primary_image_url: primary, is_published: true })
         .eq("id", id);
-      if (pubErr) throw pubErr;
-
-      setForm(EMPTY);
-      setFiles([]);
-      setMessage("Saved and published.");
+      if (error) throw error;
+      reset();
+      setSection("products");
+      setFilter("all");
+      setSearch("");
+      notify("Saved and published.");
       await load();
-    } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Save failed.");
+    } catch (error) {
+      notify(
+        error instanceof Error
+          ? error.message
+          : "Save failed. Your changes remain in the editor; please try again.",
+        true,
+      );
     } finally {
       setBusy(false);
     }
   };
-
-  const togglePublish = async (p: ProductRow) => {
-    const { error } = await supabase
-      .from("products")
-      .update({ is_published: !p.is_published })
-      .eq("id", p.id);
-    setMessage(
-      error ? error.message : p.is_published ? "Product unpublished." : "Product published.",
-    );
-    await load();
-  };
-
-  const removeImage = async (img: ImageRow) => {
-    if (img.storage_path) await supabase.storage.from("product-images").remove([img.storage_path]);
-    await supabase.from("product_images").delete().eq("id", img.id);
-    const remaining = images.filter((i) => i.product_id === img.product_id && i.id !== img.id);
-    const product = products.find((p) => p.id === img.product_id);
-    if (product?.primary_image_url === img.image_url) {
-      const next = remaining[0]?.image_url ?? null;
-      await supabase
-        .from("products")
-        .update(
-          next ? { primary_image_url: next } : { primary_image_url: null, is_published: false },
-        )
-        .eq("id", img.product_id);
+  const togglePublish = async (product: ProductRow) => {
+    if (busy) return;
+    if (!product.is_published && !canPublish(product, images)) {
+      notify("Add a photo and valid pricing in the editor before publishing.", true);
+      edit(product);
+      notify("Add a photo and valid pricing before publishing.", true);
+      return;
     }
-    await load();
+    setBusy(true);
+    try {
+      const primary =
+        product.primary_image_url ??
+        images.find((image) => image.product_id === product.id)?.image_url;
+      const { error } = await supabase
+        .from("products")
+        .update({
+          is_published: !product.is_published,
+          ...(!product.is_published && primary ? { primary_image_url: primary } : {}),
+        })
+        .eq("id", product.id);
+      if (error) throw error;
+      notify(product.is_published ? "Product unpublished." : "Product published.");
+      await load();
+    } catch (error) {
+      notify(error instanceof Error ? error.message : "Could not update publishing status.", true);
+    } finally {
+      setBusy(false);
+    }
   };
-
+  const removeImage = async (image: ImageRow) => {
+    if (
+      busy ||
+      !window.confirm(
+        "Remove this photo? Removing the final cover photo will unpublish the product.",
+      )
+    )
+      return;
+    setBusy(true);
+    try {
+      const remaining = images.filter(
+        (i) => i.product_id === image.product_id && i.id !== image.id,
+      );
+      const product = products.find((p) => p.id === image.product_id);
+      if (product?.primary_image_url === image.image_url || remaining.length === 0) {
+        const next = remaining[0]?.image_url;
+        const { error } = await supabase
+          .from("products")
+          .update(
+            next ? { primary_image_url: next } : { primary_image_url: null, is_published: false },
+          )
+          .eq("id", image.product_id);
+        if (error) throw error;
+      }
+      const { error } = await supabase.from("product_images").delete().eq("id", image.id);
+      if (error) throw error;
+      if (image.storage_path) {
+        const { error: storageError } = await supabase.storage
+          .from("product-images")
+          .remove([image.storage_path]);
+        if (storageError) {
+          notify(
+            "Photo removed from the catalogue, but the stored file could not be removed.",
+            true,
+          );
+          await load();
+          return;
+        }
+      }
+      notify("Photo removed.");
+      await load();
+    } catch (error) {
+      notify(error instanceof Error ? error.message : "Could not remove photo.", true);
+      await load();
+    } finally {
+      setBusy(false);
+    }
+  };
   const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate({ to: "/admin/login", replace: true });
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      notify("Could not sign out. Please try again.", true);
+      return;
+    }
+    void navigate({ to: "/admin/login", replace: true });
   };
-
-  const formImages = images.filter((i) => i.product_id === form.id);
-  const input = "mt-1 w-full border border-[#d0c4c3] px-3 py-2 bg-white text-sm";
-
+  const counts = catalogueCounts(products);
+  const filtered = filterProducts(products, filter, search);
+  const listProps = {
+    busy,
+    edit,
+    togglePublish: (p: ProductRow) => {
+      void togglePublish(p);
+    },
+  };
   return (
-    <main className="min-h-screen bg-[#fbf9f4] text-[#1b1c19]">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-[#e4e2dd] bg-white">
-        <h1 className="serif-luxury text-xl">Novalestic Catalogue Admin</h1>
-        <div className="flex gap-4 text-sm">
-          <a href="/" className="text-[#9E7B32] underline">
-            View storefront
-          </a>
-          <button onClick={signOut} className="text-[#4d4544] underline">
-            Sign out
-          </button>
+    <main className="min-h-screen bg-background text-foreground">
+      <header className="border-b border-border bg-card">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-8">
+          <div className="flex items-center gap-3">
+            <Gem className="size-8 text-champagne" />
+            <div>
+              <p className="font-serif text-xl">Novalestic Jewellers</p>
+              <p className="mt-1 text-xs text-muted-foreground">Catalogue administration</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button asChild variant="ghost" size="sm">
+              <a href="/">
+                Storefront
+                <ArrowUpRight />
+              </a>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={busy}
+              onClick={() => {
+                void signOut();
+              }}
+            >
+              <LogOut />
+              Sign out
+            </Button>
+          </div>
         </div>
       </header>
-      <nav className="flex gap-2 overflow-x-auto border-b border-[#e4e2dd] bg-white px-6 py-3 text-sm">
-        <a href="/admin/overview" className="whitespace-nowrap underline">
-          Business overview
-        </a>
-        <a href="/admin/orders" className="whitespace-nowrap underline">
-          Orders
-        </a>
-        <a href="/admin/enquiries" className="whitespace-nowrap underline">
-          Enquiries
-        </a>
-        <a href="/admin/customers" className="whitespace-nowrap underline">
-          Customers
-        </a>
-        <a href="/admin/inventory" className="whitespace-nowrap underline">
-          Inventory
-        </a>
-        <a href="/admin/reports" className="whitespace-nowrap underline">
-          Reports
-        </a>
-      </nav>
-
-      <div className="max-w-6xl mx-auto p-6 grid gap-8 lg:grid-cols-[420px_1fr]">
-        <form onSubmit={save} className="bg-white border border-[#e4e2dd] p-6 space-y-4 self-start">
-          <div className="flex items-center justify-between">
-            <h2 className="serif-luxury text-lg">{form.id ? "Edit product" : "Add product"}</h2>
-            {form.id && (
-              <button
-                type="button"
+      <div className="mx-auto grid max-w-7xl gap-7 px-5 py-6 sm:px-8 sm:py-8 lg:grid-cols-[210px_minmax(0,1fr)]">
+        <aside>
+          <nav aria-label="Catalogue sections" className="flex gap-2 lg:flex-col">
+            {(
+              [
+                { value: "overview", label: "Overview", icon: LayoutDashboard },
+                { value: "products", label: "Products", icon: Package },
+                { value: "editor", label: form.id ? "Edit product" : "Add product", icon: Plus },
+              ] as const
+            ).map((item) => (
+              <Button
+                key={item.value}
+                disabled={busy}
+                variant="ghost"
+                aria-current={section === item.value ? "page" : undefined}
+                className={`h-11 flex-1 px-3 lg:justify-start ${section === item.value ? "bg-emerald text-emerald-foreground hover:bg-emerald-hover hover:text-emerald-foreground" : "text-muted-foreground"}`}
                 onClick={() => {
-                  setForm(EMPTY);
-                  setFiles([]);
+                  setSection(item.value);
+                  setMessage(null);
                 }}
-                className="text-xs underline"
               >
-                New instead
-              </button>
-            )}
-          </div>
-          <label className="block text-sm">
-            Title *
-            <input
-              required
-              value={form.title}
-              onChange={(e) => set("title", e.target.value)}
-              className={input}
-            />
-          </label>
-          <div className="grid grid-cols-2 gap-3">
-            <label className="block text-sm">
-              Category *
-              <select
-                value={form.category}
-                onChange={(e) => set("category", e.target.value as Category)}
-                className={input}
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="block text-sm">
-              SKU
-              <input
-                value={form.sku}
-                onChange={(e) => set("sku", e.target.value)}
-                className={input}
-              />
-            </label>
-          </div>
-          <fieldset className="text-sm space-y-2">
-            <legend>Pricing *</legend>
-            <label className="mr-4">
-              <input
-                type="radio"
-                checked={form.pricingMode === "enquiry"}
-                onChange={() => set("pricingMode", "enquiry")}
-              />{" "}
-              Price on enquiry
-            </label>
-            <label>
-              <input
-                type="radio"
-                checked={form.pricingMode === "fixed"}
-                onChange={() => set("pricingMode", "fixed")}
-              />{" "}
-              Fixed price (PKR)
-            </label>
-            {form.pricingMode === "fixed" && (
-              <input
-                type="number"
-                min="0"
-                step="1"
-                placeholder="e.g. 250000"
-                value={form.price}
-                onChange={(e) => set("price", e.target.value)}
-                className={input}
-              />
-            )}
-          </fieldset>
-          <label className="block text-sm">
-            Cost price (PKR, private)
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Optional — never shown publicly"
-              value={form.costPrice}
-              onChange={(e) => set("costPrice", e.target.value)}
-              className={input}
-            />
-          </label>
-          \n{" "}
-          <label className="block text-sm">
-            Cost price (PKR, private)
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Optional — never shown publicly"
-              value={form.costPrice}
-              onChange={(e) => set("costPrice", e.target.value)}
-              className={input}
-            />
-          </label>
-          <label className="block text-sm">
-            Metal
-            <input
-              placeholder="e.g. 18k yellow gold"
-              value={form.metal}
-              onChange={(e) => set("metal", e.target.value)}
-              className={input}
-            />
-          </label>
-          <label className="block text-sm">
-            Available metals (comma separated)
-            <input
-              value={form.availableMetals}
-              onChange={(e) => set("availableMetals", e.target.value)}
-              className={input}
-            />
-          </label>
-          <label className="block text-sm">
-            Carat / purity
-            <input
-              value={form.carat}
-              onChange={(e) => set("carat", e.target.value)}
-              className={input}
-            />
-          </label>
-          <label className="block text-sm">
-            Short description
-            <input
-              value={form.shortDesc}
-              onChange={(e) => set("shortDesc", e.target.value)}
-              className={input}
-            />
-          </label>
-          <label className="block text-sm">
-            Full description
-            <textarea
-              rows={3}
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              className={input}
-            />
-          </label>
-          <div className="flex flex-wrap items-center gap-5 text-sm">
-            <label>
-              <input
-                type="checkbox"
-                checked={form.featured}
-                onChange={(e) => set("featured", e.target.checked)}
-              />{" "}
-              Featured
-            </label>
-            <p className="text-xs text-[#7f7575]">
-              Record opening stock under Inventory; stock availability updates from the stock
-              ledger.
-            </p>
-          </div>
-          {formImages.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {formImages.map((img) => (
-                <div key={img.id} className="relative">
-                  <img
-                    src={img.image_url}
-                    alt={img.alt_text ?? ""}
-                    className="w-16 h-16 object-cover border"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(img)}
-                    aria-label="Remove photo"
-                    className="absolute -top-2 -right-2 bg-white border rounded-full w-5 h-5 text-xs"
+                <item.icon />
+                <span>{item.label}</span>
+              </Button>
+            ))}
+          </nav>
+          <div className="mt-7 hidden border-t border-border pt-5 lg:block">
+            <p className="mb-3 text-xs font-semibold text-champagne">Store operations</p>
+            <nav aria-label="Store operations" className="grid gap-1 text-sm text-muted-foreground">
+              {["overview", "orders", "enquiries", "customers", "inventory", "reports"].map(
+                (path) => (
+                  <a
+                    key={path}
+                    href={`/admin/${path}`}
+                    className="rounded-md px-3 py-2 capitalize hover:bg-accent hover:text-foreground"
                   >
-                    ×
-                  </button>
-                </div>
-              ))}
+                    {path === "overview" ? "Business overview" : path}
+                  </a>
+                ),
+              )}
+            </nav>
+          </div>
+          <details className="mt-4 lg:hidden">
+            <summary className="cursor-pointer text-sm text-muted-foreground">
+              Store operations
+            </summary>
+            <nav className="flex flex-wrap gap-4 pt-3 text-sm" aria-label="Store operations">
+              {["overview", "orders", "enquiries", "customers", "inventory", "reports"].map(
+                (path) => (
+                  <a key={path} href={`/admin/${path}`} className="capitalize underline">
+                    {path === "overview" ? "Business overview" : path}
+                  </a>
+                ),
+              )}
+            </nav>
+          </details>
+        </aside>
+        <div className="min-w-0">
+          {message && (
+            <div
+              role={isError ? "alert" : "status"}
+              className={`mb-5 rounded-md border px-4 py-3 text-sm ${isError ? "border-destructive/30 bg-destructive/5 text-destructive" : "border-emerald/20 bg-emerald/5 text-emerald"}`}
+            >
+              {message}
             </div>
           )}
-          <label className="block text-sm">
-            Photos (JPEG, PNG or WebP, up to 10 MB each)
-            <input
-              type="file"
-              multiple
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-              className="mt-1 block text-sm"
-            />
-          </label>
-          {message && (
-            <p role="status" className="text-sm text-[#9E7B32]">
-              {message}
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full bg-[#002118] text-[#DFC27F] py-2.5 text-sm tracking-widest uppercase disabled:opacity-60"
-          >
-            {busy ? "Saving…" : "Save & publish"}
-          </button>
-        </form>
-
-        <section>
-          <h2 className="serif-luxury text-lg mb-3">Products ({products.length})</h2>
-          {products.length === 0 ? (
-            <p className="text-sm text-[#7f7575]">
-              No products yet. Add your first piece using the form.
-            </p>
+          {loading ? (
+            <div role="status" className="py-20 text-center text-muted-foreground">
+              <RefreshCw className="mx-auto mb-3 size-5 animate-spin motion-reduce:animate-none" />
+              Loading catalogue…
+            </div>
+          ) : loadError ? (
+            <div role="alert" className="py-16 text-center">
+              <CircleAlert className="mx-auto mb-4 size-8 text-destructive" />
+              <h2 className="text-2xl">Catalogue unavailable</h2>
+              <p className="mx-auto my-4 max-w-md text-sm text-muted-foreground">{loadError}</p>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  void load();
+                }}
+              >
+                <RefreshCw />
+                Try again
+              </Button>
+            </div>
+          ) : section === "editor" ? (
+            <div className="rounded-lg border border-border bg-card p-5 sm:p-8">
+              <CatalogueEditor
+                form={form}
+                set={set}
+                files={files}
+                setFiles={setFiles}
+                images={images.filter((i) => i.product_id === form.id)}
+                busy={busy}
+                save={save}
+                removeImage={(image) => {
+                  void removeImage(image);
+                }}
+                cancel={() => {
+                  reset();
+                  setSection("products");
+                }}
+              />
+            </div>
           ) : (
-            <ul className="space-y-3">
-              {products.map((p) => (
-                <li
-                  key={p.id}
-                  className="bg-white border border-[#e4e2dd] p-3 flex items-center gap-3"
+            <>
+              <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase text-champagne">
+                    Your collection
+                  </p>
+                  <h1 className="text-3xl">
+                    {section === "overview" ? "Catalogue overview" : "Products"}
+                  </h1>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {section === "overview"
+                      ? "A snapshot of your jewellery collection."
+                      : `${products.length} pieces in your catalogue`}
+                  </p>
+                </div>
+                <Button
+                  disabled={busy}
+                  onClick={openNew}
+                  className="h-11 bg-emerald text-emerald-foreground hover:bg-emerald-hover"
                 >
-                  {p.primary_image_url ? (
-                    <img src={p.primary_image_url} alt="" className="w-14 h-14 object-cover" />
-                  ) : (
-                    <div className="w-14 h-14 bg-[#f0eee9]" />
-                  )}
-                  <div className="flex-1 min-w-0 text-sm">
-                    <p className="font-semibold truncate">{p.title}</p>
-                    <p className="text-[#7f7575]">
-                      {CATEGORIES.find((c) => c.value === p.category)?.label} · {p.sku || "No SKU"}{" "}
-                      ·{" "}
-                      {p.pricing_mode === "fixed" && p.price_pkr !== null
-                        ? `Rs. ${Number(p.price_pkr).toLocaleString("en-PK")}`
-                        : "Price on enquiry"}
-                    </p>
-                    <p className="text-xs">
-                      <span className={p.is_published ? "text-emerald-700" : "text-[#7f7575]"}>
-                        {p.is_published ? "Published" : "Unpublished"}
-                      </span>
-                      {p.is_featured && " · Featured"}
-                      {!p.in_stock && " · Out of stock"}
-                    </p>
+                  <Plus />
+                  Add product
+                </Button>
+              </div>
+              {section === "overview" ? (
+                <>
+                  <div className="mb-8 grid grid-cols-2 gap-3 xl:grid-cols-4">
+                    {[
+                      { label: "Total products", value: "all", icon: Gem },
+                      { label: "Published", value: "published", icon: Eye },
+                      { label: "Drafts", value: "drafts", icon: FileText },
+                      { label: "Out of stock", value: "outOfStock", icon: Package },
+                    ].map((item) => (
+                      <div key={item.value} className="rounded-lg border border-border bg-card p-5">
+                        <item.icon className="mb-4 size-5 text-champagne" />
+                        <p className="text-3xl font-medium tabular-nums">
+                          {counts[item.value as ProductFilter]}
+                        </p>
+                        <p className="mt-2 text-xs text-muted-foreground">{item.label}</p>
+                      </div>
+                    ))}
                   </div>
-                  <button onClick={() => edit(p)} className="text-sm underline">
-                    Edit
-                  </button>
-                  <button onClick={() => togglePublish(p)} className="text-sm underline">
-                    {p.is_published ? "Unpublish" : "Publish"}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                  <div className="mb-8 flex flex-wrap items-center gap-3">
+                    <Button variant="outline" disabled={busy} onClick={() => review("drafts")}>
+                      <FileText />
+                      Review drafts ({counts.drafts})
+                    </Button>
+                    <Button variant="outline" disabled={busy} onClick={() => review("outOfStock")}>
+                      <Package />
+                      Review out of stock ({counts.outOfStock})
+                    </Button>
+                  </div>
+                  <div className="mb-5 flex items-center justify-between gap-3">
+                    <h2 className="text-xl">Recent products</h2>
+                    <Button variant="ghost" disabled={busy} onClick={() => review("all")}>
+                      View all
+                      <ArrowUpRight />
+                    </Button>
+                  </div>
+                  {products.length ? (
+                    <div className="rounded-lg border border-border bg-card p-5 sm:p-6">
+                      <CatalogueProductList products={products.slice(0, 5)} {...listProps} />
+                    </div>
+                  ) : (
+                    <div className="border-y border-border py-14 text-center">
+                      <Gem className="mx-auto mb-4 size-9 text-champagne" />
+                      <h2 className="text-2xl">Your collection starts here</h2>
+                      <p className="my-3 text-sm text-muted-foreground">
+                        No products in the catalogue yet.
+                      </p>
+                      <Button variant="outline" onClick={openNew}>
+                        <Plus />
+                        Add your first product
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="relative mb-5 max-w-lg">
+                    <Search className="pointer-events-none absolute left-3 top-3 size-4 text-muted-foreground" />
+                    <Input
+                      aria-label="Search products"
+                      placeholder="Search by name, SKU or category"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="h-10 bg-card pl-10"
+                    />
+                  </div>
+                  <div
+                    className="mb-6 flex flex-wrap gap-2"
+                    role="group"
+                    aria-label="Filter products"
+                  >
+                    {FILTERS.map((item) => (
+                      <Button
+                        key={item.value}
+                        variant="outline"
+                        aria-pressed={filter === item.value}
+                        onClick={() => setFilter(item.value)}
+                        className={
+                          filter === item.value
+                            ? "border-champagne bg-accent text-accent-foreground"
+                            : "bg-card"
+                        }
+                      >
+                        {item.label}
+                        <span className="text-xs tabular-nums text-muted-foreground">
+                          {counts[item.value]}
+                        </span>
+                      </Button>
+                    ))}
+                  </div>
+                  {filtered.length ? (
+                    <div className="rounded-lg border border-border bg-card p-5 sm:p-6">
+                      <CatalogueProductList products={filtered} {...listProps} />
+                    </div>
+                  ) : (
+                    <div className="border-y border-border py-14 text-center">
+                      <Search className="mx-auto mb-4 size-7 text-muted-foreground" />
+                      <h2 className="text-xl">
+                        {products.length ? "No matching products" : "No products yet"}
+                      </h2>
+                      <p className="my-3 text-sm text-muted-foreground">
+                        {products.length
+                          ? "Try another search or filter."
+                          : "Add the first piece to your collection."}
+                      </p>
+                      {products.length ? (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setSearch("");
+                            setFilter("all");
+                          }}
+                        >
+                          Clear filters
+                        </Button>
+                      ) : (
+                        <Button variant="outline" onClick={openNew}>
+                          <Plus />
+                          Add product
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </>
           )}
-        </section>
+        </div>
       </div>
     </main>
   );

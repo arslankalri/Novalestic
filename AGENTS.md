@@ -15,3 +15,4 @@
 
 - Admin portal lives at /admin/login and /admin (client-only routes, src/novalestic/admin/); all catalogue writes go through the browser client and are enforced by database RLS via novalestic_has_admin_access() — why: no service key in the frontend, the database is the security boundary.
 - Product photos use a private bucket with long-lived signed URLs stored on rows — why: the workspace blocks public buckets.
+- Catalogue administration keeps section state in AdminDashboard, shared display/validation in catalogue.ts, and focused editor/list components; it uses the generated browser client with explicit product/image columns and never operations cost tables — why: keep the UI aligned with the existing catalogue schema and restricted-data boundary.

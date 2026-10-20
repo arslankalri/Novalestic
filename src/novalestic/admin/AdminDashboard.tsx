@@ -354,7 +354,10 @@ export function AdminDashboard() {
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3 text-sm">
-            <a href="/" className="hidden text-[#806225] underline-offset-4 hover:underline sm:inline">
+            <a
+              href="/"
+              className="hidden text-[#806225] underline-offset-4 hover:underline sm:inline"
+            >
               View storefront
             </a>
             <button onClick={signOut} className="text-[#4d4544] underline-offset-4 hover:underline">
@@ -362,29 +365,52 @@ export function AdminDashboard() {
             </button>
           </div>
         </div>
-        <nav aria-label="Admin sections" className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6">
+        <nav
+          aria-label="Admin sections"
+          className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6"
+        >
           <button
             type="button"
-            onClick={() => { setSection("overview"); setMessage(null); }}
+            onClick={() => {
+              setSection("overview");
+              setMessage(null);
+            }}
             aria-current={section === "overview" ? "page" : undefined}
-            className={section === "overview" ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]" : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"}
+            className={
+              section === "overview"
+                ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]"
+                : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"
+            }
           >
             Overview
           </button>
           <button
             type="button"
-            onClick={() => { setSection("products"); setMessage(null); }}
+            onClick={() => {
+              setSection("products");
+              setMessage(null);
+            }}
             aria-current={section === "products" ? "page" : undefined}
-            className={section === "products" ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]" : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"}
+            className={
+              section === "products"
+                ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]"
+                : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"
+            }
           >
             Products
-            <span className="ml-2 rounded-full bg-[#f2ede3] px-2 py-0.5 text-xs">{products.length}</span>
+            <span className="ml-2 rounded-full bg-[#f2ede3] px-2 py-0.5 text-xs">
+              {products.length}
+            </span>
           </button>
           <button
             type="button"
             onClick={startNewProduct}
             aria-current={section === "editor" && !form.id ? "page" : undefined}
-            className={section === "editor" ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]" : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"}
+            className={
+              section === "editor"
+                ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]"
+                : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"
+            }
           >
             Add product
           </button>
@@ -396,10 +422,13 @@ export function AdminDashboard() {
           <section className="space-y-7">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#9e7b32]">Store management</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#9e7b32]">
+                  Store management
+                </p>
                 <h1 className="serif-luxury mt-2 text-3xl sm:text-4xl">Overview</h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[#7f7575]">
-                  Your catalogue at a glance. Add jewellery, review drafts and control what appears in the storefront.
+                  Your catalogue at a glance. Add jewellery, review drafts and control what appears
+                  in the storefront.
                 </p>
               </div>
               <button
@@ -411,8 +440,22 @@ export function AdminDashboard() {
               </button>
             </div>
 
-            {loadError && <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">{loadError}</p>}
-            {message && <p role="status" className="rounded-md border border-[#e8d9b4] bg-[#fff9e9] p-3 text-sm text-[#735721]">{message}</p>}
+            {loadError && (
+              <p
+                role="alert"
+                className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+              >
+                {loadError}
+              </p>
+            )}
+            {message && (
+              <p
+                role="status"
+                className="rounded-md border border-[#e8d9b4] bg-[#fff9e9] p-3 text-sm text-[#735721]"
+              >
+                {message}
+              </p>
+            )}
 
             <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               <div className={cardClass}>
@@ -422,7 +465,9 @@ export function AdminDashboard() {
               </div>
               <div className={cardClass}>
                 <p className="text-sm text-[#7f7575]">Published</p>
-                <p className="mt-2 text-3xl font-semibold tabular-nums">{productCounts.published}</p>
+                <p className="mt-2 text-3xl font-semibold tabular-nums">
+                  {productCounts.published}
+                </p>
                 <p className="mt-1 text-xs text-[#267253]">Visible in the storefront</p>
               </div>
               <div className={cardClass}>
@@ -432,7 +477,9 @@ export function AdminDashboard() {
               </div>
               <div className={cardClass}>
                 <p className="text-sm text-[#7f7575]">Out of stock</p>
-                <p className="mt-2 text-3xl font-semibold tabular-nums">{productCounts["out-of-stock"]}</p>
+                <p className="mt-2 text-3xl font-semibold tabular-nums">
+                  {productCounts["out-of-stock"]}
+                </p>
                 <p className="mt-1 text-xs text-[#7f7575]">Marked unavailable</p>
               </div>
             </div>
@@ -442,24 +489,42 @@ export function AdminDashboard() {
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <h2 className="serif-luxury text-xl">Recent products</h2>
-                    <p className="mt-1 text-sm text-[#7f7575]">The latest items added to your catalogue.</p>
+                    <p className="mt-1 text-sm text-[#7f7575]">
+                      The latest items added to your catalogue.
+                    </p>
                   </div>
-                  <button type="button" onClick={() => setSection("products")} className="shrink-0 text-sm text-[#806225] underline underline-offset-4">
+                  <button
+                    type="button"
+                    onClick={() => setSection("products")}
+                    className="shrink-0 text-sm text-[#806225] underline underline-offset-4"
+                  >
                     View all
                   </button>
                 </div>
                 {products.length === 0 ? (
                   <div className="mt-6 rounded-lg border border-dashed border-[#d9d0c3] px-4 py-8 text-center">
                     <p className="serif-luxury text-lg">Your catalogue starts here</p>
-                    <p className="mt-2 text-sm text-[#7f7575]">Add a product photo and details to create your first draft.</p>
-                    <button type="button" onClick={startNewProduct} className="mt-4 text-sm font-semibold text-[#806225] underline underline-offset-4">Add your first product</button>
+                    <p className="mt-2 text-sm text-[#7f7575]">
+                      Add a product photo and details to create your first draft.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={startNewProduct}
+                      className="mt-4 text-sm font-semibold text-[#806225] underline underline-offset-4"
+                    >
+                      Add your first product
+                    </button>
                   </div>
                 ) : (
                   <ul className="mt-5 divide-y divide-[#eee7dd]">
                     {products.slice(0, 5).map((p) => (
                       <li key={p.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                         {p.primary_image_url ? (
-                          <img src={p.primary_image_url} alt="" className="h-14 w-14 shrink-0 rounded-md border border-[#eee7dd] object-cover" />
+                          <img
+                            src={p.primary_image_url}
+                            alt=""
+                            className="h-14 w-14 shrink-0 rounded-md border border-[#eee7dd] object-cover"
+                          />
                         ) : (
                           <div className="h-14 w-14 shrink-0 rounded-md bg-[#f2ede3]" />
                         )}
@@ -472,10 +537,22 @@ export function AdminDashboard() {
                               : "Price on enquiry"}
                           </p>
                         </div>
-                        <span className={p.is_published ? "shrink-0 rounded-full bg-[#e8f4f0] px-2.5 py-1 text-xs text-[#24664f]" : "shrink-0 rounded-full bg-[#f2ede3] px-2.5 py-1 text-xs text-[#6e6254]"}>
+                        <span
+                          className={
+                            p.is_published
+                              ? "shrink-0 rounded-full bg-[#e8f4f0] px-2.5 py-1 text-xs text-[#24664f]"
+                              : "shrink-0 rounded-full bg-[#f2ede3] px-2.5 py-1 text-xs text-[#6e6254]"
+                          }
+                        >
                           {p.is_published ? "Published" : "Draft"}
                         </span>
-                        <button type="button" onClick={() => edit(p)} className="text-sm text-[#806225] underline underline-offset-4">Edit</button>
+                        <button
+                          type="button"
+                          onClick={() => edit(p)}
+                          className="text-sm text-[#806225] underline underline-offset-4"
+                        >
+                          Edit
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -484,19 +561,62 @@ export function AdminDashboard() {
 
               <div className={cardClass}>
                 <h2 className="serif-luxury text-xl">Quick actions</h2>
-                <p className="mt-1 text-sm text-[#7f7575]">Common catalogue tasks, all in one place.</p>
+                <p className="mt-1 text-sm text-[#7f7575]">
+                  Common catalogue tasks, all in one place.
+                </p>
                 <div className="mt-5 grid gap-3">
-                  <button type="button" onClick={startNewProduct} className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]">
-                    <span><strong className="block text-sm">Add a product</strong><span className="mt-1 block text-xs text-[#7f7575]">Create a new draft with photos.</span></span>
-                    <span aria-hidden="true" className="text-xl text-[#9e7b32]">+</span>
+                  <button
+                    type="button"
+                    onClick={startNewProduct}
+                    className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]"
+                  >
+                    <span>
+                      <strong className="block text-sm">Add a product</strong>
+                      <span className="mt-1 block text-xs text-[#7f7575]">
+                        Create a new draft with photos.
+                      </span>
+                    </span>
+                    <span aria-hidden="true" className="text-xl text-[#9e7b32]">
+                      +
+                    </span>
                   </button>
-                  <button type="button" onClick={() => { setProductFilter("drafts"); setSection("products"); setMessage(null); }} className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]">
-                    <span><strong className="block text-sm">Review drafts</strong><span className="mt-1 block text-xs text-[#7f7575]">{productCounts.drafts} product(s) awaiting publication.</span></span>
-                    <span aria-hidden="true" className="text-xl text-[#9e7b32]">›</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProductFilter("drafts");
+                      setSection("products");
+                      setMessage(null);
+                    }}
+                    className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]"
+                  >
+                    <span>
+                      <strong className="block text-sm">Review drafts</strong>
+                      <span className="mt-1 block text-xs text-[#7f7575]">
+                        {productCounts.drafts} product(s) awaiting publication.
+                      </span>
+                    </span>
+                    <span aria-hidden="true" className="text-xl text-[#9e7b32]">
+                      ›
+                    </span>
                   </button>
-                  <button type="button" onClick={() => { setProductFilter("out-of-stock"); setSection("products"); setMessage(null); }} className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]">
-                    <span><strong className="block text-sm">Check availability</strong><span className="mt-1 block text-xs text-[#7f7575]">Review items marked out of stock.</span></span>
-                    <span aria-hidden="true" className="text-xl text-[#9e7b32]">›</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProductFilter("out-of-stock");
+                      setSection("products");
+                      setMessage(null);
+                    }}
+                    className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]"
+                  >
+                    <span>
+                      <strong className="block text-sm">Check availability</strong>
+                      <span className="mt-1 block text-xs text-[#7f7575]">
+                        Review items marked out of stock.
+                      </span>
+                    </span>
+                    <span aria-hidden="true" className="text-xl text-[#9e7b32]">
+                      ›
+                    </span>
                   </button>
                 </div>
               </div>
@@ -508,17 +628,39 @@ export function AdminDashboard() {
           <section className="space-y-6">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#9e7b32]">Catalogue</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#9e7b32]">
+                  Catalogue
+                </p>
                 <h1 className="serif-luxury mt-2 text-3xl sm:text-4xl">Products</h1>
-                <p className="mt-2 text-sm text-[#7f7575]">Search, edit, publish or unpublish items in your storefront.</p>
+                <p className="mt-2 text-sm text-[#7f7575]">
+                  Search, edit, publish or unpublish items in your storefront.
+                </p>
               </div>
-              <button type="button" onClick={startNewProduct} className="inline-flex items-center justify-center rounded-md bg-[#002118] px-5 py-3 text-sm font-medium text-[#dfc27f] transition hover:bg-[#103b2e]">
+              <button
+                type="button"
+                onClick={startNewProduct}
+                className="inline-flex items-center justify-center rounded-md bg-[#002118] px-5 py-3 text-sm font-medium text-[#dfc27f] transition hover:bg-[#103b2e]"
+              >
                 + Add product
               </button>
             </div>
 
-            {loadError && <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">{loadError}</p>}
-            {message && <p role="status" className="rounded-md border border-[#e8d9b4] bg-[#fff9e9] p-3 text-sm text-[#735721]">{message}</p>}
+            {loadError && (
+              <p
+                role="alert"
+                className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+              >
+                {loadError}
+              </p>
+            )}
+            {message && (
+              <p
+                role="status"
+                className="rounded-md border border-[#e8d9b4] bg-[#fff9e9] p-3 text-sm text-[#735721]"
+              >
+                {message}
+              </p>
+            )}
 
             <div className="flex flex-wrap gap-2" aria-label="Filter products">
               {filters.map((f) => (
@@ -527,9 +669,20 @@ export function AdminDashboard() {
                   type="button"
                   onClick={() => setProductFilter(f.value)}
                   aria-pressed={productFilter === f.value}
-                  className={productFilter === f.value ? "rounded-full border border-[#002118] bg-[#002118] px-4 py-2 text-sm font-medium text-white" : "rounded-full border border-[#d9d0c3] bg-white px-4 py-2 text-sm text-[#625b52] transition hover:border-[#9e7b32]"}
+                  className={
+                    productFilter === f.value
+                      ? "rounded-full border border-[#002118] bg-[#002118] px-4 py-2 text-sm font-medium text-white"
+                      : "rounded-full border border-[#d9d0c3] bg-white px-4 py-2 text-sm text-[#625b52] transition hover:border-[#9e7b32]"
+                  }
                 >
-                  {f.label} <span className={productFilter === f.value ? "ml-1 text-[#dfc27f]" : "ml-1 text-[#8c8172]"}>{f.count}</span>
+                  {f.label}{" "}
+                  <span
+                    className={
+                      productFilter === f.value ? "ml-1 text-[#dfc27f]" : "ml-1 text-[#8c8172]"
+                    }
+                  >
+                    {f.count}
+                  </span>
                 </button>
               ))}
             </div>
@@ -547,16 +700,37 @@ export function AdminDashboard() {
 
               {visibleProducts.length === 0 ? (
                 <div className="py-12 text-center">
-                  <p className="serif-luxury text-xl">{products.length === 0 ? "No products yet" : "No matching products"}</p>
-                  <p className="mt-2 text-sm text-[#7f7575]">{products.length === 0 ? "Add your first item to get the catalogue started." : "Try a different search or filter."}</p>
-                  {products.length === 0 && <button type="button" onClick={startNewProduct} className="mt-4 text-sm font-semibold text-[#806225] underline underline-offset-4">Add product</button>}
+                  <p className="serif-luxury text-xl">
+                    {products.length === 0 ? "No products yet" : "No matching products"}
+                  </p>
+                  <p className="mt-2 text-sm text-[#7f7575]">
+                    {products.length === 0
+                      ? "Add your first item to get the catalogue started."
+                      : "Try a different search or filter."}
+                  </p>
+                  {products.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={startNewProduct}
+                      className="mt-4 text-sm font-semibold text-[#806225] underline underline-offset-4"
+                    >
+                      Add product
+                    </button>
+                  )}
                 </div>
               ) : (
                 <ul className="mt-5 divide-y divide-[#eee7dd]">
                   {visibleProducts.map((p) => (
-                    <li key={p.id} className="flex flex-col gap-3 py-4 first:pt-0 sm:flex-row sm:items-center">
+                    <li
+                      key={p.id}
+                      className="flex flex-col gap-3 py-4 first:pt-0 sm:flex-row sm:items-center"
+                    >
                       {p.primary_image_url ? (
-                        <img src={p.primary_image_url} alt="" className="h-20 w-20 shrink-0 rounded-lg border border-[#eee7dd] object-cover" />
+                        <img
+                          src={p.primary_image_url}
+                          alt=""
+                          className="h-20 w-20 shrink-0 rounded-lg border border-[#eee7dd] object-cover"
+                        />
                       ) : (
                         <div className="h-20 w-20 shrink-0 rounded-lg bg-[#f2ede3]" />
                       )}
@@ -569,18 +743,44 @@ export function AdminDashboard() {
                             : "Price on enquiry"}
                         </p>
                         <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                          <span className={p.is_published ? "rounded-full bg-[#e8f4f0] px-2.5 py-1 text-[#24664f]" : "rounded-full bg-[#f2ede3] px-2.5 py-1 text-[#6e6254]"}>
+                          <span
+                            className={
+                              p.is_published
+                                ? "rounded-full bg-[#e8f4f0] px-2.5 py-1 text-[#24664f]"
+                                : "rounded-full bg-[#f2ede3] px-2.5 py-1 text-[#6e6254]"
+                            }
+                          >
                             {p.is_published ? "Published" : "Draft"}
                           </span>
-                          <span className={p.in_stock ? "rounded-full bg-[#f6f2e8] px-2.5 py-1 text-[#76613b]" : "rounded-full bg-[#fcebea] px-2.5 py-1 text-[#9b3d34]"}>
+                          <span
+                            className={
+                              p.in_stock
+                                ? "rounded-full bg-[#f6f2e8] px-2.5 py-1 text-[#76613b]"
+                                : "rounded-full bg-[#fcebea] px-2.5 py-1 text-[#9b3d34]"
+                            }
+                          >
                             {p.in_stock ? "In stock" : "Out of stock"}
                           </span>
-                          {p.is_featured && <span className="rounded-full bg-[#f2ede3] px-2.5 py-1 text-[#6e6254]">Featured</span>}
+                          {p.is_featured && (
+                            <span className="rounded-full bg-[#f2ede3] px-2.5 py-1 text-[#6e6254]">
+                              Featured
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div className="flex shrink-0 gap-3 sm:justify-end">
-                        <button type="button" onClick={() => edit(p)} className="text-sm font-medium text-[#806225] underline underline-offset-4">Edit</button>
-                        <button type="button" onClick={() => void togglePublish(p)} className="text-sm font-medium text-[#4d4544] underline underline-offset-4">
+                        <button
+                          type="button"
+                          onClick={() => edit(p)}
+                          className="text-sm font-medium text-[#806225] underline underline-offset-4"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void togglePublish(p)}
+                          className="text-sm font-medium text-[#4d4544] underline underline-offset-4"
+                        >
                           {p.is_published ? "Unpublish" : "Publish"}
                         </button>
                       </div>
@@ -595,11 +795,25 @@ export function AdminDashboard() {
         {section === "editor" && (
           <section className="mx-auto max-w-4xl space-y-6">
             <div>
-              <button type="button" onClick={() => { setSection("products"); setMessage(null); }} className="text-sm text-[#806225] underline underline-offset-4">← Back to products</button>
-              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9e7b32]">Catalogue editor</p>
-              <h1 className="serif-luxury mt-2 text-3xl sm:text-4xl">{form.id ? "Edit product" : "Add product"}</h1>
+              <button
+                type="button"
+                onClick={() => {
+                  setSection("products");
+                  setMessage(null);
+                }}
+                className="text-sm text-[#806225] underline underline-offset-4"
+              >
+                ← Back to products
+              </button>
+              <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#9e7b32]">
+                Catalogue editor
+              </p>
+              <h1 className="serif-luxury mt-2 text-3xl sm:text-4xl">
+                {form.id ? "Edit product" : "Add product"}
+              </h1>
               <p className="mt-2 text-sm leading-6 text-[#7f7575]">
-                Complete the product details and add at least one photo. New products stay as drafts until you publish them.
+                Complete the product details and add at least one photo. New products stay as drafts
+                until you publish them.
               </p>
             </div>
 
@@ -607,33 +821,66 @@ export function AdminDashboard() {
               <section className="space-y-4">
                 <div className="border-b border-[#eee7dd] pb-3">
                   <h2 className="serif-luxury text-xl">Product details</h2>
-                  <p className="mt-1 text-xs text-[#7f7575]">The core information shown to customers.</p>
+                  <p className="mt-1 text-xs text-[#7f7575]">
+                    The core information shown to customers.
+                  </p>
                 </div>
                 <label className="block text-sm font-medium">
                   Product name *
-                  <input required value={form.title} onChange={(e) => set("title", e.target.value)} className={inputClass} placeholder="e.g. Emerald Gold Pendant" />
+                  <input
+                    required
+                    value={form.title}
+                    onChange={(e) => set("title", e.target.value)}
+                    className={inputClass}
+                    placeholder="e.g. Emerald Gold Pendant"
+                  />
                 </label>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block text-sm font-medium">
                     Category *
-                    <select value={form.category} onChange={(e) => set("category", e.target.value as Category)} className={inputClass}>
-                      {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                    <select
+                      value={form.category}
+                      onChange={(e) => set("category", e.target.value as Category)}
+                      className={inputClass}
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c.value} value={c.value}>
+                          {c.label}
+                        </option>
+                      ))}
                     </select>
                   </label>
                   <label className="block text-sm font-medium">
                     Main metal
-                    <input placeholder="e.g. 18k yellow gold" value={form.metal} onChange={(e) => set("metal", e.target.value)} className={inputClass} />
+                    <input
+                      placeholder="e.g. 18k yellow gold"
+                      value={form.metal}
+                      onChange={(e) => set("metal", e.target.value)}
+                      className={inputClass}
+                    />
                   </label>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block text-sm font-medium">
                     Available metals
-                    <input placeholder="Gold, Silver, Rose gold" value={form.availableMetals} onChange={(e) => set("availableMetals", e.target.value)} className={inputClass} />
-                    <span className="mt-1 block text-xs font-normal text-[#7f7575]">Separate options with commas.</span>
+                    <input
+                      placeholder="Gold, Silver, Rose gold"
+                      value={form.availableMetals}
+                      onChange={(e) => set("availableMetals", e.target.value)}
+                      className={inputClass}
+                    />
+                    <span className="mt-1 block text-xs font-normal text-[#7f7575]">
+                      Separate options with commas.
+                    </span>
                   </label>
                   <label className="block text-sm font-medium">
                     Carat / purity
-                    <input placeholder="e.g. 18K" value={form.carat} onChange={(e) => set("carat", e.target.value)} className={inputClass} />
+                    <input
+                      placeholder="e.g. 18K"
+                      value={form.carat}
+                      onChange={(e) => set("carat", e.target.value)}
+                      className={inputClass}
+                    />
                   </label>
                 </div>
               </section>
@@ -641,22 +888,67 @@ export function AdminDashboard() {
               <section className="space-y-4">
                 <div className="border-b border-[#eee7dd] pb-3">
                   <h2 className="serif-luxury text-xl">Pricing</h2>
-                  <p className="mt-1 text-xs text-[#7f7575]">Choose whether to show a price or invite customers to enquire.</p>
+                  <p className="mt-1 text-xs text-[#7f7575]">
+                    Choose whether to show a price or invite customers to enquire.
+                  </p>
                 </div>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <label className={form.pricingMode === "enquiry" ? "flex cursor-pointer items-start gap-3 rounded-lg border border-[#9e7b32] bg-[#fbf6e8] p-4" : "flex cursor-pointer items-start gap-3 rounded-lg border border-[#e8e0d4] p-4"}>
-                    <input type="radio" name="pricing-mode" checked={form.pricingMode === "enquiry"} onChange={() => set("pricingMode", "enquiry")} className="mt-1 accent-[#806225]" />
-                    <span><strong className="block text-sm">Price on enquiry</strong><span className="mt-1 block text-xs font-normal text-[#7f7575]">Customers contact you for a quote.</span></span>
+                  <label
+                    className={
+                      form.pricingMode === "enquiry"
+                        ? "flex cursor-pointer items-start gap-3 rounded-lg border border-[#9e7b32] bg-[#fbf6e8] p-4"
+                        : "flex cursor-pointer items-start gap-3 rounded-lg border border-[#e8e0d4] p-4"
+                    }
+                  >
+                    <input
+                      type="radio"
+                      name="pricing-mode"
+                      checked={form.pricingMode === "enquiry"}
+                      onChange={() => set("pricingMode", "enquiry")}
+                      className="mt-1 accent-[#806225]"
+                    />
+                    <span>
+                      <strong className="block text-sm">Price on enquiry</strong>
+                      <span className="mt-1 block text-xs font-normal text-[#7f7575]">
+                        Customers contact you for a quote.
+                      </span>
+                    </span>
                   </label>
-                  <label className={form.pricingMode === "fixed" ? "flex cursor-pointer items-start gap-3 rounded-lg border border-[#9e7b32] bg-[#fbf6e8] p-4" : "flex cursor-pointer items-start gap-3 rounded-lg border border-[#e8e0d4] p-4"}>
-                    <input type="radio" name="pricing-mode" checked={form.pricingMode === "fixed"} onChange={() => set("pricingMode", "fixed")} className="mt-1 accent-[#806225]" />
-                    <span><strong className="block text-sm">Fixed price</strong><span className="mt-1 block text-xs font-normal text-[#7f7575]">Show the price in Pakistani rupees.</span></span>
+                  <label
+                    className={
+                      form.pricingMode === "fixed"
+                        ? "flex cursor-pointer items-start gap-3 rounded-lg border border-[#9e7b32] bg-[#fbf6e8] p-4"
+                        : "flex cursor-pointer items-start gap-3 rounded-lg border border-[#e8e0d4] p-4"
+                    }
+                  >
+                    <input
+                      type="radio"
+                      name="pricing-mode"
+                      checked={form.pricingMode === "fixed"}
+                      onChange={() => set("pricingMode", "fixed")}
+                      className="mt-1 accent-[#806225]"
+                    />
+                    <span>
+                      <strong className="block text-sm">Fixed price</strong>
+                      <span className="mt-1 block text-xs font-normal text-[#7f7575]">
+                        Show the price in Pakistani rupees.
+                      </span>
+                    </span>
                   </label>
                 </div>
                 {form.pricingMode === "fixed" && (
                   <label className="block max-w-sm text-sm font-medium">
                     Price (PKR) *
-                    <input type="number" min="0" step="1" required placeholder="e.g. 250000" value={form.price} onChange={(e) => set("price", e.target.value)} className={inputClass} />
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      required
+                      placeholder="e.g. 250000"
+                      value={form.price}
+                      onChange={(e) => set("price", e.target.value)}
+                      className={inputClass}
+                    />
                   </label>
                 )}
               </section>
@@ -664,61 +956,130 @@ export function AdminDashboard() {
               <section className="space-y-4">
                 <div className="border-b border-[#eee7dd] pb-3">
                   <h2 className="serif-luxury text-xl">Description</h2>
-                  <p className="mt-1 text-xs text-[#7f7575]">Help customers understand the design and materials.</p>
+                  <p className="mt-1 text-xs text-[#7f7575]">
+                    Help customers understand the design and materials.
+                  </p>
                 </div>
                 <label className="block text-sm font-medium">
                   Short description
-                  <input value={form.shortDesc} onChange={(e) => set("shortDesc", e.target.value)} className={inputClass} placeholder="One sentence about this piece" />
+                  <input
+                    value={form.shortDesc}
+                    onChange={(e) => set("shortDesc", e.target.value)}
+                    className={inputClass}
+                    placeholder="One sentence about this piece"
+                  />
                 </label>
                 <label className="block text-sm font-medium">
                   Full description
-                  <textarea rows={5} value={form.description} onChange={(e) => set("description", e.target.value)} className={inputClass + " resize-y"} placeholder="Describe the style, materials, and details…" />
+                  <textarea
+                    rows={5}
+                    value={form.description}
+                    onChange={(e) => set("description", e.target.value)}
+                    className={inputClass + " resize-y"}
+                    placeholder="Describe the style, materials, and details…"
+                  />
                 </label>
               </section>
 
               <section className="space-y-4">
                 <div className="border-b border-[#eee7dd] pb-3">
                   <h2 className="serif-luxury text-xl">Photos and availability</h2>
-                  <p className="mt-1 text-xs text-[#7f7575]">Use clear, well-lit photos. JPEG, PNG or WebP up to 10 MB each.</p>
+                  <p className="mt-1 text-xs text-[#7f7575]">
+                    Use clear, well-lit photos. JPEG, PNG or WebP up to 10 MB each.
+                  </p>
                 </div>
                 {formImages.length > 0 && (
                   <div className="flex flex-wrap gap-3">
                     {formImages.map((img) => (
                       <div key={img.id} className="relative">
-                        <img src={img.image_url} alt={img.alt_text ?? ""} className="h-24 w-24 rounded-lg border border-[#e8e0d4] object-cover" />
-                        <button type="button" onClick={() => void removeImage(img)} aria-label="Remove photo" className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-[#e8e0d4] bg-white text-sm shadow-sm hover:bg-red-50">×</button>
+                        <img
+                          src={img.image_url}
+                          alt={img.alt_text ?? ""}
+                          className="h-24 w-24 rounded-lg border border-[#e8e0d4] object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => void removeImage(img)}
+                          aria-label="Remove photo"
+                          className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-[#e8e0d4] bg-white text-sm shadow-sm hover:bg-red-50"
+                        >
+                          ×
+                        </button>
                       </div>
                     ))}
                   </div>
                 )}
                 <label className="block text-sm font-medium">
                   {formImages.length > 0 ? "Add more photos" : "Upload product photos *"}
-                  <input type="file" multiple accept="image/jpeg,image/png,image/webp" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} className="mt-2 block w-full rounded-md border border-dashed border-[#d9d0c3] bg-[#fbf9f4] p-3 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-[#002118] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#dfc27f]" />
-                  <span className="mt-2 block text-xs font-normal text-[#7f7575]">{files.length > 0 ? files.length + " new photo(s) selected." : "At least one photo is required before a product can be saved."}</span>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+                    className="mt-2 block w-full rounded-md border border-dashed border-[#d9d0c3] bg-[#fbf9f4] p-3 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-[#002118] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[#dfc27f]"
+                  />
+                  <span className="mt-2 block text-xs font-normal text-[#7f7575]">
+                    {files.length > 0
+                      ? files.length + " new photo(s) selected."
+                      : "At least one photo is required before a product can be saved."}
+                  </span>
                 </label>
                 <div className="flex flex-wrap gap-4 rounded-lg bg-[#fbf9f4] p-4">
                   <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={form.inStock} onChange={(e) => set("inStock", e.target.checked)} className="accent-[#806225]" />
+                    <input
+                      type="checkbox"
+                      checked={form.inStock}
+                      onChange={(e) => set("inStock", e.target.checked)}
+                      className="accent-[#806225]"
+                    />
                     In stock
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" checked={form.featured} onChange={(e) => set("featured", e.target.checked)} className="accent-[#806225]" />
+                    <input
+                      type="checkbox"
+                      checked={form.featured}
+                      onChange={(e) => set("featured", e.target.checked)}
+                      className="accent-[#806225]"
+                    />
                     Mark as featured
                   </label>
                 </div>
               </section>
 
-              {message && <p role="alert" className="rounded-md border border-[#e8d9b4] bg-[#fff9e9] p-3 text-sm text-[#735721]">{message}</p>}
+              {message && (
+                <p
+                  role="alert"
+                  className="rounded-md border border-[#e8d9b4] bg-[#fff9e9] p-3 text-sm text-[#735721]"
+                >
+                  {message}
+                </p>
+              )}
 
               <div className="flex flex-col-reverse justify-between gap-3 border-t border-[#eee7dd] pt-5 sm:flex-row sm:items-center">
-                <button type="button" onClick={() => { setForm(EMPTY); setFiles([]); setMessage(null); setSection("products"); }} className="rounded-md border border-[#d9d0c3] px-5 py-3 text-sm font-medium transition hover:bg-[#fbf9f4]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm(EMPTY);
+                    setFiles([]);
+                    setMessage(null);
+                    setSection("products");
+                  }}
+                  className="rounded-md border border-[#d9d0c3] px-5 py-3 text-sm font-medium transition hover:bg-[#fbf9f4]"
+                >
                   Cancel
                 </button>
-                <button type="submit" disabled={busy} className="rounded-md bg-[#002118] px-6 py-3 text-sm font-semibold text-[#dfc27f] transition hover:bg-[#103b2e] disabled:cursor-not-allowed disabled:opacity-60">
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="rounded-md bg-[#002118] px-6 py-3 text-sm font-semibold text-[#dfc27f] transition hover:bg-[#103b2e] disabled:cursor-not-allowed disabled:opacity-60"
+                >
                   {busy ? "Saving product…" : form.id ? "Save changes" : "Save as draft"}
                 </button>
               </div>
-              <p className="text-xs leading-5 text-[#7f7575]">Saving does not publish the product. Use the Publish action on the Products page when the item is ready for customers.</p>
+              <p className="text-xs leading-5 text-[#7f7575]">
+                Saving does not publish the product. Use the Publish action on the Products page
+                when the item is ready for customers.
+              </p>
             </form>
           </section>
         )}

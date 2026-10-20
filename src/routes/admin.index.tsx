@@ -1,8 +1,13 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { hasAdminAccess } from "@/novalestic/admin/access";
 import { AdminDashboard } from "@/novalestic/admin/AdminDashboard";
+import { parseAdminSection, type AdminSection } from "@/novalestic/admin/sections";
 
 export const Route = createFileRoute("/admin/")({
+  validateSearch: (search: Record<string, unknown>): { section?: AdminSection } => {
+    const section = parseAdminSection(search["section"]);
+    return section ? { section } : {};
+  },
   ssr: false,
   beforeLoad: async () => {
     if (!(await hasAdminAccess())) throw redirect({ to: "/admin/login" });

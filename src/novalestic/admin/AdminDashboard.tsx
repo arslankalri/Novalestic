@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { adminDb as supabase } from "./adminDatabase";
 import type { Database } from "./adminDatabase";
+import type { AdminSection } from "./sections";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type AdminProductRow = Pick<
@@ -28,7 +29,6 @@ type AdminImageRow = Pick<
   "id" | "product_id" | "image_url" | "storage_path" | "alt_text" | "sort_order"
 >;
 type Category = "rings" | "earrings" | "necklaces" | "bangles-bracelets";
-type AdminSection = "overview" | "products" | "editor";
 type ProductFilter = "all" | "published" | "drafts" | "out-of-stock";
 
 const CATEGORIES: { value: Category; label: string }[] = [
@@ -82,6 +82,8 @@ const cardClass = "rounded-xl border border-[#e8e0d4] bg-white p-5 shadow-sm";
 
 export function AdminDashboard() {
   const navigate = useNavigate();
+  const { section: routeSection } = useSearch({ from: "/admin/" });
+  const section: AdminSection = routeSection ?? "overview";
   const [products, setProducts] = useState<AdminProductRow[]>([]);
   const [images, setImages] = useState<AdminImageRow[]>([]);
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -90,7 +92,6 @@ export function AdminDashboard() {
   const [message, setMessage] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [productSearch, setProductSearch] = useState("");
-  const [section, setSection] = useState<AdminSection>("overview");
   const [productFilter, setProductFilter] = useState<ProductFilter>("all");
 
   const load = async () => {
@@ -128,11 +129,19 @@ export function AdminDashboard() {
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setForm((f) => ({ ...f, [k]: v }));
 
+  const navigateSection = (nextSection: AdminSection) => {
+    if (section === nextSection) return;
+    void navigate({
+      to: "/admin",
+      search: (previous) => ({ ...previous, section: nextSection }),
+    });
+  };
+
   const startNewProduct = () => {
     setForm(EMPTY);
     setFiles([]);
     setMessage(null);
-    setSection("editor");
+    navigateSection("editor");
   };
 
   const edit = (p: AdminProductRow) => {
@@ -152,7 +161,7 @@ export function AdminDashboard() {
       featured: p.is_featured,
       inStock: p.in_stock,
     });
-    setSection("editor");
+    navigateSection("editor");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -264,7 +273,7 @@ export function AdminDashboard() {
           ? "Product saved."
           : "Product saved as a draft. Publish it from the product list when ready.",
       );
-      setSection("products");
+      navigateSection("products");
       await load();
     } catch (err) {
       setMessage(err instanceof Error ? err.message : "Save failed.");
@@ -372,7 +381,7 @@ export function AdminDashboard() {
           <button
             type="button"
             onClick={() => {
-              setSection("overview");
+              navigateSection("overview");
               setMessage(null);
             }}
             aria-current={section === "overview" ? "page" : undefined}
@@ -387,7 +396,7 @@ export function AdminDashboard() {
           <button
             type="button"
             onClick={() => {
-              setSection("products");
+              navigateSection("products");
               setMessage(null);
             }}
             aria-current={section === "products" ? "page" : undefined}
@@ -405,14 +414,14 @@ export function AdminDashboard() {
           <button
             type="button"
             onClick={startNewProduct}
-            aria-current={section === "editor" && !form.id ? "page" : undefined}
+            aria-current={section === "editor" ? "page" : undefined}
             className={
               section === "editor"
                 ? "border-b-2 border-[#9e7b32] px-4 py-3 text-sm font-semibold text-[#1b1c19]"
                 : "border-b-2 border-transparent px-4 py-3 text-sm text-[#7f7575] hover:text-[#1b1c19]"
             }
           >
-            Add product
+            {form.id ? "Edit product" : "Add product"}
           </button>
         </nav>
       </header>
@@ -495,7 +504,7 @@ export function AdminDashboard() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => setSection("products")}
+                    onClick={() => navigateSection("products")}
                     className="shrink-0 text-sm text-[#806225] underline underline-offset-4"
                   >
                     View all
@@ -584,7 +593,7 @@ export function AdminDashboard() {
                     type="button"
                     onClick={() => {
                       setProductFilter("drafts");
-                      setSection("products");
+                      navigateSection("products");
                       setMessage(null);
                     }}
                     className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]"
@@ -603,7 +612,7 @@ export function AdminDashboard() {
                     type="button"
                     onClick={() => {
                       setProductFilter("out-of-stock");
-                      setSection("products");
+                      navigateSection("products");
                       setMessage(null);
                     }}
                     className="flex items-center justify-between rounded-lg border border-[#e8e0d4] p-4 text-left transition hover:border-[#c8ae72] hover:bg-[#fbf9f4]"
@@ -798,7 +807,7 @@ export function AdminDashboard() {
               <button
                 type="button"
                 onClick={() => {
-                  setSection("products");
+                  navigateSection("products");
                   setMessage(null);
                 }}
                 className="text-sm text-[#806225] underline underline-offset-4"
@@ -1062,7 +1071,7 @@ export function AdminDashboard() {
                     setForm(EMPTY);
                     setFiles([]);
                     setMessage(null);
-                    setSection("products");
+                    navigateSection("products");
                   }}
                   className="rounded-md border border-[#d9d0c3] px-5 py-3 text-sm font-medium transition hover:bg-[#fbf9f4]"
                 >

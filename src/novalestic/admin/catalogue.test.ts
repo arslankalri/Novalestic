@@ -70,7 +70,8 @@ describe("Catalogue rules", () => {
     ).toBeNull();
   });
   it("blocks publishing an incomplete draft", () => {
-    expect(canPublish({ ...products[0], primary_image_url: null }, [])).toBe(false);
-    expect(canPublish(products[0], [])).toBe(true);
+    const draft = product("draft", false, true);
+    expect(canPublish({ ...draft, primary_image_url: null }, [])).toBe(false);
+    expect(canPublish(draft, [])).toBe(true);
   });
 });

@@ -24,9 +24,18 @@ export interface FormState {
   featured: boolean;
 }
 export const EMPTY: FormState = {
-  id: null, title: "", category: "rings", sku: "", pricingMode: "enquiry",
-  price: "", metal: "", availableMetals: "", carat: "", shortDesc: "",
-  description: "", featured: false,
+  id: null,
+  title: "",
+  category: "rings",
+  sku: "",
+  pricingMode: "enquiry",
+  price: "",
+  metal: "",
+  availableMetals: "",
+  carat: "",
+  shortDesc: "",
+  description: "",
+  featured: false,
 };
 export function matchesFilter(p: ProductRow, filter: ProductFilter) {
   if (filter === "published") return p.is_published;
@@ -35,28 +44,49 @@ export function matchesFilter(p: ProductRow, filter: ProductFilter) {
   return true;
 }
 export function catalogueCounts(products: ProductRow[]) {
-  return { all: products.length, published: products.filter(p => p.is_published).length,
-    drafts: products.filter(p => !p.is_published).length,
-    outOfStock: products.filter(p => !p.in_stock).length };
+  return {
+    all: products.length,
+    published: products.filter((p) => p.is_published).length,
+    drafts: products.filter((p) => !p.is_published).length,
+    outOfStock: products.filter((p) => !p.in_stock).length,
+  };
 }
 export function filterProducts(products: ProductRow[], filter: ProductFilter, search: string) {
   const query = search.trim().toLowerCase();
-  return products.filter(p => matchesFilter(p, filter) &&
-    `${p.title} ${p.sku ?? ""} ${CATEGORIES.find(c => c.value === p.category)?.label ?? p.category}`.toLowerCase().includes(query));
+  return products.filter(
+    (p) =>
+      matchesFilter(p, filter) &&
+      `${p.title} ${p.sku ?? ""} ${CATEGORIES.find((c) => c.value === p.category)?.label ?? p.category}`
+        .toLowerCase()
+        .includes(query),
+  );
 }
 export function validateProduct(form: FormState, hasImage: boolean): string | null {
   if (!form.title.trim()) return "Enter a product title.";
-  if (!CATEGORIES.some(c => c.value === form.category)) return "Choose a supported category.";
-  if (form.pricingMode === "fixed" &&
-    (!form.price.trim() || !Number.isFinite(Number(form.price)) || Number(form.price) < 0))
+  if (!CATEGORIES.some((c) => c.value === form.category)) return "Choose a supported category.";
+  if (
+    form.pricingMode === "fixed" &&
+    (!form.price.trim() || !Number.isFinite(Number(form.price)) || Number(form.price) < 0)
+  )
     return "Enter a valid PKR price, or choose enquiry-only pricing.";
   if (!hasImage) return "Add at least one product photo before publishing.";
   return null;
 }
 export function canPublish(p: ProductRow, images: ImageRow[]) {
-  return validateProduct({ ...EMPTY, title: p.title, category: p.category,
-    pricingMode: p.pricing_mode === "fixed" ? "fixed" : "enquiry",
-    price: p.price_pkr?.toString() ?? "" }, Boolean(p.primary_image_url || images.some(i => i.product_id === p.id))) === null;
+  return (
+    validateProduct(
+      {
+        ...EMPTY,
+        title: p.title,
+        category: p.category,
+        pricingMode: p.pricing_mode === "fixed" ? "fixed" : "enquiry",
+        price: p.price_pkr?.toString() ?? "",
+      },
+      Boolean(p.primary_image_url || images.some((i) => i.product_id === p.id)),
+    ) === null
+  );
 }
-export const priceLabel = (p: ProductRow) => p.pricing_mode === "fixed" && p.price_pkr !== null
-  ? `Rs. ${Number(p.price_pkr).toLocaleString("en-PK")}` : "Price on enquiry";
+export const priceLabel = (p: ProductRow) =>
+  p.pricing_mode === "fixed" && p.price_pkr !== null
+    ? `Rs. ${Number(p.price_pkr).toLocaleString("en-PK")}`
+    : "Price on enquiry";

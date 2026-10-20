@@ -1,74 +1,70 @@
-# NOVALESTIC JEWELLERS — backend and admin setup
+# NOVALESTIC JEWELLERS — Supabase setup
 
-## Current architecture
+This project currently provides a simple jewellery catalogue, product details, a persistent shopping cart and WhatsApp enquiry checkout. It does **not** process online payments or manage online orders.
 
-The public storefront and protected catalogue admin are in the original `arslankalri/Novalestic` repository. The catalogue uses the Supabase/Lovable Cloud backend configured for this project.
+## 1. Confirm the correct Supabase project
 
-The business-operations UI adds private order, customer, enquiry, inventory and reporting pages. These pages require the operations migration below to be applied to the **same database used by the live project**.
+Open the Supabase project used by the deployed Novalestic site. Make sure it is the same project configured in the app's environment variables. Never paste a service-role key or database password into frontend code or GitHub.
 
-## 1. Apply the operations migration
+Before changing the database, confirm that the foundation already exists:
 
-Run this file once in the project's Cloud/Supabase SQL editor:
+- `public.products`
+- `public.product_images`
+- `public.user_roles`
+- `public.novalestic_has_admin_access()`
 
-`supabase/migrations/202610140001_novalestic_operations.sql`
+If these do not exist, review and apply `supabase/migrations/202610130001_novalestic_admin_foundation.sql` once first. Do not re-run it on a database where it is already installed.
 
-[Open the migration on GitHub](https://github.com/arslankalri/Novalestic/blob/main/supabase/migrations/202610140001_novalestic_operations.sql)
+## 2. Apply the current catalogue migration
 
-This migration creates the customers, enquiries, orders, order-items and inventory-movement tables; private admin/partner RLS policies; automatic order numbers; stock-ledger updates; and private product cost fields for internal margin estimates.
+In the **same project's** Supabase SQL Editor, review and run:
 
-**Do not apply it to a different project's database.** If the catalogue foundation migration has not already been applied to this database, apply the foundation migration first:
+`supabase/migrations/202610200001_restrict_public_product_columns.sql`
 
-`supabase/migrations/202610130001_novalestic_admin_foundation.sql`
+[Open this migration on GitHub](https://github.com/arslankalri/Novalestic/blob/main/supabase/migrations/202610200001_restrict_public_product_columns.sql)
 
-Do not re-run an already-applied foundation migration just because the operations migration is new.
+It sets the product image bucket to public-read with a 10 MB limit and JPEG/PNG/WebP types, and limits anonymous catalogue reads to the fields the storefront needs. Run it only against the intended Novalestic database, not a different project.
 
-## 2. Admin access
+This migration does not create products, provision an administrator account, or deploy the website.
 
-The owner account should be provisioned through the trusted Cloud authentication dashboard and granted the `admin` role in `public.user_roles`. Public registration is not part of the app. Add a partner account later with a separate `partner` role; do not share the owner's password.
+## 3. Confirm administrator access
 
-The app checks admin/partner access before showing protected admin routes. Database RLS independently restricts customer, enquiry, order, order-item and inventory records to those roles.
+In Supabase Authentication, confirm that your owner account exists. Then verify that its user ID has a row in `public.user_roles` with the role `admin`. The app's `/admin` page checks this role through `novalestic_has_admin_access()`. Public registration should remain disabled unless you intentionally configure and test a secure account-creation flow.
 
-## 3. Admin pages
+If the owner role row is missing, add the real Auth user UUID through the trusted Supabase SQL Editor; do not guess the UUID:
 
-- `/admin` — catalogue management and product publishing
-- `/admin/overview` — operations overview
-- `/admin/orders` — record and track manual orders from WhatsApp, phone, Instagram, in-person or other sources
-- `/admin/enquiries` — enquiry pipeline and follow-up dates
-- `/admin/customers` — customer records and linked order totals
-- `/admin/inventory` — stock ledger and current stock
-- `/admin/reports` — recent recorded sales, collected payments and estimated gross profit where product cost is known
+```sql
+insert into public.user_roles (user_id, role)
+values ('REPLACE_WITH_REAL_AUTH_USER_UUID', 'admin')
+on conflict (user_id) do update set role = excluded.role;
+```
 
-Manual orders are not online checkout. Payment is recorded manually; the app does not process payments or create shipping labels.
+## 4. Add real products
 
-## 4. Inventory and financial accuracy
+Sign in at `/admin/login`, then open `/admin`. For each jewellery item:
 
-- Use the Inventory page to record opening stock, restocks, returns, sales/dispatches, damage and downward adjustments.
-- Inventory movements are ledger records; they cannot be edited or deleted from the client. Corrections should be entered as compensating movements.
-- Stock cannot be reduced below zero by the stock ledger.
-- Product cost price is private and is never displayed on the public storefront.
-- Gross profit is an estimate based on order-item price and the cost snapshot captured when the order is created. Missing cost prices mean the estimate is incomplete; shipping, discounts, taxes, returns and other expenses may require further accounting treatment.
-- Dashboard sales cards summarize the latest 100 orders, not a complete accounting statement.
+1. Enter the product name and category.
+2. Choose either a fixed PKR price or price-on-enquiry.
+3. Add its metal/purity and a short, accurate description.
+4. Upload at least one real product photo (JPEG, PNG or WebP, up to 10 MB each).
+5. Save the product. New products stay as drafts until you choose **Publish** in the product list.
 
-## 5. Security rules
+Use only real products, accurate prices and photographs you have permission to use. Do not publish test/example products.
 
-- Never put a Supabase service-role key or database password into browser code or commit it to GitHub.
-- Keep public sign-ups disabled.
-- Public catalogue access must remain limited to published products.
-- Operational tables must remain admin/partner-only.
-- Only authorized staff can upload or delete product images.
-- Test owner and non-admin access separately before production use.
+## 5. Test before launch
 
-## 6. Verification checklist
+- [ ] Admin sign-in works; a signed-out visitor cannot open the admin page.
+- [ ] An administrator can add a draft with a photo, edit it, and publish/unpublish it.
+- [ ] A published product appears in its correct category; an unpublished draft does not appear publicly.
+- [ ] Product search, metal filter, sorting, product options and cart quantity controls work.
+- [ ] The cart persists when the page is refreshed.
+- [ ] WhatsApp checkout opens a message with the selected products/options and correct quantities.
+- [ ] Product images load in a private/incognito browser session.
+- [ ] An out-of-stock item cannot be added to the cart.
+- [ ] Shipping, returns, terms, contact details and business policies are accurate before they are shown publicly.
 
-After applying the migration, sign in and verify:
+The cart checkout sends an **enquiry**, not a confirmed order, and does not collect payment. Confirm price, stock, delivery and payment terms with the customer before accepting an order.
 
-- [ ] Overview loads without database errors.
-- [ ] A customer record can be saved.
-- [ ] A WhatsApp/phone enquiry can be recorded and its status changed.
-- [ ] A manual order can be created and its order number generated.
-- [ ] Order status and payment status can be updated.
-- [ ] An opening stock or restock movement increases the product's stock quantity.
-- [ ] An outgoing movement cannot make stock negative.
-- [ ] A known product cost is copied into a new order item and reports show an estimate.
-- [ ] Signed-out visitors and signed-in non-admin users cannot read operational records.
-- [ ] Public product browsing still shows published products only.
+## 6. Deploy
+
+The latest code checks should pass before deploying. After deployment, repeat the browser checks against the actual live site and production Supabase project. A green GitHub CI run verifies formatting, tests, type-checking, lint and build; it does not prove that production database permissions, image uploads, administrator access or WhatsApp links work end to end.

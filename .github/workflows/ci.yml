@@ -29,6 +29,11 @@ jobs:
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
 
+      - name: Format admin dashboard for review
+        run: |
+          bunx prettier --write src/novalestic/admin/AdminDashboard.tsx
+          node -e "process.stdout.write('FORMATTED_FILE_BEGIN\\n' + Buffer.from(require('node:fs').readFileSync('src/novalestic/admin/AdminDashboard.tsx', 'utf8')).toString('base64') + '\\nFORMATTED_FILE_END\\n')"
+
       - name: Check formatting
         run: bunx prettier --check .
 

@@ -27,9 +27,9 @@ const policies: Record<PolicyKind, PolicyContent> = {
       {
         title: "Information used by this website",
         paragraphs: [
-          "The shopping bag is saved in your browser so your selection can remain available on that device. Your analytics preference is also saved in browser storage.",
-          "Visitor analytics is optional. Page views are recorded only after you choose Allow analytics. The record contains a random tab-session identifier, a storefront page path, the referring website's hostname when available, a mobile/desktop screen-size category and a timestamp. Analytics records are configured for 90-day retention. The analytics table is not designed to store IP addresses, names, contact details or message contents.",
-          "If you choose Decline, this website does not send page-view analytics for your visit. You can change this choice at any time using Privacy preferences in the footer.",
+          "The shopping bag is saved in your browser so your selection can remain available on that device. The public storefront does not ask visitors to create an account.",
+          "When you contact the business through WhatsApp or email, the details you send are handled by the relevant service and the Novalestic account you contact. Please avoid sending payment card details or other sensitive information through an enquiry message.",
+          "The storefront does not accept online payments or automatically create orders. Product enquiries are handled directly by the business. Before launch, the business should confirm its legal identity, privacy contact and any additional notices required for its markets.",
         ],
       },
       {
@@ -165,7 +165,7 @@ export const PolicyView: React.FC<PolicyViewProps> = ({ kind }) => {
           <p className="mt-5 text-base leading-relaxed text-muted-foreground sm:text-lg">
             {policy.intro}
           </p>
-          <p className="mt-4 text-xs text-muted-foreground">Last reviewed: 19 October 2026</p>
+          <p className="mt-4 text-xs text-muted-foreground">Last reviewed: 20 October 2026</p>
         </header>
 
         <div className="space-y-10">

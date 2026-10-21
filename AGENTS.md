@@ -12,5 +12,5 @@
 <!-- LOVABLE:END -->
 
 - The app is Novalestic Jewellers, a public jewellery storefront implemented in `src/novalestic/`. Its views are selected by `ShopContext`; prices are in PKR and the cart is browser-local.
-- The legacy Supabase-backed admin portal and custom catalogue database are being retired. There is currently no `/admin` route or configured product backend. The storefront product loader intentionally returns an empty collection while the Laravel backend is planned.
-- Do not recreate the old admin schema or Google-login flow as part of routine changes. The user plans to build the admin/backend in Laravel and choose the authentication integration separately.
+- Admin access uses Lovable Cloud Google sign-in at `/admin/login`; `/admin` is gated client-side (`ssr: false`) by an `admin` row in `public.user_roles`, granted by a trigger only to the owner's verified email. Why: roles must never come from client state.
+- There is no product backend yet; the storefront product loader intentionally returns an empty collection.

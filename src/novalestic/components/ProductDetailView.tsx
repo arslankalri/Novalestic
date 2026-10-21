@@ -215,7 +215,9 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               </div>
             )}
 
-            {product.category === "necklaces" && <NecklaceVirtualTryOn productName={product.title} />}
+            {product.category === "necklaces" && (
+              <NecklaceVirtualTryOn productName={product.title} />
+            )}
 
             <div className="mt-8 flex items-center gap-4">
               <span id="qty-label" className="text-sm font-medium text-foreground">

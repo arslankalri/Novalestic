@@ -52,7 +52,7 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
     setCameraState("idle");
   };
 
-  const startCamera = async () => {
+  const startCamera = async (requestedFacingMode: "user" | "environment" = facingMode) => {
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraError("This browser cannot access a camera. Use a recent browser over HTTPS and try again.");
       setCameraState("error");
@@ -66,7 +66,7 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
-          facingMode,
+          facingMode: requestedFacingMode,
           width: { ideal: 1280 },
           height: { ideal: 720 },
           frameRate: { ideal: 30, max: 30 },
@@ -206,8 +206,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
             <button
               type="button"
               onClick={() => {
-                setFacingMode((current) => current === "user" ? "environment" : "user");
-                if (cameraState === "ready") window.setTimeout(startCamera, 0);
+                const nextFacingMode = facingMode === "user" ? "environment" : "user";
+                setFacingMode(nextFacingMode);
+                if (cameraState === "ready") window.setTimeout(() => startCamera(nextFacingMode), 0);
               }}
               className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10"
             >

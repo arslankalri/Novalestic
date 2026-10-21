@@ -32,7 +32,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ prod
       return;
     }
 
-    // Ignore a permission result if the dialog closes while waiting.
+    // Ignore stale permission results if the dialog closes while waiting.
     const requestId = ++cameraRequestRef.current;
     let stream: MediaStream | null = null;
 

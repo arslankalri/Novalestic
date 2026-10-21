@@ -5,9 +5,7 @@ interface NecklaceVirtualTryOnProps {
   productName: string;
 }
 
-export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
-  productName,
-}) => {
+export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ productName }) => {
   const [open, setOpen] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState("");
@@ -30,9 +28,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
   const startCamera = async () => {
     setError("");
     if (!navigator.mediaDevices?.getUserMedia) {
-      setError(
-        "Camera access needs a supported browser and a secure HTTPS connection.",
-      );
+      setError("Camera access needs a supported browser and a secure HTTPS connection.");
       return;
     }
 
@@ -94,10 +90,8 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
     if (!open) stopCamera();
   }, [open, stopCamera]);
 
-  const gold =
-    tone === "gold" ? "#d9b45f" : tone === "silver" ? "#d5d9dc" : "#c98279";
-  const shadow =
-    tone === "gold" ? "#8c6828" : tone === "silver" ? "#7b858d" : "#884c4a";
+  const gold = tone === "gold" ? "#d9b45f" : tone === "silver" ? "#d5d9dc" : "#c98279";
+  const shadow = tone === "gold" ? "#8c6828" : tone === "silver" ? "#7b858d" : "#884c4a";
 
   return (
     <>
@@ -127,9 +121,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
                 >
                   Necklace virtual try-on
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {productName}
-                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{productName}</p>
               </div>
               <button
                 type="button"
@@ -154,9 +146,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
                 {!streaming && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-8 text-center text-white">
                     <CameraOff className="h-10 w-10 opacity-70" />
-                    <p className="text-sm">
-                      Start your camera to preview a necklace overlay.
-                    </p>
+                    <p className="text-sm">Start your camera to preview a necklace overlay.</p>
                     <button
                       type="button"
                       onClick={startCamera}
@@ -175,13 +165,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
                     aria-label="Adjustable illustrative necklace overlay"
                   >
                     <defs>
-                      <linearGradient
-                        id="chain-metal"
-                        x1="0"
-                        y1="0"
-                        x2="1"
-                        y2="1"
-                      >
+                      <linearGradient id="chain-metal" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0%" stopColor="#fff4c8" />
                         <stop offset="30%" stopColor={gold} />
                         <stop offset="65%" stopColor={shadow} />
@@ -250,10 +234,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
                 </div>
 
                 <label className="block text-sm font-medium">
-                  Necklace size{" "}
-                  <span className="float-right text-muted-foreground">
-                    {scale}%
-                  </span>
+                  Necklace size <span className="float-right text-muted-foreground">{scale}%</span>
                   <input
                     className="mt-3 w-full accent-[var(--champagne)]"
                     type="range"
@@ -265,10 +246,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
                 </label>
 
                 <label className="block text-sm font-medium">
-                  Pendant position{" "}
-                  <span className="float-right text-muted-foreground">
-                    {drop}%
-                  </span>
+                  Pendant position <span className="float-right text-muted-foreground">{drop}%</span>
                   <input
                     className="mt-3 w-full accent-[var(--champagne)]"
                     type="range"
@@ -302,14 +280,11 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
                 )}
 
                 <div className="rounded-xl border border-border bg-card p-4">
-                  <p className="text-sm font-semibold">
-                    What this preview does
-                  </p>
+                  <p className="text-sm font-semibold">What this preview does</p>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                    It places an adjustable illustration over your live camera.
-                    It does not track your neck or reproduce the exact product
-                    yet; this first prototype helps test the camera flow before
-                    adding tracking and product-specific assets.
+                    It places an adjustable illustration over your live camera. It does not track
+                    your neck or reproduce the exact product yet; this first prototype helps test
+                    the camera flow before adding tracking and product-specific assets.
                   </p>
                 </div>
 
@@ -326,8 +301,8 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
             </div>
 
             <footer className="border-t border-border px-5 py-3 text-xs text-muted-foreground sm:px-7">
-              Camera runs only after you enable it. The video is not uploaded or
-              saved by this feature.
+              Camera runs only after you enable it. The video is not uploaded or saved by this
+              feature.
             </footer>
           </section>
         </div>

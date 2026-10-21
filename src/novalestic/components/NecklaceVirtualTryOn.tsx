@@ -32,7 +32,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ prod
       return;
     }
 
-    // Track this request so stale permission prompts cannot reactivate the camera.
+    // Ignore a permission result if the dialog closes while waiting.
     const requestId = ++cameraRequestRef.current;
     let stream: MediaStream | null = null;
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Camera, CameraOff, RotateCcw, X } from "lucide-react";
 
 interface NecklaceVirtualTryOnProps {
@@ -16,13 +16,16 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
   const [tone, setTone] = useState<"gold" | "silver" | "rose">("gold");
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const cameraRequestRef = useRef(0);
 
-  const stopCamera = () => {
+  const stopCamera = useCallback(() => {
+    // Invalidate any permission request that has not resolved yet.
+    cameraRequestRef.current += 1;
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
     setStreaming(false);
-  };
+  }, []);
 
   const startCamera = async () => {
     setError("");
@@ -33,18 +36,40 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
       return;
     }
 
+    const requestId = ++cameraRequestRef.current;
+    let stream: MediaStream | null = null;
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: { facingMode: "user" },
       });
+
+      // The user may have closed the dialog while the browser asked permission.
+      if (requestId !== cameraRequestRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
+      if (!videoRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
+      videoRef.current.srcObject = stream;
+      await videoRef.current.play();
+
+      if (requestId !== cameraRequestRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
       }
       setStreaming(true);
     } catch (cause) {
+      stream?.getTracks().forEach((track) => track.stop());
+      if (streamRef.current === stream) streamRef.current = null;
+      if (requestId !== cameraRequestRef.current) return;
+
       const name = cause instanceof DOMException ? cause.name : "";
       setError(
         name === "NotAllowedError"
@@ -58,6 +83,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
 
   useEffect(
     () => () => {
+      cameraRequestRef.current += 1;
       streamRef.current?.getTracks().forEach((track) => track.stop());
     },
     [],
@@ -65,7 +91,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({
 
   useEffect(() => {
     if (!open) stopCamera();
-  }, [open]);
+  }, [open, stopCamera]);
 
   const gold =
     tone === "gold" ? "#d9b45f" : tone === "silver" ? "#d5d9dc" : "#c98279";

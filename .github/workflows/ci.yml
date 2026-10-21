@@ -29,11 +29,6 @@ jobs:
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
 
-      - name: Diagnose formatter output (temporary)
-        run: |
-          bunx prettier --write src/novalestic/components/NecklaceVirtualTryOn.tsx
-          git diff -- src/novalestic/components/NecklaceVirtualTryOn.tsx
-
       - name: Check formatting
         run: bunx prettier --check .
 

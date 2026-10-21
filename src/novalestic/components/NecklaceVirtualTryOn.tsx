@@ -246,7 +246,8 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ prod
                 </label>
 
                 <label className="block text-sm font-medium">
-                  Pendant position <span className="float-right text-muted-foreground">{drop}%</span>
+                  Pendant position{" "}
+                  <span className="float-right text-muted-foreground">{drop}%</span>
                   <input
                     className="mt-3 w-full accent-[var(--champagne)]"
                     type="range"

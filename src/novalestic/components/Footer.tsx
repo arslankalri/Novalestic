@@ -116,6 +116,9 @@ export const Footer: React.FC = () => {
             >
               Back to top ↑
             </button>
+            <a href="/admin/login" className="hover:text-foreground transition-colors rounded-sm">
+              Admin
+            </a>
           </div>
         </div>
       </div>

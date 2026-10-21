@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useShop } from "../context/ShopContext";
 import { ArrowLeft, MessageCircle, Info, ShoppingBag } from "lucide-react";
 import { CollectionError } from "./CollectionState";
+import { NecklaceVirtualTryOn } from "./NecklaceVirtualTryOn";
 
 const WHATSAPP_NUMBER = "923019653550";
 
@@ -212,6 +213,10 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
                   Exact sizing is confirmed with our team before an order is finalised.
                 </span>
               </div>
+            )}
+
+            {product.category === "necklaces" && (
+              <NecklaceVirtualTryOn productName={product.title} />
             )}
 
             <div className="mt-8 flex items-center gap-4">

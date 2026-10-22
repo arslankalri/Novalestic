@@ -3,9 +3,11 @@ import { Camera, CameraOff, RotateCcw, X } from "lucide-react";
 
 interface NecklaceVirtualTryOnProps {
   productName: string;
+  /** Transparent, product-specific PNG/WebP prepared for camera overlay. */
+  tryOnImageUrl?: string;
 }
 
-export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ productName }) => {
+export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ productName, tryOnImageUrl }) => {
   const [open, setOpen] = useState(false);
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState("");
@@ -157,7 +159,19 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ prod
                   </div>
                 )}
 
-                {streaming && (
+                {streaming && tryOnImageUrl && (
+                  <img
+                    src={tryOnImageUrl}
+                    alt={`Preview of ${productName} necklace`}
+                    draggable={false}
+                    className="pointer-events-none absolute left-1/2 top-1/2 h-auto w-[68%] max-w-none select-none object-contain drop-shadow-md"
+                    style={{
+                      transform: `translate(-50%, ${drop - 50}%) scale(${scale / 100})`,
+                    }}
+                  />
+                )}
+
+                {streaming && !tryOnImageUrl && (
                   <svg
                     viewBox="0 0 300 400"
                     preserveAspectRatio="none"
@@ -210,7 +224,7 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ prod
 
                 {streaming && (
                   <span className="absolute bottom-3 left-3 rounded-full bg-black/60 px-3 py-1 text-[11px] text-white">
-                    Illustrative overlay · not exact product rendering
+                    {tryOnImageUrl ? "Product image overlay · manual positioning" : "Illustrative overlay · not exact product rendering"}
                   </span>
                 )}
               </div>
@@ -283,9 +297,9 @@ export const NecklaceVirtualTryOn: React.FC<NecklaceVirtualTryOnProps> = ({ prod
                 <div className="rounded-xl border border-border bg-card p-4">
                   <p className="text-sm font-semibold">What this preview does</p>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                    It places an adjustable illustration over your live camera. It does not track
-                    your neck or reproduce the exact product yet; this first prototype helps test
-                    the camera flow before adding tracking and product-specific assets.
+                    {tryOnImageUrl
+                      ? "This uses a product-specific transparent image with manual positioning. Automatic neck tracking is not enabled yet, so adjust the size and pendant position for your camera view."
+                      : "It places an adjustable illustration over your live camera. It does not track your neck or reproduce the exact product yet. A transparent product image can be supplied when one has been prepared."}
                   </p>
                 </div>
 

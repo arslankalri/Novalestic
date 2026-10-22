@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useShop } from "../context/ShopContext";
 import { ArrowLeft, MessageCircle, Info, ShoppingBag } from "lucide-react";
 import { CollectionError } from "./CollectionState";
+import { NecklaceTryOn } from "./NecklaceTryOn";
 
 const WHATSAPP_NUMBER = "923019653550";
 
@@ -19,6 +20,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
   );
   const [selectedRingSize, setSelectedRingSize] = useState("Size 14 (Standard)");
   const [quantity, setQuantity] = useState(1);
+  const [tryOnOpen, setTryOnOpen] = useState(false);
 
   useEffect(() => {
     setSelectedMetal(product?.availableMetals?.[0] || product?.metal || "18k Yellow Gold");
@@ -250,6 +252,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
               </div>
             </div>
 
+            {product.category === "necklaces" && (
+              <button
+                type="button"
+                onClick={() => setTryOnOpen(true)}
+                className="mt-8 w-full rounded-full border border-foreground/20 bg-card py-3.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+              >
+                Try this necklace on
+              </button>
+            )}
+
             <div className="mt-10 space-y-3">
               <button
                 type="button"
@@ -328,6 +340,14 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({ productId 
           </div>
         </div>
       </div>
+      {product.category === "necklaces" && (
+        <NecklaceTryOn
+          productName={product.title}
+          open={tryOnOpen}
+          onClose={() => setTryOnOpen(false)}
+          tryOnImageUrl={(product as typeof product & { tryOnImageUrl?: string }).tryOnImageUrl}
+        />
+      )}
     </div>
   );
 };

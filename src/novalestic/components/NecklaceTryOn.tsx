@@ -54,7 +54,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
 
   const startCamera = async (requestedFacingMode: "user" | "environment" = facingMode) => {
     if (!navigator.mediaDevices?.getUserMedia) {
-      setCameraError("This browser cannot access a camera. Use a recent browser over HTTPS and try again.");
+      setCameraError(
+        "This browser cannot access a camera. Use a recent browser over HTTPS and try again.",
+      );
       setCameraState("error");
       return;
     }
@@ -95,7 +97,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
     const file = event.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setCameraError("Choose an image file with a transparent background, ideally a PNG or WebP.");
+      setCameraError(
+        "Choose an image file with a transparent background, ideally a PNG or WebP.",
+      );
       return;
     }
     const nextUrl = URL.createObjectURL(file);
@@ -159,7 +163,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
                   Start your camera to preview the necklace placement.
                 </p>
                 {cameraState === "starting" ? (
-                  <span className="text-sm text-white/70" role="status">Starting camera…</span>
+                  <span className="text-sm text-white/70" role="status">
+                    Starting camera…
+                  </span>
                 ) : (
                   <button
                     type="button"
@@ -208,7 +214,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
               onClick={() => {
                 const nextFacingMode = facingMode === "user" ? "environment" : "user";
                 setFacingMode(nextFacingMode);
-                if (cameraState === "ready") window.setTimeout(() => startCamera(nextFacingMode), 0);
+                if (cameraState === "ready") {
+                  window.setTimeout(() => startCamera(nextFacingMode), 0);
+                }
               }}
               className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-sm text-white hover:bg-white/10"
             >
@@ -252,7 +260,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
 
           <div className="mt-6">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <label htmlFor="try-on-width" className="text-sm font-medium">Necklace width</label>
+              <label htmlFor="try-on-width" className="text-sm font-medium">
+                Necklace width
+              </label>
               <span className="text-xs tabular-nums text-muted-foreground">{overlayWidth}%</span>
             </div>
             <input
@@ -268,7 +278,9 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
 
           <div className="mt-5">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <label htmlFor="try-on-top" className="text-sm font-medium">Vertical position</label>
+              <label htmlFor="try-on-top" className="text-sm font-medium">
+                Vertical position
+              </label>
               <span className="text-xs tabular-nums text-muted-foreground">{overlayTop}%</span>
             </div>
             <input
@@ -294,15 +306,18 @@ export const NecklaceTryOn: React.FC<NecklaceTryOnProps> = ({
           </button>
 
           {cameraError && (
-            <p role="alert" className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
+            <p
+              role="alert"
+              className="mt-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-sm text-destructive"
+            >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <span>{cameraError}</span>
             </p>
           )}
 
           <p className="mt-5 border-t border-border pt-4 text-xs leading-relaxed text-muted-foreground">
-            Camera video stays in this browser session; this feature does not upload or save camera footage.
-            Preview proportions are approximate and are not a guarantee of real-world fit.
+            Camera video stays in this browser session; this feature does not upload or save camera
+            footage. Preview proportions are approximate and are not a guarantee of real-world fit.
           </p>
         </aside>
       </section>
